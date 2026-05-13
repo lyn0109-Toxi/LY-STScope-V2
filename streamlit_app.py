@@ -2309,11 +2309,7 @@ def render_sidebar() -> None:
         st.caption("Open or close this sidebar with the arrow in the upper-left corner.")
 
         st.markdown("### Ver.2 Module")
-        st.page_link(
-            "pages/01_REIT_Focused_Analysis.py",
-            label="REIT Focused Analysis",
-            icon=":material/apartment:",
-        )
+        st.caption("Use the REIT Analysis tab in the main screen.")
 
         st.markdown("### Compare List")
         if st.session_state.compare:
@@ -2432,21 +2428,9 @@ with tab_portfolio:
     portfolio_tab()
 
 with tab_reit:
-    st.markdown(
-        """
-        <div class="hero-panel">
-            <h1 style="margin:0 0 8px;">REIT Focused Analysis</h1>
-            <div class="hero-muted">Open the Ver.2 module for REIT valuation, income safety, property quality, and macro sensitivity.</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-    st.page_link(
-        "pages/01_REIT_Focused_Analysis.py",
-        label="Open REIT Focused Analysis",
-        icon=":material/apartment:",
-        use_container_width=True,
-    )
+    from reit_analysis_module import main as render_reit_analysis
+
+    render_reit_analysis(include_sidebar=False)
 
 with tab_settings:
     settings_tab()
