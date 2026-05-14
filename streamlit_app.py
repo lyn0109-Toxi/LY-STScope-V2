@@ -1680,6 +1680,14 @@ def search_tab() -> None:
         "LY-STScope is designed for learning and analytical discussion using real market examples. "
         "It is not an investment recommendation or financial advisory service."
     )
+    if not FINNHUB_API_KEY:
+        st.warning(
+            "FINNHUB_API_KEY is not configured, so live stock search is temporarily unavailable. "
+            "REIT Analysis still works with educational sample data."
+        )
+        st.info("Add FINNHUB_API_KEY in Streamlit Cloud > App settings > Secrets to enable live stock analysis.")
+        return
+
     with st.form("stock_search"):
         query = st.text_input(
             "Enter a stock ticker",
@@ -2407,10 +2415,6 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-
-if not FINNHUB_API_KEY:
-    st.error("FINNHUB_API_KEY is not configured. Add it in Streamlit Cloud > App settings > Secrets.")
-    st.stop()
 
 sync_selected_detail_from_query()
 
