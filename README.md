@@ -19,6 +19,7 @@ This app is designed as an educational analytics tool, not an investment recomme
 ## Planned Analysis Areas
 
 - Stock valuation and portfolio analytics from the original LY-STScope.
+- Korean stock search expansion with approximately 100 major KOSPI/KOSDAQ companies searchable by company name or ticker.
 - REIT sector classification: Retail, Industrial, Residential, Office, Healthcare, Data Center, Storage, Hotel, Diversified, Mortgage REITs.
 - REIT-specific valuation: dividend yield, price to FFO, AFFO payout ratio, NAV premium or discount.
 - Interest-rate sensitivity: relationship between REIT returns, Treasury yields, and financing conditions.

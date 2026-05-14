@@ -947,6 +947,211 @@ DEVELOPER_NAME = "Young Lee"
 DEVELOPER_EMAIL = "lyn0109@gmail.com"
 
 
+KOREAN_STOCK_MAP = {
+    "삼성전자": "005930.KS",
+    "samsung electronics": "005930.KS",
+    "sk하이닉스": "000660.KS",
+    "sk hynix": "000660.KS",
+    "lg에너지솔루션": "373220.KS",
+    "lg energy solution": "373220.KS",
+    "삼성바이오로직스": "207940.KS",
+    "samsung biologics": "207940.KS",
+    "현대차": "005380.KS",
+    "hyundai motor": "005380.KS",
+    "기아": "000270.KS",
+    "kia": "000270.KS",
+    "셀트리온": "068270.KS",
+    "celltrion": "068270.KS",
+    "kb금융": "105560.KS",
+    "kb financial": "105560.KS",
+    "신한지주": "055550.KS",
+    "shinhan financial": "055550.KS",
+    "posco홀딩스": "005490.KS",
+    "posco holdings": "005490.KS",
+    "naver": "035420.KS",
+    "네이버": "035420.KS",
+    "카카오": "035720.KS",
+    "kakao": "035720.KS",
+    "삼성sdi": "006400.KS",
+    "samsung sdi": "006400.KS",
+    "lg화학": "051910.KS",
+    "lg chem": "051910.KS",
+    "현대모비스": "012330.KS",
+    "hyundai mobis": "012330.KS",
+    "삼성물산": "028260.KS",
+    "samsung c&t": "028260.KS",
+    "포스코퓨처엠": "003670.KS",
+    "posco future m": "003670.KS",
+    "하나금융지주": "086790.KS",
+    "hana financial": "086790.KS",
+    "삼성생명": "032830.KS",
+    "samsung life": "032830.KS",
+    "lg전자": "066570.KS",
+    "lg electronics": "066570.KS",
+    "sk이노베이션": "096770.KS",
+    "sk innovation": "096770.KS",
+    "한화에어로스페이스": "012450.KS",
+    "hanwha aerospace": "012450.KS",
+    "hd현대중공업": "329180.KS",
+    "hd hyundai heavy industries": "329180.KS",
+    "삼성화재": "000810.KS",
+    "samsung fire": "000810.KS",
+    "kt&g": "033780.KS",
+    "케이티앤지": "033780.KS",
+    "우리금융지주": "316140.KS",
+    "woori financial": "316140.KS",
+    "하이브": "352820.KS",
+    "hybe": "352820.KS",
+    "크래프톤": "259960.KS",
+    "krafton": "259960.KS",
+    "sk텔레콤": "017670.KS",
+    "sk telecom": "017670.KS",
+    "기업은행": "024110.KS",
+    "ibk": "024110.KS",
+    "고려아연": "010130.KS",
+    "korea zinc": "010130.KS",
+    "삼성전기": "009150.KS",
+    "samsung electro-mechanics": "009150.KS",
+    "카카오뱅크": "323410.KS",
+    "kakaobank": "323410.KS",
+    "카카오페이": "377300.KS",
+    "kakaopay": "377300.KS",
+    "삼성에스디에스": "018260.KS",
+    "samsung sds": "018260.KS",
+    "lg": "003550.KS",
+    "한국전력": "015760.KS",
+    "kepco": "015760.KS",
+    "kt": "030200.KS",
+    "대한항공": "003490.KS",
+    "korean air": "003490.KS",
+    "아모레퍼시픽": "090430.KS",
+    "amorepacific": "090430.KS",
+    "넷마블": "251270.KS",
+    "netmarble": "251270.KS",
+    "엔씨소프트": "036570.KS",
+    "ncsoft": "036570.KS",
+    "롯데케미칼": "011170.KS",
+    "lotte chemical": "011170.KS",
+    "s-oil": "010950.KS",
+    "에쓰오일": "010950.KS",
+    "현대건설": "000720.KS",
+    "hyundai engineering construction": "000720.KS",
+    "두산에너빌리티": "034020.KS",
+    "doosan enerbility": "034020.KS",
+    "lg생활건강": "051900.KS",
+    "lg h&h": "051900.KS",
+    "한미약품": "128940.KS",
+    "hanmi pharm": "128940.KS",
+    "유한양행": "000100.KS",
+    "yuhan": "000100.KS",
+    "녹십자": "006280.KS",
+    "gc pharma": "006280.KS",
+    "한화솔루션": "009830.KS",
+    "hanwha solutions": "009830.KS",
+    "현대글로비스": "086280.KS",
+    "hyundai glovis": "086280.KS",
+    "cj제일제당": "097950.KS",
+    "cj cheiljedang": "097950.KS",
+    "오리온": "271560.KS",
+    "orion": "271560.KS",
+    "삼양식품": "003230.KS",
+    "samyang foods": "003230.KS",
+    "농심": "004370.KS",
+    "nongshim": "004370.KS",
+    "대한전선": "001440.KS",
+    "taihan cable": "001440.KS",
+    "현대로템": "064350.KS",
+    "hyundai rotem": "064350.KS",
+    "lg이노텍": "011070.KS",
+    "lg innotek": "011070.KS",
+    "ls electric": "010120.KS",
+    "ls일렉트릭": "010120.KS",
+    "코웨이": "021240.KS",
+    "coway": "021240.KS",
+    "미래에셋증권": "006800.KS",
+    "mirae asset securities": "006800.KS",
+    "삼성증권": "016360.KS",
+    "samsung securities": "016360.KS",
+    "한국금융지주": "071050.KS",
+    "korea investment holdings": "071050.KS",
+    "메리츠금융지주": "138040.KS",
+    "meritz financial": "138040.KS",
+    "에코프로비엠": "247540.KQ",
+    "ecopro bm": "247540.KQ",
+    "에코프로": "086520.KQ",
+    "ecopro": "086520.KQ",
+    "알테오젠": "196170.KQ",
+    "alteogen": "196170.KQ",
+    "hpsp": "403870.KQ",
+    "에이치피에스피": "403870.KQ",
+    "레인보우로보틱스": "277810.KQ",
+    "rainbow robotics": "277810.KQ",
+    "리노공업": "058470.KQ",
+    "leeno": "058470.KQ",
+    "셀트리온제약": "068760.KQ",
+    "celltrion pharm": "068760.KQ",
+    "hlb": "028300.KQ",
+    "에스엠": "041510.KQ",
+    "sm entertainment": "041510.KQ",
+    "jyp ent": "035900.KQ",
+    "jyp": "035900.KQ",
+    "카카오게임즈": "293490.KQ",
+    "kakao games": "293490.KQ",
+    "펄어비스": "263750.KQ",
+    "pearl abyss": "263750.KQ",
+    "스튜디오드래곤": "253450.KQ",
+    "studio dragon": "253450.KQ",
+    "천보": "278280.KQ",
+    "chunbo": "278280.KQ",
+    "동진쎄미켐": "005290.KQ",
+    "dongjin semichem": "005290.KQ",
+    "솔브레인": "357780.KQ",
+    "soulbrain": "357780.KQ",
+    "원익ips": "240810.KQ",
+    "wonik ips": "240810.KQ",
+    "파마리서치": "214450.KQ",
+    "pharma research": "214450.KQ",
+    "삼천당제약": "000250.KQ",
+    "samyangdang pharm": "000250.KQ",
+    "휴젤": "145020.KQ",
+    "hugel": "145020.KQ",
+    "메디톡스": "086900.KQ",
+    "medytox": "086900.KQ",
+    "클래시스": "214150.KQ",
+    "classys": "214150.KQ",
+    "씨젠": "096530.KQ",
+    "seegene": "096530.KQ",
+    "오스템임플란트": "048260.KQ",
+    "osstem implant": "048260.KQ",
+    "파두": "440110.KQ",
+    "fadu": "440110.KQ",
+    "기가비스": "420770.KQ",
+    "gigavis": "420770.KQ",
+    "이오테크닉스": "039030.KQ",
+    "eo technics": "039030.KQ",
+    "제이앤티씨": "204270.KQ",
+    "jntc": "204270.KQ",
+    "hd한국조선해양": "009540.KS",
+    "hd korea shipbuilding": "009540.KS",
+    "삼성중공업": "010140.KS",
+    "samsung heavy industries": "010140.KS",
+    "한화오션": "042660.KS",
+    "hanwha ocean": "042660.KS",
+    "hmm": "011200.KS",
+    "팬오션": "028670.KS",
+    "pan ocean": "028670.KS",
+    "ls": "006260.KS",
+    "db하이텍": "000990.KS",
+    "db hitek": "000990.KS",
+    "db손해보험": "005830.KS",
+    "db insurance": "005830.KS",
+    "현대해상": "001450.KS",
+    "hyundai marine fire": "001450.KS",
+    "강원랜드": "035250.KS",
+    "kangwon land": "035250.KS",
+}
+
+
 def init_state() -> None:
     st.session_state.setdefault("stocks", {})
     st.session_state.setdefault("compare", [])
@@ -990,6 +1195,43 @@ def fmt_market_cap(value: float | int | None) -> str:
     # Finnhub profile marketCapitalization is in millions.
     billions = float(value) / 1000
     return f"{billions:,.2f}B"
+
+
+def normalize_company_query(query: str) -> str:
+    return " ".join(query.strip().lower().split())
+
+
+def is_korean_symbol(symbol: str) -> bool:
+    clean = symbol.strip().upper()
+    return clean.endswith(".KS") or clean.endswith(".KQ")
+
+
+def resolve_korean_ticker(query: str) -> str | None:
+    clean = query.strip()
+    normalized = normalize_company_query(clean)
+    if normalized in KOREAN_STOCK_MAP:
+        return KOREAN_STOCK_MAP[normalized]
+
+    upper = clean.upper()
+    if is_korean_symbol(upper):
+        return upper
+
+    if clean.isdigit() and len(clean) == 6:
+        known_symbols = set(KOREAN_STOCK_MAP.values())
+        kosdaq_symbol = f"{clean}.KQ"
+        kospi_symbol = f"{clean}.KS"
+        if kosdaq_symbol in known_symbols:
+            return kosdaq_symbol
+        return kospi_symbol
+
+    return None
+
+
+def company_name_for_korean_symbol(symbol: str) -> str:
+    for name, mapped_symbol in KOREAN_STOCK_MAP.items():
+        if mapped_symbol == symbol and any(ord(char) > 127 for char in name):
+            return name
+    return symbol
 
 
 def resolve_ticker(query: str) -> str:
@@ -1180,7 +1422,78 @@ def calculate_valuation(stock: dict[str, Any]) -> dict[str, Any]:
     return stock
 
 
+def load_korean_stock(query: str) -> dict[str, Any]:
+    symbol = resolve_korean_ticker(query)
+    if not symbol:
+        raise ValueError(f"{query} is not recognized as a Korean stock.")
+
+    ticker = yf.Ticker(symbol)
+    history = load_price_history_from_yahoo(symbol, days=30)
+    if history.empty:
+        raise ValueError(f"No Yahoo Finance price history was returned for {symbol}.")
+
+    history = normalize_price_history(history)
+    closes = history["Close"].astype(float).tolist()
+    price = closes[-1] if closes else 0.0
+    if price <= 0:
+        raise ValueError(f"No current price was returned for {symbol}.")
+
+    previous = closes[-2] if len(closes) >= 2 else price
+    change_pct = ((price - previous) / previous * 100) if previous else 0.0
+
+    try:
+        info = ticker.get_info()
+    except Exception:
+        info = {}
+
+    market_cap = info.get("marketCap")
+    market_cap_millions = float(market_cap) / 1_000_000 if market_cap else None
+    trailing_eps = info.get("trailingEps") or 0
+    book_value = info.get("bookValue") or 0
+    dividend_rate = info.get("dividendRate") or 0
+    dividend_yield = (float(info.get("dividendYield") or 0) * 100)
+    pe = info.get("trailingPE") or info.get("forwardPE")
+    beta = info.get("beta") or 1.0
+    growth_rate = info.get("earningsGrowth")
+    if growth_rate is None:
+        growth_rate = info.get("revenueGrowth")
+    if growth_rate is None:
+        growth_rate = 0.05
+
+    name = (
+        info.get("longName")
+        or info.get("shortName")
+        or company_name_for_korean_symbol(symbol)
+    )
+    industry = info.get("industry") or info.get("sector") or "Korean Equity"
+    peer_pe = pe if pe and 0 < float(pe) < 100 else 15.0
+
+    stock = {
+        "symbol": symbol,
+        "name": name,
+        "industry": industry,
+        "price": price,
+        "change_pct": change_pct,
+        "market_cap": market_cap_millions,
+        "pe": pe,
+        "dividend_yield": dividend_yield,
+        "beta": beta,
+        "eps": trailing_eps,
+        "dividend": dividend_rate,
+        "growth_rate": growth_rate,
+        "book_value": book_value,
+        "peer_average_pe": peer_pe,
+        "peers": [],
+        "market": "Korea",
+    }
+    return calculate_valuation(stock)
+
+
 def load_stock(query: str) -> dict[str, Any]:
+    korean_symbol = resolve_korean_ticker(query)
+    if korean_symbol:
+        return load_korean_stock(korean_symbol)
+
     symbol = resolve_ticker(query)
     profile = finnhub_get("stock/profile2", symbol=symbol)
     quote = finnhub_get("quote", symbol=symbol)
@@ -1349,6 +1662,7 @@ def render_fair_value(stock: dict[str, Any]) -> None:
 
 def render_tradingview_chart(symbol: str) -> None:
     container_id = f"tradingview_{symbol.replace('.', '_').replace('-', '_')}"
+    tv_symbol = f"KRX:{symbol[:6]}" if is_korean_symbol(symbol) else symbol
     components.html(
         f"""
         <div class="tradingview-widget-container" style="height:520px;width:100%;">
@@ -1357,7 +1671,7 @@ def render_tradingview_chart(symbol: str) -> None:
             <script type="text/javascript">
             new TradingView.widget({{
                 "autosize": true,
-                "symbol": "{symbol}",
+                "symbol": "{tv_symbol}",
                 "interval": "D",
                 "timezone": "Etc/UTC",
                 "theme": "dark",
@@ -1682,22 +1996,23 @@ def search_tab() -> None:
     )
     if not FINNHUB_API_KEY:
         st.warning(
-            "FINNHUB_API_KEY is not configured, so live stock search is temporarily unavailable. "
-            "REIT Analysis still works with educational sample data."
+            "FINNHUB_API_KEY is not configured, so US live stock search is temporarily unavailable. "
+            "Korean stock search and REIT Analysis can still work with Yahoo Finance and educational sample data."
         )
         st.info("Add FINNHUB_API_KEY in Streamlit Cloud > App settings > Secrets to enable live stock analysis.")
-        return
 
     with st.form("stock_search"):
         query = st.text_input(
             "Enter a stock ticker",
             value=st.session_state.last_query,
-            placeholder="Enter a ticker, e.g. NVDA, AAPL, TSLA, PFE",
+            placeholder="Enter a ticker or company name, e.g. NVDA, AAPL, 삼성전자, NAVER, SK하이닉스",
         )
         submitted = st.form_submit_button("Analyze Ticker")
     if submitted and query.strip():
         with st.spinner("Loading stock data..."):
             try:
+                if not FINNHUB_API_KEY and not resolve_korean_ticker(query):
+                    raise ValueError("US stock search requires FINNHUB_API_KEY. Try a Korean stock such as 삼성전자 or 005930.KS, or add the API key in Secrets.")
                 stock = load_stock(query)
                 st.session_state.stocks[stock["symbol"]] = stock
                 st.session_state.last_query = query.strip()
