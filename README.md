@@ -12,6 +12,7 @@ This app is designed as an educational analytics tool, not an investment recomme
 - `reit_analysis_module.py`: REIT-focused Ver.2 module used inside the main app.
 - `pages/01_REIT_Focused_Analysis.py`: Optional standalone REIT-focused page.
 - `personal_finance_engine.py`: Experimental Personal Finance calculation engine.
+- `personal_finance_module.py`: Personal Finance Streamlit UI module.
 - `docs/`: REIT analysis blueprint and data dictionary.
 - `ontology/`: Initial REIT ontology structure.
 

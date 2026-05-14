@@ -2418,8 +2418,8 @@ st.markdown(
 
 sync_selected_detail_from_query()
 
-tab_search, tab_compare, tab_portfolio, tab_reit, tab_settings, tab_guide = st.tabs(
-    ["Search", "Compare", "Portfolio", "REIT Analysis", "Settings", "User Guide"]
+tab_search, tab_compare, tab_portfolio, tab_reit, tab_personal, tab_settings, tab_guide = st.tabs(
+    ["Search", "Compare", "Portfolio", "REIT Analysis", "Personal Finance", "Settings", "User Guide"]
 )
 
 with tab_search:
@@ -2435,6 +2435,11 @@ with tab_reit:
     from reit_analysis_module import main as render_reit_analysis
 
     render_reit_analysis(include_sidebar=False)
+
+with tab_personal:
+    from personal_finance_module import render_personal_finance
+
+    render_personal_finance()
 
 with tab_settings:
     settings_tab()
