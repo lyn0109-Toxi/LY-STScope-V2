@@ -1,5 +1,6 @@
 import math
 import os
+import json
 from html import escape
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -1163,6 +1164,7 @@ def init_state() -> None:
     st.session_state.setdefault("last_query", "")
     st.session_state.setdefault("selected_detail", None)
     st.session_state.setdefault("comments", [])
+    st.session_state.setdefault("financial_diary", [])
 
 
 @st.cache_data(ttl=300, show_spinner=False)
@@ -2428,6 +2430,394 @@ def render_complementarity_analysis() -> None:
     st.dataframe(corr.round(3), use_container_width=True)
 
 
+def portfolio_valuation_rows() -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    weights = portfolio_analysis_weights()
+    for symbol, holding in st.session_state.portfolio.items():
+        stock = st.session_state.stocks.get(symbol)
+        if not stock:
+            continue
+        price = float(stock.get("price") or 0)
+        fair_price = float(stock.get("fair_price") or 0)
+        upside = ((fair_price - price) / price * 100) if price > 0 and fair_price > 0 else None
+        weight = weights.get(symbol, 0.0)
+        rows.append(
+            {
+                "Stock": symbol,
+                "Name": stock.get("name", symbol),
+                "Price": stock_money(stock, price),
+                "Fair Value": stock_money(stock, fair_price) if fair_price > 0 else "N/A",
+                "Upside / Downside": "N/A" if upside is None else f"{upside:+.1f}%",
+                "Analysis Weight": f"{weight * 100:.1f}%",
+                "Weighted Contribution": "N/A" if upside is None else f"{upside * weight:+.2f} pts",
+                "Valuation": stock.get("valuation_status", "N/A"),
+            }
+        )
+    return rows
+
+
+def complementarity_summary() -> dict[str, Any] | None:
+    symbols = [symbol for symbol in st.session_state.portfolio if symbol in st.session_state.stocks]
+    returns = portfolio_return_frame(symbols)
+    if returns.empty or len(returns.columns) < 2:
+        return None
+
+    corr = returns.corr()
+    pair_values = []
+    for i, first in enumerate(corr.columns):
+        for second in corr.columns[i + 1 :]:
+            pair_values.append((first, second, float(corr.loc[first, second])))
+    if not pair_values:
+        return None
+
+    avg_pair_corr = sum(item[2] for item in pair_values) / len(pair_values)
+    best_pair = min(pair_values, key=lambda item: item[2])
+    crowded_pair = max(pair_values, key=lambda item: item[2])
+    return {
+        "average_pair_correlation": avg_pair_corr,
+        "complementarity_score": max(0, min(100, (1 - avg_pair_corr) * 100)),
+        "best_offset_pair": best_pair,
+        "highest_co_movement_pair": crowded_pair,
+        "correlation_matrix": corr,
+    }
+
+
+def portfolio_holdings_snapshot() -> list[dict[str, Any]]:
+    usdkrw, _, _ = effective_usdkrw()
+    base_currency = st.session_state.get("portfolio_base_currency", "USD")
+    market_values = portfolio_market_values()
+    total_value = sum(market_values.values())
+    weights = portfolio_analysis_weights()
+    holdings = []
+    for symbol, holding in st.session_state.portfolio.items():
+        stock = st.session_state.stocks.get(symbol)
+        if not stock:
+            continue
+        shares = float(holding.get("shares") or 0)
+        native_value = float(stock.get("price") or 0) * shares
+        base_value = convert_value(
+            native_value,
+            stock.get("currency", "USD"),
+            base_currency,
+            usdkrw,
+        )
+        holdings.append(
+            {
+                "symbol": symbol,
+                "name": stock.get("name", symbol),
+                "currency": stock.get("currency", "USD"),
+                "shares": shares,
+                "price": float(stock.get("price") or 0),
+                "native_market_value": native_value,
+                "base_market_value": base_value,
+                "base_weight": base_value / total_value if total_value > 0 else 0,
+                "analysis_weight": weights.get(symbol, 0.0),
+                "valuation_status": stock.get("valuation_status", "N/A"),
+            }
+        )
+    return holdings
+
+
+def build_financial_snapshot(note: str, mood: str, next_action: str) -> dict[str, Any]:
+    total_value, weighted_beta, valuation_score, _ = portfolio_metrics()
+    usdkrw, fx_source, fx_date = effective_usdkrw()
+    risk = portfolio_risk_metrics()
+    comp = complementarity_summary()
+    personal_result = st.session_state.get("last_personal_finance_result", {})
+
+    return {
+        "time": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "mood": mood,
+        "note": note,
+        "next_action": next_action,
+        "base_currency": st.session_state.get("portfolio_base_currency", "USD"),
+        "usdkrw": usdkrw,
+        "fx_source": fx_source,
+        "fx_date": fx_date,
+        "portfolio": {
+            "total_market_value": total_value,
+            "weighted_beta": weighted_beta,
+            "valuation_score": valuation_score,
+            "weighting_mode": st.session_state.get("portfolio_weighting_mode", "Share-based"),
+            "holdings": portfolio_holdings_snapshot(),
+        },
+        "risk": None
+        if not risk
+        else {
+            "annualized_risk": risk["annual_vol"],
+            "expected_annual_return": risk["annual_return"],
+            "diversification_benefit_daily": risk["diversification_benefit"],
+        },
+        "complementarity": None
+        if not comp
+        else {
+            "score": comp["complementarity_score"],
+            "average_pair_correlation": comp["average_pair_correlation"],
+            "best_offset_pair": list(comp["best_offset_pair"]),
+            "highest_co_movement_pair": list(comp["highest_co_movement_pair"]),
+        },
+        "personal_finance": personal_result,
+    }
+
+
+def calculation_details_tab() -> None:
+    st.markdown(
+        """
+        <div class="hero-panel">
+            <h1 style="margin:0 0 8px;">Calculation Details</h1>
+            <div class="hero-muted">Review the formulas, data inputs, assumptions, and interpretation logic behind LY-STScope.</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.info(
+        "This section is designed for transparency. It explains how the app creates each analytical signal, "
+        "so users can understand the assumptions instead of treating the output as a recommendation."
+    )
+
+    with st.expander("1. Stock Valuation Triangulation", expanded=True):
+        st.markdown(
+            """
+            **Blended Fair Value** is the average of the valid valuation models available for each stock.
+
+            - **Income Approach:** Gordon Growth Model when dividends are available; otherwise EPS capitalization.
+            - **Asset Approach:** Graham Number = square root of `22.5 x EPS x Book Value per Share`.
+            - **Market Approach:** `EPS x Peer Average P/E`.
+            - **Valuation Status:** if current price is more than 5% above fair value, it is marked Overvalued; if more than 5% below, Undervalued.
+            """
+        )
+        if st.session_state.stocks:
+            symbols = list(st.session_state.stocks.keys())
+            selected = st.selectbox("Inspect a loaded stock", symbols, key="calc_stock_symbol")
+            stock = st.session_state.stocks[selected]
+            tri = stock.get("triangulation", {})
+            st.dataframe(
+                [
+                    {"Input": "Current Price", "Value": stock_money(stock, stock.get("price"))},
+                    {"Input": "EPS", "Value": stock_money(stock, float(stock.get("eps") or 0))},
+                    {"Input": "Book Value / Share", "Value": stock_money(stock, float(stock.get("book_value") or 0))},
+                    {"Input": "Dividend / Share", "Value": stock_money(stock, float(stock.get("dividend") or 0))},
+                    {"Input": "Beta", "Value": fmt_number(stock.get("beta"))},
+                    {"Input": "Growth Rate", "Value": f"{float(stock.get('growth_rate') or 0) * 100:.1f}%"},
+                    {"Input": "Peer Average P/E", "Value": fmt_number(stock.get("peer_average_pe"))},
+                ],
+                hide_index=True,
+                use_container_width=True,
+            )
+            st.dataframe(
+                [
+                    {"Approach": "Income", "Model": tri.get("income_model", "N/A"), "Value": stock_money(stock, tri.get("income_value")) if tri.get("income_value") else "N/A"},
+                    {"Approach": "Asset", "Model": "Graham Number", "Value": stock_money(stock, tri.get("asset_value")) if tri.get("asset_value") else "N/A"},
+                    {"Approach": "Market", "Model": "Peer P/E", "Value": stock_money(stock, tri.get("market_value")) if tri.get("market_value") else "N/A"},
+                    {"Approach": "Blended", "Model": f"{tri.get('valid_models', 0)} valid model(s)", "Value": stock_money(stock, stock.get("fair_price")) if stock.get("fair_price") else "N/A"},
+                ],
+                hide_index=True,
+                use_container_width=True,
+            )
+        else:
+            st.caption("Search stocks first to inspect live valuation inputs.")
+
+    with st.expander("2. Portfolio Valuation Score", expanded=True):
+        st.markdown(
+            """
+            The portfolio valuation score measures weighted upside or downside versus each holding's blended fair value.
+
+            `Portfolio Valuation Score = sum(weight x ((Fair Value - Current Price) / Current Price)) / valued-stock weight`
+
+            Positive means the portfolio appears undervalued under the app assumptions. Negative means the portfolio appears overvalued.
+            """
+        )
+        rows = portfolio_valuation_rows()
+        if rows:
+            st.dataframe(rows, hide_index=True, use_container_width=True)
+        else:
+            st.caption("Add holdings to the portfolio to see contribution details.")
+
+    with st.expander("3. Portfolio Risk and Diversification"):
+        st.markdown(
+            """
+            Portfolio risk is calculated from daily return covariance.
+
+            `Portfolio Variance = w' x Covariance Matrix x w`
+
+            `Annualized Risk = Daily Portfolio Standard Deviation x sqrt(252)`
+
+            The calculation uses the selected portfolio weighting mode. For mixed-currency portfolios, weights are calculated in the selected base currency, but daily price returns currently do not include FX return effects.
+            """
+        )
+        risk = portfolio_risk_metrics()
+        if risk:
+            st.dataframe(
+                pd.DataFrame(
+                    [
+                        {"Metric": "Daily Portfolio SD", "Value": f"{risk['daily_vol'] * 100:.3f}%"},
+                        {"Metric": "Annualized Portfolio Risk", "Value": f"{risk['annual_vol'] * 100:.1f}%"},
+                        {"Metric": "Expected Annual Return", "Value": f"{risk['annual_return'] * 100:+.1f}%"},
+                        {"Metric": "Daily Diversification Benefit", "Value": f"{risk['diversification_benefit'] * 100:.3f}%"},
+                    ]
+                ),
+                hide_index=True,
+                use_container_width=True,
+            )
+            st.markdown("**Weight Vector**")
+            st.dataframe(risk["weights"].rename("Weight").to_frame().style.format("{:.2%}"), use_container_width=True)
+            st.markdown("**Covariance Matrix**")
+            st.dataframe(risk["covariance"].round(6), use_container_width=True)
+            st.markdown("**Correlation Matrix**")
+            st.dataframe(risk["correlation"].round(3), use_container_width=True)
+        else:
+            st.caption("At least two portfolio holdings with price history are needed.")
+
+    with st.expander("4. Personal Finance Health Score"):
+        st.markdown(
+            """
+            Personal Finance connects investment readiness with life-level financial health.
+
+            - **Net Worth:** total assets minus total debt.
+            - **Monthly Surplus:** income minus fixed expenses, variable expenses, and debt payments.
+            - **Emergency Fund:** cash savings divided by monthly living expenses.
+            - **Savings Rate:** monthly surplus divided by monthly income.
+            - **Debt-to-Income:** monthly debt payment divided by monthly income.
+            - **Financial Health Score:** weighted score from liquidity, debt, savings, goal progress, and risk capacity.
+            """
+        )
+        result = st.session_state.get("last_personal_finance_result")
+        if result:
+            st.dataframe(
+                [
+                    {"Metric": "Net Worth", "Value": fmt_money(float(result["net_worth"]))},
+                    {"Metric": "Monthly Surplus", "Value": fmt_money(float(result["monthly_surplus"]))},
+                    {"Metric": "Emergency Fund", "Value": f"{float(result['emergency_months']):.1f} months"},
+                    {"Metric": "Savings Rate", "Value": f"{float(result['savings_rate']) * 100:.1f}%"},
+                    {"Metric": "Debt-to-Income", "Value": f"{float(result['debt_to_income']) * 100:.1f}%"},
+                    {"Metric": "Financial Health Score", "Value": f"{float(result['financial_health_score']):.1f}/100"},
+                ],
+                hide_index=True,
+                use_container_width=True,
+            )
+        else:
+            st.caption("Open the Personal Finance tab first to calculate a personal finance snapshot.")
+
+
+def financial_diary_tab() -> None:
+    st.markdown(
+        """
+        <div class="hero-panel">
+            <h1 style="margin:0 0 8px;">Financial Diary</h1>
+            <div class="hero-muted">Save snapshots of your financial life, portfolio structure, risk signals, and personal notes over time.</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.caption(
+        "Diary entries are stored in the current Streamlit session unless downloaded. Avoid entering sensitive personal information in a public or shared browser."
+    )
+
+    mood = st.selectbox(
+        "Today's financial feeling",
+        ["Calm", "Curious", "Cautious", "Confident", "Concerned", "Planning"],
+        key="diary_mood",
+    )
+    note = st.text_area(
+        "Diary note",
+        placeholder="Example: I reviewed my portfolio today and noticed that growth stocks still dominate my risk profile.",
+        height=130,
+        key="diary_note",
+    )
+    next_action = st.text_input(
+        "Next action",
+        placeholder="Example: Review cash reserve and reduce concentration risk next week.",
+        key="diary_next_action",
+    )
+
+    save_col, download_col = st.columns([1, 2])
+    with save_col:
+        if st.button("Save Financial Snapshot", use_container_width=True):
+            snapshot = build_financial_snapshot(note.strip(), mood, next_action.strip())
+            st.session_state.financial_diary.append(snapshot)
+            st.success("Snapshot saved to your Financial Diary for this session.")
+
+    diary_json = json.dumps(st.session_state.financial_diary, indent=2, ensure_ascii=False)
+    with download_col:
+        st.download_button(
+            "Download Diary JSON",
+            data=diary_json,
+            file_name=f"ly_stscope_financial_diary_{datetime.now().strftime('%Y%m%d')}.json",
+            mime="application/json",
+            use_container_width=True,
+            disabled=not bool(st.session_state.financial_diary),
+        )
+
+    uploaded = st.file_uploader("Restore diary JSON", type=["json"], key="diary_restore")
+    if uploaded is not None:
+        try:
+            restored = json.loads(uploaded.getvalue().decode("utf-8"))
+            if isinstance(restored, list):
+                st.session_state.financial_diary = restored
+                st.success("Diary restored for this session.")
+            else:
+                st.warning("The uploaded diary file must contain a list of entries.")
+        except Exception as exc:
+            st.warning(f"Could not restore diary file: {exc}")
+
+    st.subheader("Saved Entries")
+    if not st.session_state.financial_diary:
+        st.info("No diary entries yet. Save a snapshot after reviewing your portfolio or personal finance status.")
+        return
+
+    summary_rows = []
+    for idx, entry in enumerate(st.session_state.financial_diary, start=1):
+        portfolio = entry.get("portfolio", {})
+        personal = entry.get("personal_finance") or {}
+        base_currency = entry.get("base_currency", "USD")
+        summary_rows.append(
+            {
+                "#": idx,
+                "Time": entry.get("time"),
+                "Mood": entry.get("mood"),
+                "Portfolio Value": fmt_money(portfolio.get("total_market_value"), base_currency),
+                "Valuation Score": "N/A"
+                if portfolio.get("valuation_score") is None
+                else f"{float(portfolio.get('valuation_score')):+.1f}%",
+                "Financial Health": "N/A"
+                if not personal
+                else f"{float(personal.get('financial_health_score', 0)):.1f}/100",
+            }
+        )
+    st.dataframe(summary_rows, hide_index=True, use_container_width=True)
+
+    for idx, entry in reversed(list(enumerate(st.session_state.financial_diary, start=1))):
+        with st.expander(f"Entry {idx}: {entry.get('time')} - {entry.get('mood')}", expanded=False):
+            st.write(f"**Note:** {entry.get('note') or 'No note'}")
+            st.write(f"**Next Action:** {entry.get('next_action') or 'No action recorded'}")
+            portfolio = entry.get("portfolio", {})
+            base_currency = entry.get("base_currency", "USD")
+            entry_valuation = portfolio.get("valuation_score")
+            valuation_text = "N/A" if entry_valuation is None else f"{float(entry_valuation):+.1f}%"
+            st.write(
+                f"**Portfolio:** {fmt_money(portfolio.get('total_market_value'), base_currency)} | "
+                f"Beta {fmt_number(portfolio.get('weighted_beta'))} | "
+                f"Valuation Score {valuation_text}"
+            )
+            holdings = portfolio.get("holdings") or []
+            if holdings:
+                st.dataframe(
+                    [
+                        {
+                            "Stock": f"{item['symbol']} - {item['name']}",
+                            "Currency": item["currency"],
+                            "Shares": item["shares"],
+                            "Base Weight": f"{float(item['base_weight']) * 100:.1f}%",
+                            "Valuation": item["valuation_status"],
+                        }
+                        for item in holdings
+                    ],
+                    hide_index=True,
+                    use_container_width=True,
+                )
+
+
 def render_portfolio_charts() -> None:
     symbols = [symbol for symbol in st.session_state.portfolio if symbol in st.session_state.stocks]
     st.subheader("Portfolio Charts")
@@ -2743,7 +3133,25 @@ def guide_tab() -> None:
         "Click a stock card to review the TradingView price chart, current price, fair value, CAPM required return, key statistics, and valuation triangulation."
     )
 
-    st.subheader("8. API and Macro Settings")
+    st.subheader("8. Calculation Details")
+    st.write(
+        """
+        The Calculation Details tab explains the formulas, assumptions, and data inputs behind valuation,
+        portfolio valuation score, portfolio risk, diversification, and personal finance health.
+        Use this tab to understand why a result appears, not just what the result says.
+        """
+    )
+
+    st.subheader("9. Financial Diary")
+    st.write(
+        """
+        The Financial Diary tab saves a point-in-time snapshot of portfolio structure, risk signals,
+        personal finance results, and the user's own reflection. Diary data is held in the current
+        session unless downloaded as a JSON file.
+        """
+    )
+
+    st.subheader("10. API and Macro Settings")
     guide_image("05-settings-modal.png", "Settings screen")
     st.write(
         """
@@ -2870,8 +3278,28 @@ st.markdown(
 
 sync_selected_detail_from_query()
 
-tab_search, tab_compare, tab_portfolio, tab_reit, tab_personal, tab_settings, tab_guide = st.tabs(
-    ["Search", "Compare", "Portfolio", "REIT Analysis", "Personal Finance", "Settings", "User Guide"]
+(
+    tab_search,
+    tab_compare,
+    tab_portfolio,
+    tab_reit,
+    tab_personal,
+    tab_calculation,
+    tab_diary,
+    tab_settings,
+    tab_guide,
+) = st.tabs(
+    [
+        "Search",
+        "Compare",
+        "Portfolio",
+        "REIT Analysis",
+        "Personal Finance",
+        "Calculation Details",
+        "Financial Diary",
+        "Settings",
+        "User Guide",
+    ]
 )
 
 with tab_search:
@@ -2892,6 +3320,12 @@ with tab_personal:
     from personal_finance_module import render_personal_finance
 
     render_personal_finance()
+
+with tab_calculation:
+    calculation_details_tab()
+
+with tab_diary:
+    financial_diary_tab()
 
 with tab_settings:
     settings_tab()

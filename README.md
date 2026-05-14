@@ -1,10 +1,10 @@
 # LY-STScope Ver.2
 
-LY-STScope Ver.2 combines the original LY-STScope stock valuation platform with a new REIT-focused analysis module. The main app remains LY-STScope, while the REIT module is available inside the main app's `REIT Analysis` tab and also as a Streamlit page.
+LY-STScope Ver.2 combines the original LY-STScope stock valuation platform with REIT-focused analysis, personal finance, calculation transparency, and a financial diary. The main app remains LY-STScope, while the REIT module is available inside the main app's `REIT Analysis` tab and also as a Streamlit page.
 
 ## Purpose
 
-This app is designed as an educational analytics tool, not an investment recommendation service. The goal is to study how finance theory can be applied to stocks, portfolios, and REITs using real market examples.
+This app is designed as an educational personal financial intelligence platform, not an investment recommendation service. The goal is to help users understand, protect, and manage their financial life by connecting income, spending, savings, investments, real estate exposure, portfolio risk, and life goals with real market examples.
 
 ## App Structure
 
@@ -27,6 +27,8 @@ This app is designed as an educational analytics tool, not an investment recomme
 - Portfolio analysis: REIT allocation, sector concentration, beta, covariance, correlation, and diversification.
 - Educational comparison: stock-style valuation versus REIT-style valuation.
 - Personal Finance test engine: net worth, cash flow, emergency fund, savings rate, debt-to-income, risk capacity, and financial health score.
+- Calculation Details: transparent formulas, data inputs, assumptions, valuation contribution, covariance, correlation, and personal finance score breakdown.
+- Financial Diary: session-based portfolio and personal finance snapshots with user notes, next actions, and JSON download/restore.
 
 ## Streamlit Cloud
 

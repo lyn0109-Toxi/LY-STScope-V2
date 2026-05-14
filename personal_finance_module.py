@@ -99,6 +99,8 @@ def render_personal_finance() -> None:
         investment_risk_score=investment_risk_score,
     )
     result = calculate_personal_finance(profile)
+    st.session_state["last_personal_finance_profile"] = profile.__dict__
+    st.session_state["last_personal_finance_result"] = result
 
     st.subheader("Financial Snapshot")
     c1, c2, c3 = st.columns(3)
