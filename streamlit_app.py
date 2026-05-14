@@ -1157,6 +1157,9 @@ def init_state() -> None:
     st.session_state.setdefault("compare", [])
     st.session_state.setdefault("portfolio", {})
     st.session_state.setdefault("portfolio_weighting_mode", "Share-based")
+    st.session_state.setdefault("portfolio_base_currency", "USD")
+    st.session_state.setdefault("manual_usdkrw", 1350.0)
+    st.session_state.setdefault("use_live_fx", True)
     st.session_state.setdefault("last_query", "")
     st.session_state.setdefault("selected_detail", None)
     st.session_state.setdefault("comments", [])
@@ -1177,10 +1180,16 @@ def finnhub_get(path: str, **params: Any) -> Any:
     return response.json()
 
 
-def fmt_money(value: float | int | None) -> str:
+def fmt_money(value: float | int | None, currency: str = "USD") -> str:
     if value is None:
         return "N/A"
+    if currency == "KRW":
+        return f"₩{value:,.0f}"
     return f"${value:,.2f}"
+
+
+def stock_money(stock: dict[str, Any], value: float | int | None) -> str:
+    return fmt_money(value, stock.get("currency", "USD"))
 
 
 def fmt_number(value: float | int | None, digits: int = 2) -> str:
@@ -1189,12 +1198,60 @@ def fmt_number(value: float | int | None, digits: int = 2) -> str:
     return f"{value:,.{digits}f}"
 
 
-def fmt_market_cap(value: float | int | None) -> str:
+def fmt_market_cap(value: float | int | None, currency: str = "USD") -> str:
     if not value:
         return "N/A"
     # Finnhub profile marketCapitalization is in millions.
+    if currency == "KRW":
+        trillions = float(value) / 1_000_000
+        return f"₩{trillions:,.2f}T"
     billions = float(value) / 1000
-    return f"{billions:,.2f}B"
+    return f"${billions:,.2f}B"
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def load_live_usdkrw() -> dict[str, Any]:
+    try:
+        history = yf.download(
+            "KRW=X",
+            period="5d",
+            interval="1d",
+            progress=False,
+            auto_adjust=False,
+            threads=False,
+        )
+    except Exception:
+        return {"rate": None, "date": None, "source": "Unavailable"}
+
+    clean = normalize_price_history(history.reset_index() if not history.empty else history)
+    if clean.empty:
+        return {"rate": None, "date": None, "source": "Unavailable"}
+
+    latest = clean.iloc[-1]
+    return {
+        "rate": float(latest["Close"]),
+        "date": latest["Date"].strftime("%Y-%m-%d"),
+        "source": "Yahoo Finance KRW=X",
+    }
+
+
+def effective_usdkrw() -> tuple[float, str, str]:
+    manual_rate = float(st.session_state.get("manual_usdkrw", 1350.0) or 1350.0)
+    if st.session_state.get("use_live_fx", True):
+        live = load_live_usdkrw()
+        if live.get("rate"):
+            return float(live["rate"]), str(live.get("source") or "Yahoo Finance KRW=X"), str(live.get("date") or "Latest")
+    return manual_rate, "Manual fallback", "User input"
+
+
+def convert_value(value: float, from_currency: str, to_currency: str, usdkrw: float) -> float:
+    if from_currency == to_currency:
+        return value
+    if from_currency == "USD" and to_currency == "KRW":
+        return value * usdkrw
+    if from_currency == "KRW" and to_currency == "USD":
+        return value / usdkrw if usdkrw > 0 else 0.0
+    return value
 
 
 def normalize_company_query(query: str) -> str:
@@ -1485,6 +1542,7 @@ def load_korean_stock(query: str) -> dict[str, Any]:
         "peer_average_pe": peer_pe,
         "peers": [],
         "market": "Korea",
+        "currency": "KRW",
     }
     return calculate_valuation(stock)
 
@@ -1520,6 +1578,8 @@ def load_stock(query: str) -> dict[str, Any]:
         "book_value": metric.get("bookValuePerShareAnnual") or 0,
         "peer_average_pe": peer_pe,
         "peers": peers,
+        "market": "US",
+        "currency": "USD",
     }
     return calculate_valuation(stock)
 
@@ -1608,13 +1668,13 @@ def render_stock_card(stock: dict[str, Any]) -> None:
                 </div>
                 <div class="stock-card-price">
                     <div>
-                        <div class="price">{fmt_money(stock['price'])}</div>
+                        <div class="price">{stock_money(stock, stock['price'])}</div>
                         <div style="color:{'#059669' if stock['change_pct'] >= 0 else '#dc2626'};font-weight:850;margin-top:7px;">{stock['change_pct']:+.2f}% today</div>
                     </div>
                     <span class="status-chip" style="background:{status_color(status)};">{status}</span>
                 </div>
                 <div class="stock-card-stats">
-                    <span>Market Cap<b>{fmt_market_cap(stock['market_cap'])}</b></span>
+                    <span>Market Cap<b>{fmt_market_cap(stock['market_cap'], stock.get('currency', 'USD'))}</b></span>
                     <span>PER<b>{fmt_number(stock['pe'])}</b></span>
                 </div>
                 <div class="click-hint">Click this stock card to view details and price movement.</div>
@@ -1643,8 +1703,8 @@ def render_stock_card(stock: dict[str, Any]) -> None:
 def render_fair_value(stock: dict[str, Any]) -> None:
     tri = stock["triangulation"]
     st.subheader(f"{stock['name']} ({stock['symbol']})")
-    st.metric("Current Price", fmt_money(stock["price"]), f"{stock['change_pct']:+.2f}%")
-    st.metric("Blended Fair Value", fmt_money(stock["fair_price"]) if stock["fair_price"] else "N/A")
+    st.metric("Current Price", stock_money(stock, stock["price"]), f"{stock['change_pct']:+.2f}%")
+    st.metric("Blended Fair Value", stock_money(stock, stock["fair_price"]) if stock["fair_price"] else "N/A")
     st.write(f"**Status:** {stock['valuation_status']}")
     st.write(f"**Required Return (CAPM):** {stock['expected_return'] * 100:.2f}%")
     st.table(
@@ -1652,9 +1712,9 @@ def render_fair_value(stock: dict[str, Any]) -> None:
             "Approach": ["Income", "Asset", "Market"],
             "Model": [tri["income_model"], "Graham Number", "Peer P/E"],
             "Value": [
-                fmt_money(tri["income_value"]) if tri["income_value"] else "N/A",
-                fmt_money(tri["asset_value"]) if tri["asset_value"] else "N/A",
-                fmt_money(tri["market_value"]) if tri["market_value"] else "N/A",
+                stock_money(stock, tri["income_value"]) if tri["income_value"] else "N/A",
+                stock_money(stock, tri["asset_value"]) if tri["asset_value"] else "N/A",
+                stock_money(stock, tri["market_value"]) if tri["market_value"] else "N/A",
             ],
         }
     )
@@ -1750,7 +1810,7 @@ def render_stock_terminal(stock: dict[str, Any]) -> None:
     change_class = "green" if change >= 0 else "red"
     upside = valuation_upside(stock)
     upside_text = "N/A" if upside is None else f"{upside:+.1f}%"
-    fair_value = fmt_money(stock["fair_price"]) if stock.get("fair_price") else "N/A"
+    fair_value = stock_money(stock, stock["fair_price"]) if stock.get("fair_price") else "N/A"
     pe_text = fmt_number(stock.get("pe"))
     growth_text = f"{float(stock.get('growth_rate') or 0) * 100:.1f}%"
     beta_text = fmt_number(stock.get("beta"))
@@ -1786,7 +1846,7 @@ def render_stock_terminal(stock: dict[str, Any]) -> None:
                                 <div class="terminal-symbol">{symbol}</div>
                                 <div class="terminal-company">{name} · {industry}</div>
                             </div>
-                            <div class="terminal-price">{fmt_money(stock["price"])} <span class="{change_class}">{change:+.2f}%</span></div>
+                            <div class="terminal-price">{stock_money(stock, stock["price"])} <span class="{change_class}">{change:+.2f}%</span></div>
                         </div>
                         <div class="terminal-chart-grid">
                             <div class="ma-line ma-green"></div>
@@ -1822,8 +1882,8 @@ def render_stock_terminal(stock: dict[str, Any]) -> None:
                 </div>
                 <div class="terminal-status-strip">
                     <span>Status: <b>{status}</b></span>
-                    <span>Market Cap: <b>{fmt_market_cap(stock.get("market_cap"))}</b></span>
-                    <span>EPS: <b>{fmt_money(float(stock.get("eps") or 0))}</b></span>
+                    <span>Market Cap: <b>{fmt_market_cap(stock.get("market_cap"), stock.get("currency", "USD"))}</b></span>
+                    <span>EPS: <b>{stock_money(stock, float(stock.get("eps") or 0))}</b></span>
                 </div>
             </div>
         </div>
@@ -1928,11 +1988,11 @@ def render_stock_detail(stock: dict[str, Any]) -> None:
 
     c1, c2, c3, c4 = st.columns(4)
     with c1:
-        metric_card("Current Price", fmt_money(stock["price"]))
+        metric_card("Current Price", stock_money(stock, stock["price"]))
     with c2:
         metric_card("Daily Change", f"{stock['change_pct']:+.2f}%", "#10b981" if stock["change_pct"] >= 0 else "#ef4444")
     with c3:
-        metric_card("Blended Fair Value", fmt_money(stock["fair_price"]) if stock["fair_price"] else "N/A")
+        metric_card("Blended Fair Value", stock_money(stock, stock["fair_price"]) if stock["fair_price"] else "N/A")
     with c4:
         metric_card("Valuation", stock["valuation_status"], status_color(stock["valuation_status"]))
 
@@ -1942,11 +2002,11 @@ def render_stock_detail(stock: dict[str, Any]) -> None:
 
     st.markdown("#### Key Statistics")
     stats = {
-        "Market Cap": fmt_market_cap(stock["market_cap"]),
+        "Market Cap": fmt_market_cap(stock["market_cap"], stock.get("currency", "USD")),
         "PER (TTM)": fmt_number(stock["pe"]),
         "Dividend Yield": f"{float(stock['dividend_yield'] or 0):.2f}%",
         "Beta": fmt_number(stock["beta"]),
-        "EPS": fmt_money(float(stock["eps"] or 0)),
+        "EPS": stock_money(stock, float(stock["eps"] or 0)),
         "Growth Rate": f"{float(stock['growth_rate'] or 0) * 100:.1f}%",
     }
     st.dataframe([stats], hide_index=True, use_container_width=True)
@@ -1957,17 +2017,17 @@ def render_stock_detail(stock: dict[str, Any]) -> None:
             {
                 "Approach": "Income",
                 "Model": tri["income_model"],
-                "Value": fmt_money(tri["income_value"]) if tri["income_value"] else "N/A",
+                "Value": stock_money(stock, tri["income_value"]) if tri["income_value"] else "N/A",
             },
             {
                 "Approach": "Asset",
                 "Model": "Graham Number",
-                "Value": fmt_money(tri["asset_value"]) if tri["asset_value"] else "N/A",
+                "Value": stock_money(stock, tri["asset_value"]) if tri["asset_value"] else "N/A",
             },
             {
                 "Approach": "Market",
                 "Model": "Peer P/E",
-                "Value": fmt_money(tri["market_value"]) if tri["market_value"] else "N/A",
+                "Value": stock_money(stock, tri["market_value"]) if tri["market_value"] else "N/A",
             },
         ],
         hide_index=True,
@@ -2051,14 +2111,14 @@ def compare_tab() -> None:
 
     rows = []
     metrics = [
-        ("Current Price", lambda s: fmt_money(s["price"])),
+        ("Current Price", lambda s: stock_money(s, s["price"])),
         ("Change", lambda s: f"{s['change_pct']:+.2f}%"),
-        ("Market Cap", lambda s: fmt_market_cap(s["market_cap"])),
+        ("Market Cap", lambda s: fmt_market_cap(s["market_cap"], s.get("currency", "USD"))),
         ("PER", lambda s: fmt_number(s["pe"])),
         ("Dividend Yield", lambda s: f"{float(s['dividend_yield'] or 0):.2f}%"),
         ("Beta", lambda s: fmt_number(s["beta"])),
-        ("EPS", lambda s: fmt_money(float(s["eps"] or 0))),
-        ("Fair Value", lambda s: fmt_money(s["fair_price"]) if s["fair_price"] else "N/A"),
+        ("EPS", lambda s: stock_money(s, float(s["eps"] or 0))),
+        ("Fair Value", lambda s: stock_money(s, s["fair_price"]) if s["fair_price"] else "N/A"),
         ("Valuation", lambda s: s["valuation_status"]),
     ]
     for label, getter in metrics:
@@ -2075,12 +2135,39 @@ def compare_tab() -> None:
 
 def portfolio_market_values() -> dict[str, float]:
     values: dict[str, float] = {}
+    base_currency = st.session_state.get("portfolio_base_currency", "USD")
+    usdkrw, _, _ = effective_usdkrw()
+    for symbol, holding in st.session_state.portfolio.items():
+        stock = st.session_state.stocks.get(symbol)
+        if not stock:
+            continue
+        native_value = float(stock["price"]) * float(holding.get("shares") or 0)
+        values[symbol] = convert_value(
+            native_value,
+            stock.get("currency", "USD"),
+            base_currency,
+            usdkrw,
+        )
+    return values
+
+
+def portfolio_native_market_values() -> dict[str, float]:
+    values: dict[str, float] = {}
     for symbol, holding in st.session_state.portfolio.items():
         stock = st.session_state.stocks.get(symbol)
         if not stock:
             continue
         values[symbol] = float(stock["price"]) * float(holding.get("shares") or 0)
     return values
+
+
+def portfolio_currency_breakdown() -> dict[str, float]:
+    breakdown: dict[str, float] = {}
+    for symbol, value in portfolio_native_market_values().items():
+        stock = st.session_state.stocks.get(symbol, {})
+        currency = stock.get("currency", "USD")
+        breakdown[currency] = breakdown.get(currency, 0.0) + value
+    return breakdown
 
 
 def portfolio_analysis_weights(symbols: list[str] | None = None) -> dict[str, float]:
@@ -2374,6 +2461,35 @@ def portfolio_tab() -> None:
         unsafe_allow_html=True,
     )
 
+    fx_col1, fx_col2, fx_col3 = st.columns(3)
+    with fx_col1:
+        st.selectbox(
+            "Portfolio base currency",
+            ["USD", "KRW"],
+            key="portfolio_base_currency",
+            help="Portfolio totals and weights are calculated after converting each holding into this currency.",
+        )
+    with fx_col2:
+        st.checkbox(
+            "Use live USD/KRW",
+            key="use_live_fx",
+            help="Uses Yahoo Finance KRW=X when available. Manual rate is used as fallback.",
+        )
+    with fx_col3:
+        st.number_input(
+            "Manual USD/KRW rate",
+            min_value=1.0,
+            value=float(st.session_state.get("manual_usdkrw", 1350.0)),
+            step=1.0,
+            key="manual_usdkrw",
+        )
+
+    usdkrw, fx_source, fx_date = effective_usdkrw()
+    st.caption(
+        f"FX setting: 1 USD = ₩{usdkrw:,.2f} | Source: {fx_source} | Date: {fx_date}. "
+        "Portfolio weights use converted base-currency values."
+    )
+
     st.radio(
         "Portfolio weighting mode",
         ["Share-based", "Equal-weighted"],
@@ -2402,7 +2518,7 @@ def portfolio_tab() -> None:
     if valuation_score is not None:
         score_color = "#10b981" if valuation_score > 5 else "#ef4444" if valuation_score < -5 else "#f59e0b"
     with c1:
-        metric_card("Total Market Value", fmt_money(total_value))
+        metric_card("Total Market Value", fmt_money(total_value, st.session_state.portfolio_base_currency))
     with c2:
         metric_card("Weighted Beta", fmt_number(weighted_beta))
     with c3:
@@ -2419,6 +2535,18 @@ def portfolio_tab() -> None:
         st.info("No stocks in your portfolio yet. Add them from the search results.")
         return
 
+    native_breakdown = portfolio_currency_breakdown()
+    if len(native_breakdown) > 1:
+        st.info(
+            "This portfolio includes multiple currencies. Native market values are shown by currency, "
+            f"and portfolio weights are calculated in {st.session_state.portfolio_base_currency} using the USD/KRW FX rate above."
+        )
+    if native_breakdown:
+        st.caption(
+            "Native currency breakdown: "
+            + " | ".join(fmt_money(value, currency) for currency, value in sorted(native_breakdown.items()))
+        )
+
     current_holdings = []
     for symbol, holding in list(st.session_state.portfolio.items()):
         stock = st.session_state.stocks.get(symbol)
@@ -2432,22 +2560,31 @@ def portfolio_tab() -> None:
             key=f"shares_{symbol}",
         )
         st.session_state.portfolio[symbol]["shares"] = shares
-        market_value = float(stock["price"]) * shares
-        current_holdings.append((symbol, stock, shares, market_value))
+        native_value = float(stock["price"]) * shares
+        base_value = convert_value(
+            native_value,
+            stock.get("currency", "USD"),
+            st.session_state.portfolio_base_currency,
+            usdkrw,
+        )
+        current_holdings.append((symbol, stock, shares, native_value, base_value))
 
     rows = []
-    current_total_value = sum(item[3] for item in current_holdings)
+    current_total_value = sum(item[4] for item in current_holdings)
     analysis_weights = portfolio_analysis_weights()
-    for symbol, stock, shares, market_value in current_holdings:
-        weight = market_value / current_total_value * 100 if current_total_value else 0
+    for symbol, stock, shares, native_value, base_value in current_holdings:
+        currency = stock.get("currency", "USD")
+        weight = base_value / current_total_value * 100 if current_total_value else 0
         analysis_weight = analysis_weights.get(symbol, 0.0) * 100
         rows.append(
             {
                 "Stock": f"{symbol} - {stock['name']}",
-                "Price": fmt_money(stock["price"]),
+                "Currency": currency,
+                "Price": stock_money(stock, stock["price"]),
                 "Shares": shares,
-                "Market Value": fmt_money(market_value),
-                "Market Weight": f"{weight:.1f}%",
+                "Native Market Value": fmt_money(native_value, currency),
+                f"{st.session_state.portfolio_base_currency} Market Value": fmt_money(base_value, st.session_state.portfolio_base_currency),
+                "Base Weight": f"{weight:.1f}%",
                 "Analysis Weight": f"{analysis_weight:.1f}%",
             }
         )

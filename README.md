@@ -20,6 +20,7 @@ This app is designed as an educational analytics tool, not an investment recomme
 
 - Stock valuation and portfolio analytics from the original LY-STScope.
 - Korean stock search expansion with approximately 100 major KOSPI/KOSDAQ companies searchable by company name or ticker.
+- Multi-currency portfolio view for US and Korean stocks, with USD/KRW conversion using a live FX rate when available and a manual fallback rate when live data is unavailable.
 - REIT sector classification: Retail, Industrial, Residential, Office, Healthcare, Data Center, Storage, Hotel, Diversified, Mortgage REITs.
 - REIT-specific valuation: dividend yield, price to FFO, AFFO payout ratio, NAV premium or discount.
 - Interest-rate sensitivity: relationship between REIT returns, Treasury yields, and financing conditions.
