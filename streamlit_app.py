@@ -2012,6 +2012,226 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background:
+            radial-gradient(circle at 18% 8%, rgba(255, 255, 255, 0.98), transparent 24%),
+            radial-gradient(circle at 82% 10%, rgba(254, 240, 138, 0.42), transparent 22%),
+            radial-gradient(circle at 74% 44%, rgba(125, 211, 252, 0.48), transparent 30%),
+            radial-gradient(circle at 20% 72%, rgba(167, 243, 208, 0.38), transparent 28%),
+            linear-gradient(90deg, rgba(14,165,233,0.075) 1px, transparent 1px),
+            linear-gradient(0deg, rgba(20,184,166,0.055) 1px, transparent 1px),
+            linear-gradient(135deg, #f8fcff 0%, #eaf7ff 42%, #fff8e8 100%) !important;
+        background-size: auto, auto, auto, auto, 58px 58px, 58px 58px, auto !important;
+        color: #102033;
+    }
+    .stApp::before {
+        opacity: 0.42;
+        background:
+            linear-gradient(112deg, transparent 0%, transparent 42%, rgba(255,255,255,0.72) 48%, rgba(34,211,238,0.18) 54%, transparent 62%),
+            linear-gradient(72deg, transparent 0%, transparent 60%, rgba(250,204,21,0.20) 64%, rgba(16,185,129,0.13) 69%, transparent 76%);
+        animation: futureLightSweep 16s ease-in-out infinite;
+    }
+    .stApp::after {
+        right: 2vw;
+        top: 13vh;
+        width: min(520px, 36vw);
+        height: 280px;
+        opacity: 0.26;
+        background:
+            radial-gradient(ellipse at 70% 80%, rgba(255,255,255,0.74), transparent 56%),
+            linear-gradient(135deg, transparent 0 12%, rgba(14,165,233,0.34) 12% 13%, transparent 13% 28%, rgba(20,184,166,0.30) 28% 29%, transparent 29% 46%, rgba(250,204,21,0.30) 46% 47%, transparent 47% 100%);
+        animation: futureGraphFloat 9s ease-in-out infinite;
+    }
+    @keyframes futureLightSweep {
+        0%, 100% { transform: translateX(-10%) translateY(0); }
+        50% { transform: translateX(10%) translateY(-8px); }
+    }
+    @keyframes futureGraphFloat {
+        0%, 100% { transform: translateY(0) scale(0.98); }
+        50% { transform: translateY(14px) scale(1.02); }
+    }
+    h1, h2, h3,
+    div[data-testid="stHeadingWithActionElements"] h1 {
+        color: #102033;
+        text-shadow: none;
+    }
+    p, li, label {
+        color: #334155;
+    }
+    .brand-header {
+        border: 1px solid rgba(125, 211, 252, 0.42);
+        background:
+            radial-gradient(circle at 58% 12%, rgba(255, 255, 255, 0.94), transparent 22%),
+            radial-gradient(circle at 50% 28%, rgba(125, 211, 252, 0.46), transparent 30%),
+            radial-gradient(circle at 82% 26%, rgba(254, 240, 138, 0.38), transparent 25%),
+            linear-gradient(135deg, rgba(255,255,255,0.92), rgba(224,242,254,0.84) 54%, rgba(236,253,245,0.82)) !important;
+        box-shadow: 0 28px 78px rgba(14, 116, 144, 0.14);
+    }
+    .brand-header::after {
+        height: 4px;
+        background: linear-gradient(90deg, transparent, rgba(37,99,235,0.76), rgba(34,211,238,0.86), rgba(20,184,166,0.76), transparent);
+        box-shadow: 0 0 26px rgba(34, 211, 238, 0.42);
+    }
+    .brand-icon {
+        background:
+            radial-gradient(circle at 34% 24%, rgba(255,255,255,0.76), transparent 26%),
+            linear-gradient(135deg, rgba(56,189,248,0.92), rgba(45,212,191,0.78)) !important;
+        border-color: rgba(14, 165, 233, 0.34);
+        box-shadow: 0 18px 38px rgba(14, 165, 233, 0.22), inset 0 0 24px rgba(255,255,255,0.25);
+    }
+    .brand-name {
+        color: #071631;
+        text-shadow: 0 12px 32px rgba(14, 116, 144, 0.12);
+    }
+    .brand-name .scope-accent {
+        color: #12b7d8;
+        text-shadow: 0 0 32px rgba(34, 211, 238, 0.34);
+    }
+    .brand-subtitle {
+        color: #48627e;
+    }
+    .brand-badge {
+        color: #075985;
+        background: rgba(255, 255, 255, 0.72);
+        border-color: rgba(14, 165, 233, 0.28);
+        box-shadow: 0 12px 28px rgba(14, 116, 144, 0.10);
+    }
+    .st-key-circle_nav {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(125, 211, 252, 0.40);
+        background:
+            radial-gradient(circle at 15% 18%, rgba(255,255,255,0.94), transparent 26%),
+            radial-gradient(circle at 88% 24%, rgba(254,240,138,0.28), transparent 26%),
+            radial-gradient(circle at 50% 80%, rgba(167,243,208,0.28), transparent 32%),
+            rgba(255, 255, 255, 0.50) !important;
+        box-shadow: 0 22px 58px rgba(14, 116, 144, 0.14), inset 0 0 42px rgba(255,255,255,0.34);
+        backdrop-filter: blur(14px);
+    }
+    .st-key-circle_nav::before {
+        content: "";
+        position: absolute;
+        inset: 14px 5%;
+        border-radius: 999px;
+        pointer-events: none;
+        opacity: 0.54;
+        border: 2px solid rgba(125, 211, 252, 0.24);
+        background:
+            radial-gradient(circle at 18% 50%, rgba(14,165,233,0.18), transparent 12%),
+            radial-gradient(circle at 82% 50%, rgba(250,204,21,0.16), transparent 13%);
+        animation: futurePulse 7s ease-in-out infinite;
+    }
+    @keyframes futurePulse {
+        0%, 100% { transform: scaleX(0.98); opacity: 0.38; }
+        50% { transform: scaleX(1.02); opacity: 0.68; }
+    }
+    .st-key-circle_nav div[data-testid="stButton"] button {
+        color: #102033 !important;
+        border: 1px solid rgba(37, 99, 235, 0.16) !important;
+        background:
+            radial-gradient(circle at 34% 22%, rgba(255,255,255,0.86), transparent 24%),
+            radial-gradient(circle at 50% 56%, rgba(125,211,252,0.24), transparent 58%),
+            linear-gradient(145deg, rgba(255,255,255,0.86), rgba(224,242,254,0.74)) !important;
+        box-shadow: 0 18px 38px rgba(14, 116, 144, 0.13), inset 0 0 26px rgba(255,255,255,0.40) !important;
+    }
+    .st-key-circle_nav div[data-testid="stButton"] button:hover {
+        border-color: rgba(14, 165, 233, 0.56) !important;
+        box-shadow: 0 0 0 8px rgba(125, 211, 252, 0.18), 0 22px 48px rgba(14, 165, 233, 0.18) !important;
+    }
+    .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] {
+        color: #ffffff !important;
+        background:
+            radial-gradient(circle at 34% 22%, rgba(255,255,255,0.48), transparent 23%),
+            linear-gradient(135deg, #60d7ff 0%, #22c7e8 42%, #34d399 100%) !important;
+        border-color: rgba(14, 165, 233, 0.62) !important;
+        box-shadow: 0 0 0 10px rgba(125, 211, 252, 0.22), 0 0 42px rgba(34, 211, 238, 0.38), 0 22px 46px rgba(14, 116, 144, 0.18) !important;
+    }
+    .st-key-circle_nav div[data-testid="stButton"] button p {
+        color: inherit !important;
+    }
+    .life-compact-panel,
+    .hero-panel {
+        border: 1px solid rgba(125, 211, 252, 0.38);
+        background:
+            radial-gradient(circle at 16% 18%, rgba(255,255,255,0.92), transparent 26%),
+            radial-gradient(circle at 88% 18%, rgba(254,240,138,0.26), transparent 24%),
+            linear-gradient(135deg, rgba(255,255,255,0.78), rgba(224,242,254,0.68) 58%, rgba(236,253,245,0.72)) !important;
+        box-shadow: 0 24px 64px rgba(14, 116, 144, 0.12);
+        backdrop-filter: blur(12px);
+    }
+    .life-compact-panel h1,
+    .hero-panel h1,
+    .hero-panel h2,
+    .hero-panel h3 {
+        color: #102033 !important;
+    }
+    .life-compact-panel p,
+    .hero-muted {
+        color: #334155 !important;
+    }
+    .life-compact-card {
+        background: rgba(255, 255, 255, 0.72);
+        border-color: rgba(14, 165, 233, 0.18);
+        box-shadow: 0 14px 30px rgba(14, 116, 144, 0.08);
+    }
+    .life-compact-card b {
+        color: #0e7490;
+    }
+    .life-compact-card span {
+        color: #475569;
+    }
+    .metric-card,
+    div[data-testid="stMetric"],
+    div[data-testid="stDataFrame"] {
+        box-shadow: 0 14px 34px rgba(14, 116, 144, 0.08);
+    }
+    .app-footer {
+        color: #475569;
+        border-top-color: rgba(14, 165, 233, 0.18);
+    }
+    .app-footer b {
+        color: #102033;
+    }
+    section[data-testid="stSidebar"] {
+        background:
+            radial-gradient(circle at 28% 7%, rgba(125, 211, 252, 0.30), transparent 28%),
+            radial-gradient(circle at 72% 38%, rgba(254, 240, 138, 0.18), transparent 26%),
+            linear-gradient(180deg, rgba(248,252,255,0.96), rgba(224,242,254,0.92) 52%, rgba(236,253,245,0.90)) !important;
+        border-right: 1px solid rgba(14, 165, 233, 0.22);
+        box-shadow: 18px 0 40px rgba(14, 116, 144, 0.10);
+    }
+    section[data-testid="stSidebar"] h1,
+    section[data-testid="stSidebar"] h2,
+    section[data-testid="stSidebar"] h3,
+    section[data-testid="stSidebar"] label,
+    section[data-testid="stSidebar"] p {
+        color: #102033 !important;
+    }
+    section[data-testid="stSidebar"] code {
+        color: #047857 !important;
+        background: rgba(255,255,255,0.72) !important;
+    }
+    .stTextInput input,
+    .stNumberInput input,
+    textarea {
+        background: #ffffff !important;
+        color: #102033 !important;
+        border-color: rgba(14, 165, 233, 0.38) !important;
+        box-shadow: 0 10px 24px rgba(14, 116, 144, 0.08) !important;
+    }
+    .stTextInput input::placeholder,
+    textarea::placeholder {
+        color: #64748b !important;
+        opacity: 1 !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 
 def get_finnhub_api_key() -> str:
     try:
