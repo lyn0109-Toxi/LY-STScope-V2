@@ -889,6 +889,173 @@ st.markdown(
         font-size: 12px;
         margin-top: 8px;
     }
+    .life-entry-wrap {
+        min-height: 86vh;
+        display: grid;
+        align-items: center;
+        padding: 36px 0 54px;
+    }
+    .life-entry {
+        position: relative;
+        overflow: hidden;
+        border-radius: 34px;
+        border: 1px solid rgba(148, 163, 184, 0.28);
+        background:
+            radial-gradient(circle at 66% 18%, rgba(34, 211, 238, 0.22), transparent 26%),
+            radial-gradient(circle at 24% 24%, rgba(16, 185, 129, 0.16), transparent 28%),
+            linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(17, 24, 39, 0.94) 48%, rgba(4, 9, 15, 0.98));
+        box-shadow: 0 32px 90px rgba(0, 0, 0, 0.34);
+        padding: clamp(34px, 5vw, 70px);
+    }
+    .life-entry::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        opacity: 0.30;
+        background:
+            linear-gradient(90deg, rgba(34,211,238,0.12) 1px, transparent 1px),
+            linear-gradient(0deg, rgba(16,185,129,0.09) 1px, transparent 1px);
+        background-size: 48px 48px;
+        animation: dataSweep 18s linear infinite;
+    }
+    .life-entry-grid {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(340px, 0.86fr);
+        gap: clamp(28px, 4vw, 64px);
+        align-items: center;
+    }
+    .life-kicker {
+        color: #67e8f9;
+        font-size: 0.9rem;
+        font-weight: 900;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+    }
+    .life-title {
+        color: #f8fafc;
+        font-size: clamp(3rem, 6vw, 6.6rem);
+        line-height: 0.92;
+        letter-spacing: 0;
+        font-weight: 950;
+        margin: 0;
+    }
+    .life-title span {
+        color: #67e8f9;
+        text-shadow: 0 0 32px rgba(34, 211, 238, 0.36);
+    }
+    .life-copy {
+        max-width: 760px;
+        margin: 24px 0 26px;
+        color: #dbe7f3;
+        font-size: clamp(1.05rem, 1.8vw, 1.32rem);
+        line-height: 1.65;
+        font-weight: 700;
+    }
+    .life-pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 18px;
+    }
+    .life-pill {
+        border: 1px solid rgba(103, 232, 249, 0.30);
+        background: rgba(15, 23, 42, 0.70);
+        color: #e0f2fe;
+        border-radius: 999px;
+        padding: 8px 13px;
+        font-size: 0.86rem;
+        font-weight: 850;
+    }
+    .life-map {
+        min-height: 520px;
+        border-radius: 30px;
+        border: 1px solid rgba(148, 163, 184, 0.26);
+        background:
+            radial-gradient(circle at 50% 44%, rgba(34, 211, 238, 0.20), transparent 32%),
+            linear-gradient(160deg, rgba(15, 23, 42, 0.74), rgba(8, 13, 22, 0.94));
+        box-shadow: inset 0 0 46px rgba(34, 211, 238, 0.08);
+        position: relative;
+        overflow: hidden;
+    }
+    .life-orbit {
+        position: absolute;
+        inset: 64px;
+        border: 1px solid rgba(148, 163, 184, 0.20);
+        border-radius: 50%;
+        animation: graphFloat 9s ease-in-out infinite;
+    }
+    .life-orbit.two {
+        inset: 112px;
+        animation-delay: -2s;
+    }
+    .life-core {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 162px;
+        height: 162px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        color: #f8fafc;
+        font-size: 1.05rem;
+        font-weight: 950;
+        background:
+            radial-gradient(circle at 35% 26%, rgba(255,255,255,0.34), transparent 22%),
+            linear-gradient(135deg, rgba(34, 211, 238, 0.38), rgba(20, 184, 166, 0.24)),
+            rgba(15, 23, 42, 0.92);
+        border: 1px solid rgba(103, 232, 249, 0.48);
+        box-shadow: 0 0 48px rgba(34, 211, 238, 0.28);
+    }
+    .life-node {
+        position: absolute;
+        width: 124px;
+        min-height: 70px;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        border-radius: 20px;
+        padding: 12px;
+        color: #e0f2fe;
+        font-size: 0.88rem;
+        line-height: 1.15;
+        font-weight: 900;
+        background: rgba(15, 23, 42, 0.74);
+        border: 1px solid rgba(148, 163, 184, 0.28);
+        box-shadow: 0 14px 36px rgba(0, 0, 0, 0.22);
+    }
+    .life-node.income { left: 44px; top: 72px; }
+    .life-node.saving { right: 44px; top: 78px; }
+    .life-node.risk { left: 34px; bottom: 88px; }
+    .life-node.assets { right: 34px; bottom: 88px; }
+    .life-node.goals { left: 50%; top: 32px; transform: translateX(-50%); }
+    .life-node.diary { left: 50%; bottom: 32px; transform: translateX(-50%); }
+    div[data-testid="stButton"] button[kind="primary"] {
+        border-radius: 999px;
+        padding: 0.78rem 1.4rem;
+        font-weight: 950;
+        border: 1px solid rgba(103, 232, 249, 0.48);
+        background: linear-gradient(135deg, #22d3ee, #14b8a6);
+        color: #06202a;
+        box-shadow: 0 18px 42px rgba(34, 211, 238, 0.20);
+    }
+    @media (max-width: 900px) {
+        .life-entry-grid {
+            grid-template-columns: 1fr;
+        }
+        .life-map {
+            min-height: 430px;
+        }
+        .life-node {
+            width: 112px;
+            font-size: 0.78rem;
+        }
+    }
     .app-footer {
         border-top: 1px solid rgba(148, 163, 184, 0.24);
         margin-top: 34px;
@@ -946,6 +1113,7 @@ GUIDE_PDF_PATH = Path(__file__).with_name("LY-STScope_User_Guide.pdf")
 GUIDE_SCREENSHOT_DIR = Path(__file__).with_name("guide_assets") / "screenshots"
 DEVELOPER_NAME = "Young Lee"
 DEVELOPER_EMAIL = "lyn0109@gmail.com"
+LIFE_ENTRY_VERSION = "life-design-2026-05-15"
 
 
 KOREAN_STOCK_MAP = {
@@ -1165,6 +1333,8 @@ def init_state() -> None:
     st.session_state.setdefault("selected_detail", None)
     st.session_state.setdefault("comments", [])
     st.session_state.setdefault("financial_diary", [])
+    st.session_state.setdefault("life_entry_complete", False)
+    st.session_state.setdefault("life_entry_version_seen", "")
 
 
 @st.cache_data(ttl=300, show_spinner=False)
@@ -3176,6 +3346,11 @@ def render_sidebar() -> None:
         st.markdown("## LY-STScope")
         st.caption("Open or close this sidebar with the arrow in the upper-left corner.")
 
+        if st.button("View Life Design Intro", use_container_width=True):
+            st.session_state.life_entry_complete = False
+            st.session_state.life_entry_version_seen = ""
+            st.rerun()
+
         st.markdown("### Ver.2 Module")
         st.caption("Use the REIT Analysis tab in the main screen.")
 
@@ -3257,80 +3432,159 @@ def render_footer() -> None:
     )
 
 
-init_state()
-render_sidebar()
-
-st.markdown(
-    """
-    <div class="brand-header">
-        <div class="brand-mark">
-            <div class="brand-icon" aria-hidden="true"></div>
-            <div>
-                <div class="brand-name">LY-ST<span class="scope-accent">Scope</span></div>
-                <div class="brand-subtitle">V 3 5 . 0&nbsp;&nbsp; M A J E S T I C&nbsp;&nbsp; N A V I G A T I O N</div>
+def render_life_entry_screen(standalone: bool = True) -> None:
+    shell_style = (
+        """
+        <style>
+        section[data-testid="stSidebar"] { display: none; }
+        div[data-testid="collapsedControl"] { display: none; }
+        .block-container { max-width: 1480px; padding-top: 1.2rem; }
+        </style>
+        """
+        if standalone
+        else ""
+    )
+    st.markdown(
+        shell_style
+        + """
+        <div class="life-entry-wrap">
+            <div class="life-entry">
+                <div class="life-entry-grid">
+                    <div>
+                        <div class="life-kicker">Personal Life & Financial Intelligence</div>
+                        <h1 class="life-title">Design your <span>life</span>, not only your portfolio.</h1>
+                        <div class="life-copy">
+                            LY-STScope connects income, spending, savings, investments, real estate exposure,
+                            risk, and life goals into one educational dashboard. It helps users understand where
+                            they stand today and what they may need to protect, improve, and plan next.
+                        </div>
+                        <div class="life-pill-row">
+                            <div class="life-pill">Income & Spending</div>
+                            <div class="life-pill">Portfolio Risk</div>
+                            <div class="life-pill">Real Estate Lens</div>
+                            <div class="life-pill">Life Goals</div>
+                            <div class="life-pill">Financial Diary</div>
+                        </div>
+                    </div>
+                    <div class="life-map" aria-label="Life design map">
+                        <div class="life-orbit"></div>
+                        <div class="life-orbit two"></div>
+                        <div class="life-core">Life<br>Design<br>Dashboard</div>
+                        <div class="life-node income">Income<br>Cash Flow</div>
+                        <div class="life-node saving">Savings<br>Liquidity</div>
+                        <div class="life-node risk">Risk<br>Protection</div>
+                        <div class="life-node assets">Assets<br>Portfolio</div>
+                        <div class="life-node goals">Goals<br>Planning</div>
+                        <div class="life-node diary">Diary<br>Reflection</div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="brand-badge">Server-side Finnhub data</div>
-    </div>
-    """,
-    unsafe_allow_html=True,
+        """,
+        unsafe_allow_html=True,
+    )
+
+    c1, c2, c3 = st.columns([1, 1.1, 1])
+    with c2:
+        if st.button("Enter LY-STScope Life Dashboard", type="primary", use_container_width=True):
+            st.session_state.life_entry_complete = True
+            st.session_state.life_entry_version_seen = LIFE_ENTRY_VERSION
+            st.rerun()
+        st.caption(
+            "Educational and informational use only. LY-STScope is not financial, investment, legal, or tax advice."
+        )
+
+
+def render_main_app() -> None:
+    render_sidebar()
+
+    st.markdown(
+        """
+        <div class="brand-header">
+            <div class="brand-mark">
+                <div class="brand-icon" aria-hidden="true"></div>
+                <div>
+                    <div class="brand-name">LY-ST<span class="scope-accent">Scope</span></div>
+                    <div class="brand-subtitle">V 3 5 . 0&nbsp;&nbsp; M A J E S T I C&nbsp;&nbsp; N A V I G A T I O N</div>
+                </div>
+            </div>
+            <div class="brand-badge">Server-side Finnhub data</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    sync_selected_detail_from_query()
+
+    (
+        tab_life,
+        tab_search,
+        tab_compare,
+        tab_portfolio,
+        tab_reit,
+        tab_personal,
+        tab_calculation,
+        tab_diary,
+        tab_settings,
+        tab_guide,
+    ) = st.tabs(
+        [
+            "Life Design",
+            "Search",
+            "Compare",
+            "Portfolio",
+            "REIT Analysis",
+            "Personal Finance",
+            "Calculation Details",
+            "Financial Diary",
+            "Settings",
+            "User Guide",
+        ]
+    )
+
+    with tab_life:
+        render_life_entry_screen(standalone=False)
+
+    with tab_search:
+        search_tab()
+
+    with tab_compare:
+        compare_tab()
+
+    with tab_portfolio:
+        portfolio_tab()
+
+    with tab_reit:
+        from reit_analysis_module import main as render_reit_analysis
+
+        render_reit_analysis(include_sidebar=False)
+
+    with tab_personal:
+        from personal_finance_module import render_personal_finance
+
+        render_personal_finance()
+
+    with tab_calculation:
+        calculation_details_tab()
+
+    with tab_diary:
+        financial_diary_tab()
+
+    with tab_settings:
+        settings_tab()
+
+    with tab_guide:
+        guide_tab()
+
+    render_footer()
+
+
+init_state()
+show_life_entry = (
+    not st.session_state.life_entry_complete
+    or st.session_state.life_entry_version_seen != LIFE_ENTRY_VERSION
 )
-
-sync_selected_detail_from_query()
-
-(
-    tab_search,
-    tab_compare,
-    tab_portfolio,
-    tab_reit,
-    tab_personal,
-    tab_calculation,
-    tab_diary,
-    tab_settings,
-    tab_guide,
-) = st.tabs(
-    [
-        "Search",
-        "Compare",
-        "Portfolio",
-        "REIT Analysis",
-        "Personal Finance",
-        "Calculation Details",
-        "Financial Diary",
-        "Settings",
-        "User Guide",
-    ]
-)
-
-with tab_search:
-    search_tab()
-
-with tab_compare:
-    compare_tab()
-
-with tab_portfolio:
-    portfolio_tab()
-
-with tab_reit:
-    from reit_analysis_module import main as render_reit_analysis
-
-    render_reit_analysis(include_sidebar=False)
-
-with tab_personal:
-    from personal_finance_module import render_personal_finance
-
-    render_personal_finance()
-
-with tab_calculation:
-    calculation_details_tab()
-
-with tab_diary:
-    financial_diary_tab()
-
-with tab_settings:
-    settings_tab()
-
-with tab_guide:
-    guide_tab()
-
-render_footer()
+if show_life_entry:
+    render_life_entry_screen()
+else:
+    render_main_app()

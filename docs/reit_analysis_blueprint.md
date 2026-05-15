@@ -45,7 +45,17 @@ Peer group multiples such as Price / FFO, dividend yield spread, and sector peer
 - Tenant and occupancy risk
 - Portfolio covariance and correlation
 
-## 6. Future Expansion
+## 6. Customer-Focused Scorecard
+
+The app should translate REIT data into five practical lenses:
+
+- Dividend Safety Score: dividend yield, AFFO payout, debt burden, occupancy, and lease duration.
+- FFO/AFFO Valuation Score: Price/FFO, NAV premium or discount, dividend yield, and payout burden.
+- Debt & Rate Risk Score: Debt/EBITDA, beta, and estimated sensitivity to interest rates.
+- Property Quality Score: occupancy, tenant quality, and rent growth.
+- Growth Score: FFO growth, rent growth, and operating quality.
+
+## 7. Future Expansion
 
 - REIT peer group engine by property type
 - Simple equal-weight REIT portfolio backtest

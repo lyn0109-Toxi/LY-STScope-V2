@@ -29,6 +29,7 @@ This app is designed as an educational personal financial intelligence platform,
 - Personal Finance test engine: net worth, cash flow, emergency fund, savings rate, debt-to-income, risk capacity, and financial health score.
 - Calculation Details: transparent formulas, data inputs, assumptions, valuation contribution, covariance, correlation, and personal finance score breakdown.
 - Financial Diary: session-based portfolio and personal finance snapshots with user notes, next actions, and JSON download/restore.
+- Life Design entry screen: one-click first screen that frames LY-STScope as a personal life and financial intelligence dashboard before entering the main app.
 
 ## Streamlit Cloud
 
