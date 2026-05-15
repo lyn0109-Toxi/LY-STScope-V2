@@ -1422,28 +1422,27 @@ st.markdown(
         100% { transform: translateX(540px) scale(1.12); opacity: 0.20; }
     }
     .homepage-visual {
-        min-height: 800px;
-        padding: clamp(24px, 3vw, 42px);
+        min-height: clamp(650px, 56vw, 860px);
+        padding: 0;
         border-color: rgba(37, 99, 235, 0.20);
         background:
-            linear-gradient(90deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.88) 31%, rgba(255,255,255,0.46) 62%, rgba(255,255,255,0.18) 100%),
-            radial-gradient(circle at 76% 33%, rgba(250, 204, 21, 0.20), transparent 28%),
             var(--home-bg),
             linear-gradient(135deg, #f8fbff 0%, #dff4ff 52%, #fff7ed 100%);
         background-size: cover;
-        background-position: center;
+        background-position: center top;
+        background-repeat: no-repeat;
         color: #0f172a;
         box-shadow: 0 32px 90px rgba(15, 23, 42, 0.20);
     }
     .homepage-visual::before {
-        opacity: 0.36;
+        opacity: 0.10;
         background:
-            linear-gradient(115deg, transparent 0%, transparent 38%, rgba(255,255,255,0.72) 44%, rgba(125,211,252,0.30) 50%, transparent 58%),
-            radial-gradient(circle at 65% 42%, rgba(255,255,255,0.50), transparent 18%);
+            linear-gradient(115deg, transparent 0%, transparent 42%, rgba(255,255,255,0.54) 48%, rgba(125,211,252,0.18) 52%, transparent 58%);
         background-size: 180% 100%, auto;
         animation: homeLightSweep 9s ease-in-out infinite;
     }
     .homepage-visual::after {
+        display: none;
         inset: auto -12% 0 -12%;
         height: 30%;
         opacity: 0.46;
@@ -1459,7 +1458,12 @@ st.markdown(
         align-items: center;
         justify-content: space-between;
         gap: 22px;
-        padding: 12px 14px 30px;
+        min-height: 88px;
+        padding: 18px 34px;
+        background: rgba(255, 255, 255, 0.93);
+        border-bottom: 1px solid rgba(148, 163, 184, 0.20);
+        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+        backdrop-filter: blur(16px);
     }
     .home-brand {
         display: flex;
@@ -1493,7 +1497,7 @@ st.markdown(
         font-weight: 760;
     }
     .home-nav-actions {
-        display: flex;
+        display: none;
         gap: 10px;
     }
     .home-action {
@@ -1511,9 +1515,7 @@ st.markdown(
         border-color: rgba(37, 99, 235, 0.0);
     }
     .homepage-visual .life-entry-grid {
-        grid-template-columns: minmax(420px, 0.78fr) minmax(500px, 1.22fr);
-        gap: clamp(28px, 4vw, 70px);
-        padding: clamp(18px, 3vw, 42px) 12px 18px;
+        display: none;
     }
     .homepage-visual .life-kicker {
         display: inline-flex;
@@ -1626,7 +1628,7 @@ st.markdown(
     .home-module-grid {
         position: relative;
         z-index: 2;
-        display: grid;
+        display: none;
         grid-template-columns: repeat(5, minmax(0, 1fr));
         gap: 14px;
         margin-top: 24px;
@@ -1758,7 +1760,7 @@ GUIDE_SCREENSHOT_DIR = Path(__file__).with_name("guide_assets") / "screenshots"
 HOMEPAGE_BG_PATH = Path(__file__).parent / "assets" / "homepage_life_design.png"
 DEVELOPER_NAME = "Young Lee"
 DEVELOPER_EMAIL = "lyn0109@gmail.com"
-LIFE_ENTRY_VERSION = "life-homepage-2026-05-15-v2"
+LIFE_ENTRY_VERSION = "life-homepage-2026-05-15-v3"
 
 
 @st.cache_data(show_spinner=False)
@@ -4116,10 +4118,6 @@ def render_life_entry_screen(standalone: bool = True) -> None:
                         <span>Analytics</span>
                         <span>Resources</span>
                         <span>About</span>
-                    </div>
-                    <div class="home-nav-actions">
-                        <div class="home-action">Log In</div>
-                        <div class="home-action primary">Start Free</div>
                     </div>
                 </div>
                 <div class="life-entry-grid">
