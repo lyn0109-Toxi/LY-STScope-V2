@@ -749,6 +749,63 @@ st.markdown(
         line-height: 1.04;
         letter-spacing: 0;
     }
+    .st-key-circle_nav {
+        margin: 24px 0 30px;
+        padding: 24px 22px 28px;
+        border-radius: 30px;
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        background:
+            radial-gradient(circle at 18% 12%, rgba(34, 211, 238, 0.16), transparent 24%),
+            radial-gradient(circle at 82% 18%, rgba(16, 185, 129, 0.12), transparent 22%),
+            rgba(8, 13, 22, 0.48);
+        box-shadow: inset 0 0 42px rgba(34, 211, 238, 0.04), 0 18px 44px rgba(2, 6, 23, 0.22);
+    }
+    .st-key-circle_nav div[data-testid="column"] {
+        display: flex;
+        justify-content: center;
+    }
+    .st-key-circle_nav div[data-testid="stButton"] {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+    .st-key-circle_nav div[data-testid="stButton"] button {
+        width: 108px !important;
+        height: 108px !important;
+        min-width: 108px !important;
+        min-height: 108px !important;
+        padding: 0 !important;
+        border-radius: 999px !important;
+        color: #eaf7ff !important;
+        border: 1px solid rgba(148, 163, 184, 0.30) !important;
+        background:
+            radial-gradient(circle at 34% 22%, rgba(255,255,255,0.24), transparent 22%),
+            radial-gradient(circle at 50% 54%, rgba(34, 211, 238, 0.16), transparent 58%),
+            linear-gradient(145deg, rgba(15, 23, 42, 0.94), rgba(8, 13, 22, 0.94)) !important;
+        box-shadow: 0 14px 30px rgba(2, 6, 23, 0.28), inset 0 0 30px rgba(34, 211, 238, 0.05) !important;
+        transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+    }
+    .st-key-circle_nav div[data-testid="stButton"] button:hover {
+        transform: translateY(-5px) scale(1.02);
+        border-color: rgba(103, 232, 249, 0.72) !important;
+        box-shadow: 0 0 0 8px rgba(34, 211, 238, 0.08), 0 20px 42px rgba(34, 211, 238, 0.14) !important;
+    }
+    .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] {
+        color: #ffffff !important;
+        background:
+            radial-gradient(circle at 34% 22%, rgba(255,255,255,0.38), transparent 22%),
+            linear-gradient(135deg, #22d3ee 0%, #0ea5e9 48%, #14b8a6 100%) !important;
+        border-color: rgba(103, 232, 249, 0.90) !important;
+        box-shadow: 0 0 0 10px rgba(34, 211, 238, 0.10), 0 0 38px rgba(34, 211, 238, 0.36), 0 22px 46px rgba(14, 116, 144, 0.24) !important;
+    }
+    .st-key-circle_nav div[data-testid="stButton"] button p {
+        white-space: pre-line;
+        text-align: center;
+        line-height: 1.05;
+        font-size: 0.86rem;
+        font-weight: 950;
+        margin: 0;
+    }
     .life-compact-panel {
         border-radius: 28px;
         border: 1px solid rgba(103, 232, 249, 0.24);
@@ -4445,163 +4502,51 @@ NAV_ITEMS = [
 
 
 def active_nav_key() -> str:
+    valid_keys = {item["key"] for item in NAV_ITEMS}
+
     try:
-        view = st.query_params.get("view", "life")
+        view = st.query_params.get("view")
     except Exception:
         params = st.experimental_get_query_params()
-        view = params.get("view", ["life"])
+        view = params.get("view")
 
     if isinstance(view, list):
         view = view[0] if view else "life"
 
+    if view in valid_keys:
+        st.session_state.active_view = view
+        return view
+
+    session_view = st.session_state.get("active_view", "life")
+    return session_view if session_view in valid_keys else "life"
+
+
+def set_active_nav_key(view: str) -> None:
     valid_keys = {item["key"] for item in NAV_ITEMS}
-    return view if view in valid_keys else "life"
+    if view not in valid_keys:
+        view = "life"
+    st.session_state.active_view = view
+    try:
+        st.query_params["view"] = view
+    except Exception:
+        st.experimental_set_query_params(view=view)
 
 
 def render_circle_navigation(active_key: str) -> None:
-    nav_html = []
-    for item in NAV_ITEMS:
-        active_class = " active" if item["key"] == active_key else ""
-        nav_html.append(
-            f"""
-            <a class="circle-nav-item{active_class}" href="?view={item['key']}" target="_parent" aria-label="{item['label']}">
-                <span class="circle-nav-content">
-                    <span class="circle-nav-icon">{item['icon']}</span>
-                    <span class="circle-nav-label">{item['label']}</span>
-                </span>
-            </a>
-            """
-        )
-
-    components.html(
-        f"""
-        <!doctype html>
-        <html>
-        <head>
-        <style>
-            html, body {{
-                margin: 0;
-                padding: 0;
-                background: transparent;
-                font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            }}
-            .circle-nav-wrap {{
-                box-sizing: border-box;
-                width: 100%;
-                padding: 18px 18px 22px;
-                border-radius: 30px;
-                border: 1px solid rgba(148, 163, 184, 0.22);
-                background:
-                    radial-gradient(circle at 18% 12%, rgba(34, 211, 238, 0.18), transparent 24%),
-                    radial-gradient(circle at 82% 18%, rgba(16, 185, 129, 0.13), transparent 22%),
-                    rgba(8, 13, 22, 0.56);
-                box-shadow: inset 0 0 42px rgba(34, 211, 238, 0.05), 0 18px 44px rgba(2, 6, 23, 0.22);
-                overflow-x: auto;
-                overflow-y: hidden;
-            }}
-            .circle-nav {{
-                min-width: 1180px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 14px;
-            }}
-            .circle-nav-item {{
-                flex: 0 0 auto;
-                width: 108px;
-                height: 108px;
-                border-radius: 999px;
-                display: grid;
-                place-items: center;
-                text-decoration: none;
-                color: #eaf7ff;
-                position: relative;
-                overflow: hidden;
-                isolation: isolate;
-                background:
-                    radial-gradient(circle at 34% 22%, rgba(255,255,255,0.24), transparent 22%),
-                    radial-gradient(circle at 50% 54%, rgba(34, 211, 238, 0.16), transparent 58%),
-                    linear-gradient(145deg, rgba(15, 23, 42, 0.94), rgba(8, 13, 22, 0.94));
-                border: 1px solid rgba(148, 163, 184, 0.30);
-                box-shadow: 0 14px 30px rgba(2, 6, 23, 0.28), inset 0 0 30px rgba(34, 211, 238, 0.05);
-                transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
-            }}
-            .circle-nav-item::before {{
-                content: "";
-                position: absolute;
-                inset: 8px;
-                border-radius: inherit;
-                border: 1px solid rgba(103, 232, 249, 0.19);
-                box-shadow: inset 0 0 24px rgba(255,255,255,0.05);
-                z-index: -1;
-            }}
-            .circle-nav-item::after {{
-                content: "";
-                position: absolute;
-                inset: -34%;
-                background: conic-gradient(from 90deg, transparent, rgba(103, 232, 249, 0.30), transparent, rgba(20, 184, 166, 0.22), transparent);
-                opacity: 0.28;
-                animation: circleNavSpin 14s linear infinite;
-                z-index: -2;
-            }}
-            .circle-nav-item:hover {{
-                transform: translateY(-5px) scale(1.02);
-                border-color: rgba(103, 232, 249, 0.72);
-                box-shadow: 0 0 0 8px rgba(34, 211, 238, 0.08), 0 20px 42px rgba(34, 211, 238, 0.14);
-            }}
-            .circle-nav-item.active {{
-                color: #ffffff;
-                background:
-                    radial-gradient(circle at 34% 22%, rgba(255,255,255,0.38), transparent 22%),
-                    linear-gradient(135deg, #22d3ee 0%, #0ea5e9 48%, #14b8a6 100%);
-                border-color: rgba(103, 232, 249, 0.90);
-                box-shadow: 0 0 0 10px rgba(34, 211, 238, 0.10), 0 0 38px rgba(34, 211, 238, 0.36), 0 22px 46px rgba(14, 116, 144, 0.24);
-            }}
-            .circle-nav-content {{
-                display: grid;
-                place-items: center;
-                gap: 7px;
-                text-align: center;
-                padding: 8px;
-            }}
-            .circle-nav-icon {{
-                width: 42px;
-                height: 42px;
-                border-radius: 999px;
-                display: grid;
-                place-items: center;
-                font-size: 0.83rem;
-                font-weight: 950;
-                letter-spacing: 0.03em;
-                color: #ffffff;
-                background: rgba(255, 255, 255, 0.14);
-                border: 1px solid rgba(255, 255, 255, 0.22);
-                box-shadow: inset 0 0 16px rgba(255, 255, 255, 0.06);
-            }}
-            .circle-nav-label {{
-                display: block;
-                color: inherit;
-                font-size: 0.82rem;
-                font-weight: 950;
-                line-height: 1.02;
-                letter-spacing: 0;
-            }}
-            @keyframes circleNavSpin {{
-                from {{ transform: rotate(0deg); }}
-                to {{ transform: rotate(360deg); }}
-            }}
-        </style>
-        </head>
-        <body>
-        <div class="circle-nav-wrap">
-            <div class="circle-nav">{''.join(nav_html)}</div>
-        </div>
-        </body>
-        </html>
-        """,
-        height=158,
-        scrolling=False,
-    )
+    with st.container(key="circle_nav"):
+        for start in range(0, len(NAV_ITEMS), 5):
+            cols = st.columns(5, gap="medium")
+            for col, item in zip(cols, NAV_ITEMS[start : start + 5]):
+                button_label = f"{item['icon']}\n{item['label']}"
+                with col:
+                    st.button(
+                        button_label,
+                        key=f"nav_{item['key']}",
+                        type="primary" if item["key"] == active_key else "secondary",
+                        use_container_width=True,
+                        on_click=set_active_nav_key,
+                        args=(item["key"],),
+                    )
 
 
 def render_life_compact_panel() -> None:
