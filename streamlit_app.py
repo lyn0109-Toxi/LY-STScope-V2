@@ -4464,7 +4464,7 @@ def render_circle_navigation(active_key: str) -> None:
         active_class = " active" if item["key"] == active_key else ""
         nav_html.append(
             f"""
-            <a class="circle-nav-item{active_class}" href="?view={item['key']}" target="_self" aria-label="{item['label']}">
+            <a class="circle-nav-item{active_class}" href="?view={item['key']}" target="_parent" aria-label="{item['label']}">
                 <span class="circle-nav-content">
                     <span class="circle-nav-icon">{item['icon']}</span>
                     <span class="circle-nav-label">{item['label']}</span>
@@ -4473,15 +4473,134 @@ def render_circle_navigation(active_key: str) -> None:
             """
         )
 
-    st.markdown(
+    components.html(
         f"""
+        <!doctype html>
+        <html>
+        <head>
+        <style>
+            html, body {{
+                margin: 0;
+                padding: 0;
+                background: transparent;
+                font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            }}
+            .circle-nav-wrap {{
+                box-sizing: border-box;
+                width: 100%;
+                padding: 18px 18px 22px;
+                border-radius: 30px;
+                border: 1px solid rgba(148, 163, 184, 0.22);
+                background:
+                    radial-gradient(circle at 18% 12%, rgba(34, 211, 238, 0.18), transparent 24%),
+                    radial-gradient(circle at 82% 18%, rgba(16, 185, 129, 0.13), transparent 22%),
+                    rgba(8, 13, 22, 0.56);
+                box-shadow: inset 0 0 42px rgba(34, 211, 238, 0.05), 0 18px 44px rgba(2, 6, 23, 0.22);
+                overflow-x: auto;
+                overflow-y: hidden;
+            }}
+            .circle-nav {{
+                min-width: 1180px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 14px;
+            }}
+            .circle-nav-item {{
+                flex: 0 0 auto;
+                width: 108px;
+                height: 108px;
+                border-radius: 999px;
+                display: grid;
+                place-items: center;
+                text-decoration: none;
+                color: #eaf7ff;
+                position: relative;
+                overflow: hidden;
+                isolation: isolate;
+                background:
+                    radial-gradient(circle at 34% 22%, rgba(255,255,255,0.24), transparent 22%),
+                    radial-gradient(circle at 50% 54%, rgba(34, 211, 238, 0.16), transparent 58%),
+                    linear-gradient(145deg, rgba(15, 23, 42, 0.94), rgba(8, 13, 22, 0.94));
+                border: 1px solid rgba(148, 163, 184, 0.30);
+                box-shadow: 0 14px 30px rgba(2, 6, 23, 0.28), inset 0 0 30px rgba(34, 211, 238, 0.05);
+                transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+            }}
+            .circle-nav-item::before {{
+                content: "";
+                position: absolute;
+                inset: 8px;
+                border-radius: inherit;
+                border: 1px solid rgba(103, 232, 249, 0.19);
+                box-shadow: inset 0 0 24px rgba(255,255,255,0.05);
+                z-index: -1;
+            }}
+            .circle-nav-item::after {{
+                content: "";
+                position: absolute;
+                inset: -34%;
+                background: conic-gradient(from 90deg, transparent, rgba(103, 232, 249, 0.30), transparent, rgba(20, 184, 166, 0.22), transparent);
+                opacity: 0.28;
+                animation: circleNavSpin 14s linear infinite;
+                z-index: -2;
+            }}
+            .circle-nav-item:hover {{
+                transform: translateY(-5px) scale(1.02);
+                border-color: rgba(103, 232, 249, 0.72);
+                box-shadow: 0 0 0 8px rgba(34, 211, 238, 0.08), 0 20px 42px rgba(34, 211, 238, 0.14);
+            }}
+            .circle-nav-item.active {{
+                color: #ffffff;
+                background:
+                    radial-gradient(circle at 34% 22%, rgba(255,255,255,0.38), transparent 22%),
+                    linear-gradient(135deg, #22d3ee 0%, #0ea5e9 48%, #14b8a6 100%);
+                border-color: rgba(103, 232, 249, 0.90);
+                box-shadow: 0 0 0 10px rgba(34, 211, 238, 0.10), 0 0 38px rgba(34, 211, 238, 0.36), 0 22px 46px rgba(14, 116, 144, 0.24);
+            }}
+            .circle-nav-content {{
+                display: grid;
+                place-items: center;
+                gap: 7px;
+                text-align: center;
+                padding: 8px;
+            }}
+            .circle-nav-icon {{
+                width: 42px;
+                height: 42px;
+                border-radius: 999px;
+                display: grid;
+                place-items: center;
+                font-size: 0.83rem;
+                font-weight: 950;
+                letter-spacing: 0.03em;
+                color: #ffffff;
+                background: rgba(255, 255, 255, 0.14);
+                border: 1px solid rgba(255, 255, 255, 0.22);
+                box-shadow: inset 0 0 16px rgba(255, 255, 255, 0.06);
+            }}
+            .circle-nav-label {{
+                display: block;
+                color: inherit;
+                font-size: 0.82rem;
+                font-weight: 950;
+                line-height: 1.02;
+                letter-spacing: 0;
+            }}
+            @keyframes circleNavSpin {{
+                from {{ transform: rotate(0deg); }}
+                to {{ transform: rotate(360deg); }}
+            }}
+        </style>
+        </head>
+        <body>
         <div class="circle-nav-wrap">
-            <div class="circle-nav">
-                {''.join(nav_html)}
-            </div>
+            <div class="circle-nav">{''.join(nav_html)}</div>
         </div>
+        </body>
+        </html>
         """,
-        unsafe_allow_html=True,
+        height=158,
+        scrolling=False,
     )
 
 
