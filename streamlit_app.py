@@ -1422,17 +1422,26 @@ st.markdown(
         100% { transform: translateX(540px) scale(1.12); opacity: 0.20; }
     }
     .homepage-visual {
-        min-height: clamp(650px, 56vw, 860px);
+        min-height: 620px;
+        aspect-ratio: 1672 / 941;
         padding: 0;
         border-color: rgba(37, 99, 235, 0.20);
         background:
-            var(--home-bg),
             linear-gradient(135deg, #f8fbff 0%, #dff4ff 52%, #fff7ed 100%);
         background-size: cover;
         background-position: center top;
         background-repeat: no-repeat;
         color: #0f172a;
         box-shadow: 0 32px 90px rgba(15, 23, 42, 0.20);
+    }
+    .homepage-bg-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+        z-index: 0;
     }
     .homepage-visual::before {
         opacity: 0.10;
@@ -1514,7 +1523,7 @@ st.markdown(
         color: #ffffff;
         border-color: rgba(37, 99, 235, 0.0);
     }
-    .homepage-visual .life-entry-grid {
+    .homepage-visual.has-home-image .life-entry-grid {
         display: none;
     }
     .homepage-visual .life-kicker {
@@ -1628,10 +1637,13 @@ st.markdown(
     .home-module-grid {
         position: relative;
         z-index: 2;
-        display: none;
+        display: grid;
         grid-template-columns: repeat(5, minmax(0, 1fr));
         gap: 14px;
         margin-top: 24px;
+    }
+    .homepage-visual.has-home-image .home-module-grid {
+        display: none;
     }
     .home-module-card {
         min-height: 128px;
@@ -1680,7 +1692,7 @@ st.markdown(
             width: 100%;
             justify-content: center;
         }
-        .homepage-visual .life-entry-grid {
+        .homepage-visual.has-home-image .life-entry-grid {
             grid-template-columns: 1fr;
         }
         .home-module-grid {
@@ -1690,6 +1702,8 @@ st.markdown(
     @media (max-width: 680px) {
         .homepage-visual {
             padding: 18px;
+            min-height: 620px;
+            aspect-ratio: auto;
         }
         .home-nav-links,
         .home-nav-actions {
@@ -1760,7 +1774,7 @@ GUIDE_SCREENSHOT_DIR = Path(__file__).with_name("guide_assets") / "screenshots"
 HOMEPAGE_BG_PATH = Path(__file__).parent / "assets" / "homepage_life_design.png"
 DEVELOPER_NAME = "Young Lee"
 DEVELOPER_EMAIL = "lyn0109@gmail.com"
-LIFE_ENTRY_VERSION = "life-homepage-2026-05-15-v3"
+LIFE_ENTRY_VERSION = "life-homepage-2026-05-15-v4"
 
 
 @st.cache_data(show_spinner=False)
@@ -4101,12 +4115,18 @@ def render_life_entry_screen(standalone: bool = True) -> None:
         else ""
     )
     homepage_bg = image_data_uri(str(HOMEPAGE_BG_PATH))
-    homepage_bg_style = f' style="--home-bg: url({homepage_bg});"' if homepage_bg else ""
+    homepage_class = " has-home-image" if homepage_bg else ""
+    homepage_image = (
+        f'<img class="homepage-bg-img" src="{homepage_bg}" alt="LY-STScope life design homepage preview">'
+        if homepage_bg
+        else ""
+    )
     st.markdown(
         shell_style
         + f"""
         <div class="life-entry-wrap">
-            <div class="life-entry homepage-visual"{homepage_bg_style}>
+            <div class="life-entry homepage-visual{homepage_class}">
+                {homepage_image}
                 <div class="home-nav">
                     <div class="home-brand">
                         <div class="home-brand-mark">LY</div>
