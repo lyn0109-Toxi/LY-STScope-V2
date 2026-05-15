@@ -1,6 +1,7 @@
 import math
 import os
 import json
+import base64
 from html import escape
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -1420,6 +1421,285 @@ st.markdown(
         42% { opacity: 0.90; }
         100% { transform: translateX(540px) scale(1.12); opacity: 0.20; }
     }
+    .homepage-visual {
+        min-height: 800px;
+        padding: clamp(24px, 3vw, 42px);
+        border-color: rgba(37, 99, 235, 0.20);
+        background:
+            linear-gradient(90deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.88) 31%, rgba(255,255,255,0.46) 62%, rgba(255,255,255,0.18) 100%),
+            radial-gradient(circle at 76% 33%, rgba(250, 204, 21, 0.20), transparent 28%),
+            var(--home-bg),
+            linear-gradient(135deg, #f8fbff 0%, #dff4ff 52%, #fff7ed 100%);
+        background-size: cover;
+        background-position: center;
+        color: #0f172a;
+        box-shadow: 0 32px 90px rgba(15, 23, 42, 0.20);
+    }
+    .homepage-visual::before {
+        opacity: 0.36;
+        background:
+            linear-gradient(115deg, transparent 0%, transparent 38%, rgba(255,255,255,0.72) 44%, rgba(125,211,252,0.30) 50%, transparent 58%),
+            radial-gradient(circle at 65% 42%, rgba(255,255,255,0.50), transparent 18%);
+        background-size: 180% 100%, auto;
+        animation: homeLightSweep 9s ease-in-out infinite;
+    }
+    .homepage-visual::after {
+        inset: auto -12% 0 -12%;
+        height: 30%;
+        opacity: 0.46;
+        background:
+            linear-gradient(90deg, transparent, rgba(59,130,246,0.18), rgba(20,184,166,0.20), rgba(250,204,21,0.20), transparent),
+            radial-gradient(ellipse at 72% 100%, rgba(255, 255, 255, 0.58), transparent 66%);
+        animation: homeGlowRoad 8s ease-in-out infinite;
+    }
+    .home-nav {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 22px;
+        padding: 12px 14px 30px;
+    }
+    .home-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #0f172a;
+        font-size: 1.2rem;
+        font-weight: 950;
+    }
+    .home-brand-mark {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        border-radius: 14px;
+        color: white;
+        font-size: 1.32rem;
+        background: linear-gradient(135deg, #2563eb, #22d3ee 46%, #14b8a6);
+        box-shadow: 0 14px 28px rgba(37, 99, 235, 0.22);
+    }
+    .home-brand small {
+        color: #2563eb;
+        font-size: 0.9rem;
+        margin-left: 4px;
+    }
+    .home-nav-links {
+        display: flex;
+        gap: clamp(16px, 3vw, 46px);
+        color: #1e293b;
+        font-size: 0.92rem;
+        font-weight: 760;
+    }
+    .home-nav-actions {
+        display: flex;
+        gap: 10px;
+    }
+    .home-action {
+        border-radius: 14px;
+        padding: 11px 18px;
+        border: 1px solid rgba(37, 99, 235, 0.30);
+        background: rgba(255, 255, 255, 0.72);
+        color: #1d4ed8;
+        font-weight: 900;
+        box-shadow: 0 12px 24px rgba(15, 23, 42, 0.06);
+    }
+    .home-action.primary {
+        background: linear-gradient(135deg, #2563eb, #0ea5e9);
+        color: #ffffff;
+        border-color: rgba(37, 99, 235, 0.0);
+    }
+    .homepage-visual .life-entry-grid {
+        grid-template-columns: minmax(420px, 0.78fr) minmax(500px, 1.22fr);
+        gap: clamp(28px, 4vw, 70px);
+        padding: clamp(18px, 3vw, 42px) 12px 18px;
+    }
+    .homepage-visual .life-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        padding: 9px 14px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid rgba(14, 165, 233, 0.18);
+        color: #0f3f4a;
+        letter-spacing: 0;
+        text-transform: none;
+        box-shadow: 0 12px 28px rgba(14, 116, 144, 0.08);
+    }
+    .homepage-visual .life-title {
+        margin-top: 18px;
+        max-width: 620px;
+        font-size: clamp(3rem, 5vw, 5.6rem);
+        color: #071631;
+        text-shadow: 0 1px 0 rgba(255,255,255,0.40);
+    }
+    .homepage-visual .life-title span {
+        color: transparent;
+        background: linear-gradient(120deg, #14b8a6, #0ea5e9 52%, #2563eb);
+        -webkit-background-clip: text;
+        background-clip: text;
+        text-shadow: none;
+    }
+    .homepage-visual .life-copy {
+        max-width: 520px;
+        padding: 0;
+        margin-top: 24px;
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+        color: #1e293b;
+        font-size: clamp(1rem, 1.3vw, 1.16rem);
+        line-height: 1.55;
+        font-weight: 680;
+    }
+    .home-cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin: 26px 0 16px;
+    }
+    .home-cta {
+        border-radius: 999px;
+        padding: 14px 22px;
+        font-weight: 950;
+        color: #ffffff;
+        background: linear-gradient(135deg, #2563eb, #0ea5e9);
+        box-shadow: 0 18px 38px rgba(37, 99, 235, 0.24);
+    }
+    .home-cta.secondary {
+        color: #1d4ed8;
+        background: rgba(255, 255, 255, 0.70);
+        border: 1px solid rgba(37, 99, 235, 0.30);
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+    }
+    .home-proof {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #334155;
+        font-size: 0.9rem;
+        font-weight: 720;
+        margin-top: 10px;
+    }
+    .home-proof-dots {
+        display: flex;
+    }
+    .home-proof-dot {
+        width: 30px;
+        height: 30px;
+        margin-left: -7px;
+        border-radius: 999px;
+        border: 2px solid rgba(255,255,255,0.88);
+        background: linear-gradient(135deg, #2563eb, #22d3ee);
+    }
+    .home-proof-dot:first-child {
+        margin-left: 0;
+    }
+    .homepage-visual .life-pill-row {
+        display: none;
+    }
+    .homepage-visual .life-map {
+        min-height: 560px;
+        background:
+            radial-gradient(circle at 50% 46%, rgba(255,255,255,0.76), rgba(219,234,254,0.58) 18%, rgba(255,255,255,0.18) 34%, transparent 50%),
+            linear-gradient(135deg, rgba(255,255,255,0.40), rgba(255,255,255,0.12));
+        border: 1px solid rgba(255,255,255,0.54);
+        backdrop-filter: blur(12px);
+        box-shadow: inset 0 0 42px rgba(255,255,255,0.18), 0 24px 52px rgba(15, 23, 42, 0.12);
+    }
+    .homepage-visual .life-node {
+        color: #0f172a;
+        background: rgba(255,255,255,0.72);
+        border-color: rgba(37, 99, 235, 0.18);
+        box-shadow: 0 14px 30px rgba(37, 99, 235, 0.10);
+    }
+    .homepage-visual .life-core {
+        opacity: 1;
+        color: #0f172a;
+        background:
+            radial-gradient(circle at 50% 50%, rgba(255,255,255,0.92), rgba(224,242,254,0.84) 48%, rgba(255,255,255,0.48));
+        border-color: rgba(59, 130, 246, 0.24);
+        box-shadow: 0 0 80px rgba(14, 165, 233, 0.26);
+    }
+    .home-module-grid {
+        position: relative;
+        z-index: 2;
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 24px;
+    }
+    .home-module-card {
+        min-height: 128px;
+        border-radius: 22px;
+        padding: 18px;
+        background: rgba(255,255,255,0.70);
+        border: 1px solid rgba(255,255,255,0.72);
+        box-shadow: 0 18px 38px rgba(15, 23, 42, 0.10);
+        backdrop-filter: blur(10px);
+        color: #0f172a;
+    }
+    .home-module-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        color: white;
+        margin-bottom: 12px;
+        background: linear-gradient(135deg, #2563eb, #22d3ee);
+    }
+    .home-module-card b {
+        display: block;
+        font-size: 0.98rem;
+        margin-bottom: 7px;
+    }
+    .home-module-card span {
+        color: #475569;
+        font-size: 0.84rem;
+        line-height: 1.35;
+    }
+    @keyframes homeLightSweep {
+        0%, 100% { background-position: -120% 0, center; opacity: 0.22; }
+        50% { background-position: 120% 0, center; opacity: 0.46; }
+    }
+    @keyframes homeGlowRoad {
+        0%, 100% { transform: translateX(-5%); opacity: 0.34; }
+        50% { transform: translateX(5%); opacity: 0.56; }
+    }
+    @media (max-width: 1100px) {
+        .home-nav {
+            flex-wrap: wrap;
+        }
+        .home-nav-links {
+            order: 3;
+            width: 100%;
+            justify-content: center;
+        }
+        .homepage-visual .life-entry-grid {
+            grid-template-columns: 1fr;
+        }
+        .home-module-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+    @media (max-width: 680px) {
+        .homepage-visual {
+            padding: 18px;
+        }
+        .home-nav-links,
+        .home-nav-actions {
+            display: none;
+        }
+        .homepage-visual .life-title {
+            font-size: 2.7rem;
+        }
+        .home-module-grid {
+            grid-template-columns: 1fr;
+        }
+    }
     .app-footer {
         border-top: 1px solid rgba(148, 163, 184, 0.24);
         margin-top: 34px;
@@ -1475,9 +1755,19 @@ EQUITY_RISK_PREMIUM = 0.045
 
 GUIDE_PDF_PATH = Path(__file__).with_name("LY-STScope_User_Guide.pdf")
 GUIDE_SCREENSHOT_DIR = Path(__file__).with_name("guide_assets") / "screenshots"
+HOMEPAGE_BG_PATH = Path(__file__).parent / "assets" / "homepage_life_design.png"
 DEVELOPER_NAME = "Young Lee"
 DEVELOPER_EMAIL = "lyn0109@gmail.com"
-LIFE_ENTRY_VERSION = "life-design-2026-05-15"
+LIFE_ENTRY_VERSION = "life-homepage-2026-05-15-v2"
+
+
+@st.cache_data(show_spinner=False)
+def image_data_uri(path_text: str) -> str:
+    image_path = Path(path_text)
+    if not image_path.exists():
+        return ""
+    encoded = base64.b64encode(image_path.read_bytes()).decode("ascii")
+    return f"data:image/png;base64,{encoded}"
 
 
 KOREAN_STOCK_MAP = {
@@ -3808,26 +4098,50 @@ def render_life_entry_screen(standalone: bool = True) -> None:
         if standalone
         else ""
     )
+    homepage_bg = image_data_uri(str(HOMEPAGE_BG_PATH))
+    homepage_bg_style = f' style="--home-bg: url({homepage_bg});"' if homepage_bg else ""
     st.markdown(
         shell_style
-        + """
+        + f"""
         <div class="life-entry-wrap">
-            <div class="life-entry">
+            <div class="life-entry homepage-visual"{homepage_bg_style}>
+                <div class="home-nav">
+                    <div class="home-brand">
+                        <div class="home-brand-mark">LY</div>
+                        <div>LY-STScope <small>Ver.2</small></div>
+                    </div>
+                    <div class="home-nav-links">
+                        <span>Features</span>
+                        <span>Life Map</span>
+                        <span>Analytics</span>
+                        <span>Resources</span>
+                        <span>About</span>
+                    </div>
+                    <div class="home-nav-actions">
+                        <div class="home-action">Log In</div>
+                        <div class="home-action primary">Start Free</div>
+                    </div>
+                </div>
                 <div class="life-entry-grid">
                     <div>
-                        <div class="life-kicker">Personal Life & Financial Intelligence</div>
-                        <h1 class="life-title">Design your <span>life</span>, not only your portfolio.</h1>
+                        <div class="life-kicker">Your Life. Your Money. Your Future.</div>
+                        <h1 class="life-title">Design Your <span>Financial Life</span></h1>
                         <div class="life-copy">
-                            LY-STScope connects income, spending, savings, investments, real estate exposure,
-                            risk, and life goals into one educational dashboard. It helps users understand where
-                            they stand today and what they may need to protect, improve, and plan next.
+                            LY-STScope Ver.2 brings stock valuation, portfolio diversification, REIT analytics,
+                            personal finance, and financial diary reflection into one clear life dashboard.
                         </div>
-                        <div class="life-pill-row">
-                            <div class="life-pill">Income & Spending</div>
-                            <div class="life-pill">Portfolio Risk</div>
-                            <div class="life-pill">Real Estate Lens</div>
-                            <div class="life-pill">Life Goals</div>
-                            <div class="life-pill">Financial Diary</div>
+                        <div class="home-cta-row">
+                            <div class="home-cta">Start Your Life Map</div>
+                            <div class="home-cta secondary">Explore Dashboard</div>
+                        </div>
+                        <div class="home-proof">
+                            <div class="home-proof-dots">
+                                <div class="home-proof-dot"></div>
+                                <div class="home-proof-dot"></div>
+                                <div class="home-proof-dot"></div>
+                                <div class="home-proof-dot"></div>
+                            </div>
+                            <span>Build, review, and improve your financial life with real examples.</span>
                         </div>
                     </div>
                     <div class="life-map" aria-label="Life design map">
@@ -3853,6 +4167,33 @@ def render_life_entry_screen(standalone: bool = True) -> None:
                         <div class="life-node assets">Assets<br>Portfolio</div>
                         <div class="life-node goals">Goals<br>Planning</div>
                         <div class="life-node diary">Diary<br>Reflection</div>
+                    </div>
+                </div>
+                <div class="home-module-grid">
+                    <div class="home-module-card">
+                        <div class="home-module-icon">SV</div>
+                        <b>Stock Valuation</b>
+                        <span>Fair value, valuation status, and real market context.</span>
+                    </div>
+                    <div class="home-module-card">
+                        <div class="home-module-icon">RE</div>
+                        <b>REIT Analytics</b>
+                        <span>Income, real estate exposure, and rate sensitivity lens.</span>
+                    </div>
+                    <div class="home-module-card">
+                        <div class="home-module-icon">PD</div>
+                        <b>Portfolio Diversification</b>
+                        <span>Risk, covariance, correlation, and complementarity.</span>
+                    </div>
+                    <div class="home-module-card">
+                        <div class="home-module-icon">82</div>
+                        <b>Financial Health</b>
+                        <span>Cash flow, savings, debt, liquidity, and capacity.</span>
+                    </div>
+                    <div class="home-module-card">
+                        <div class="home-module-icon">FD</div>
+                        <b>Financial Diary</b>
+                        <span>Save snapshots, notes, next actions, and reflection.</span>
                     </div>
                 </div>
             </div>
