@@ -588,38 +588,237 @@ st.markdown(
         }
     }
     div[data-testid="stTabs"] div[role="tablist"] {
-        gap: 8px;
-        border-bottom: 1px solid rgba(148, 163, 184, 0.28);
-        padding: 4px 0 12px;
-        margin-bottom: 20px;
+        gap: 16px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.20);
+        padding: 10px 0 22px;
+        margin-bottom: 24px;
         flex-wrap: wrap;
+        align-items: center;
     }
     div[data-testid="stTabs"] button[role="tab"] {
-        background: rgba(15, 23, 42, 0.72);
-        border: 1px solid rgba(148, 163, 184, 0.32);
-        border-radius: 12px;
-        color: #dbe7f3;
-        font-size: 16px;
-        font-weight: 800;
-        padding: 10px 17px;
-        min-height: 46px;
+        width: 112px;
+        height: 112px;
+        min-width: 112px;
+        min-height: 112px;
+        display: grid;
+        place-items: center;
+        padding: 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.34);
+        color: #e2e8f0;
+        background:
+            radial-gradient(circle at 35% 24%, rgba(255,255,255,0.13), transparent 24%),
+            radial-gradient(circle at 50% 58%, rgba(34, 211, 238, 0.10), transparent 56%),
+            rgba(15, 23, 42, 0.78);
+        box-shadow:
+            inset 0 0 28px rgba(34, 211, 238, 0.05),
+            0 14px 30px rgba(2, 6, 23, 0.26);
+        transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease;
     }
     div[data-testid="stTabs"] button[role="tab"]:hover {
         border-color: #22d3ee;
         color: #f8fafc;
-        background: rgba(14, 116, 144, 0.34);
+        background:
+            radial-gradient(circle at 35% 24%, rgba(255,255,255,0.18), transparent 24%),
+            radial-gradient(circle at 50% 58%, rgba(34, 211, 238, 0.22), transparent 56%),
+            rgba(15, 23, 42, 0.88);
+        transform: translateY(-4px);
+        box-shadow:
+            0 0 0 8px rgba(34, 211, 238, 0.06),
+            0 18px 36px rgba(34, 211, 238, 0.12);
     }
     div[data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
-        background: linear-gradient(135deg, #0ea5e9, #0f766e);
+        background:
+            radial-gradient(circle at 34% 25%, rgba(255,255,255,0.32), transparent 23%),
+            linear-gradient(135deg, #22d3ee 0%, #0ea5e9 46%, #14b8a6 100%);
         border-color: #22d3ee;
         color: #ffffff;
-        box-shadow: 0 8px 22px rgba(34,211,238,0.24);
+        box-shadow:
+            0 0 0 9px rgba(34, 211, 238, 0.12),
+            0 0 34px rgba(34, 211, 238, 0.32),
+            0 18px 38px rgba(14, 116, 144, 0.24);
+        transform: translateY(-3px);
     }
     div[data-testid="stTabs"] button[role="tab"] p {
-        font-size: 16px;
-        font-weight: 800;
+        max-width: 86px;
+        font-size: 15px;
+        font-weight: 950;
         color: inherit;
-        line-height: 1.2;
+        line-height: 1.05;
+        text-align: center;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        margin: 0;
+    }
+    div[data-testid="stTabs"] div[data-baseweb="tab-highlight"] {
+        display: none;
+    }
+    .circle-nav-wrap {
+        margin: 24px 0 30px;
+        padding: 24px 22px 28px;
+        border-radius: 30px;
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        background:
+            radial-gradient(circle at 18% 12%, rgba(34, 211, 238, 0.16), transparent 24%),
+            radial-gradient(circle at 82% 18%, rgba(16, 185, 129, 0.12), transparent 22%),
+            rgba(8, 13, 22, 0.48);
+        box-shadow: inset 0 0 42px rgba(34, 211, 238, 0.04), 0 18px 44px rgba(2, 6, 23, 0.22);
+    }
+    .circle-nav {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: clamp(14px, 1.8vw, 22px);
+    }
+    .circle-nav-item {
+        width: 122px;
+        height: 122px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        text-decoration: none !important;
+        color: #eaf7ff !important;
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
+        background:
+            radial-gradient(circle at 34% 22%, rgba(255,255,255,0.24), transparent 22%),
+            radial-gradient(circle at 50% 54%, rgba(34, 211, 238, 0.16), transparent 58%),
+            linear-gradient(145deg, rgba(15, 23, 42, 0.92), rgba(8, 13, 22, 0.92));
+        border: 1px solid rgba(148, 163, 184, 0.30);
+        box-shadow: 0 14px 32px rgba(2, 6, 23, 0.28), inset 0 0 30px rgba(34, 211, 238, 0.05);
+        transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+    }
+    .circle-nav-item::before {
+        content: "";
+        position: absolute;
+        inset: 9px;
+        border-radius: inherit;
+        border: 1px solid rgba(103, 232, 249, 0.18);
+        box-shadow: inset 0 0 24px rgba(255,255,255,0.04);
+        z-index: -1;
+    }
+    .circle-nav-item::after {
+        content: "";
+        position: absolute;
+        inset: -35%;
+        background: conic-gradient(from 90deg, transparent, rgba(103, 232, 249, 0.28), transparent, rgba(20, 184, 166, 0.20), transparent);
+        opacity: 0.28;
+        animation: circleNavSpin 14s linear infinite;
+        z-index: -2;
+    }
+    .circle-nav-item:hover {
+        transform: translateY(-5px) scale(1.02);
+        border-color: rgba(103, 232, 249, 0.70);
+        box-shadow: 0 0 0 8px rgba(34, 211, 238, 0.08), 0 20px 42px rgba(34, 211, 238, 0.14);
+    }
+    .circle-nav-item.active {
+        color: #ffffff !important;
+        background:
+            radial-gradient(circle at 34% 22%, rgba(255,255,255,0.38), transparent 22%),
+            linear-gradient(135deg, #22d3ee 0%, #0ea5e9 48%, #14b8a6 100%);
+        border-color: rgba(103, 232, 249, 0.88);
+        box-shadow: 0 0 0 10px rgba(34, 211, 238, 0.10), 0 0 38px rgba(34, 211, 238, 0.36), 0 22px 46px rgba(14, 116, 144, 0.24);
+    }
+    .circle-nav-content {
+        display: grid;
+        place-items: center;
+        gap: 7px;
+        text-align: center;
+        padding: 10px;
+    }
+    .circle-nav-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        font-size: 0.88rem;
+        font-weight: 950;
+        letter-spacing: 0.03em;
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.20);
+        box-shadow: inset 0 0 16px rgba(255, 255, 255, 0.06);
+    }
+    .circle-nav-label {
+        display: block;
+        color: inherit;
+        font-size: 0.88rem;
+        font-weight: 950;
+        line-height: 1.04;
+        letter-spacing: 0;
+    }
+    .life-compact-panel {
+        border-radius: 28px;
+        border: 1px solid rgba(103, 232, 249, 0.24);
+        background:
+            radial-gradient(circle at 18% 20%, rgba(34, 211, 238, 0.16), transparent 26%),
+            linear-gradient(135deg, rgba(15, 23, 42, 0.76), rgba(8, 13, 22, 0.86));
+        padding: clamp(24px, 4vw, 42px);
+        margin: 4px 0 22px;
+        box-shadow: 0 18px 44px rgba(2, 6, 23, 0.22);
+    }
+    .life-compact-panel h1 {
+        margin: 0 0 10px;
+        color: #f8fafc;
+        font-size: clamp(2rem, 3vw, 3.4rem);
+        font-weight: 950;
+    }
+    .life-compact-panel p {
+        max-width: 900px;
+        color: #dbeafe;
+        font-size: 1.05rem;
+        line-height: 1.58;
+        margin: 0;
+    }
+    .life-compact-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 24px;
+    }
+    .life-compact-card {
+        min-height: 118px;
+        border-radius: 22px;
+        padding: 18px;
+        background: rgba(15, 23, 42, 0.64);
+        border: 1px solid rgba(148, 163, 184, 0.20);
+    }
+    .life-compact-card b {
+        color: #67e8f9;
+        display: block;
+        margin-bottom: 7px;
+        font-size: 0.96rem;
+    }
+    .life-compact-card span {
+        color: #dbeafe;
+        font-size: 0.86rem;
+        line-height: 1.4;
+    }
+    @keyframes circleNavSpin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    @media (max-width: 760px) {
+        .circle-nav {
+            justify-content: center;
+        }
+        .circle-nav-item {
+            width: 96px;
+            height: 96px;
+        }
+        .circle-nav-icon {
+            width: 34px;
+            height: 34px;
+            font-size: 0.72rem;
+        }
+        .circle-nav-label {
+            font-size: 0.76rem;
+        }
+        .life-compact-grid {
+            grid-template-columns: 1fr;
+        }
     }
     div[data-testid="stVerticalBlockBorderWrapper"] {
         background: rgba(15, 23, 42, 0.48);
@@ -4231,6 +4430,84 @@ def render_life_entry_screen(standalone: bool = True) -> None:
         )
 
 
+NAV_ITEMS = [
+    {"key": "life", "label": "Life", "icon": "LF"},
+    {"key": "search", "label": "Search", "icon": "SR"},
+    {"key": "compare", "label": "Compare", "icon": "CP"},
+    {"key": "portfolio", "label": "Portfolio", "icon": "PF"},
+    {"key": "reit", "label": "REIT", "icon": "RE"},
+    {"key": "finance", "label": "Finance", "icon": "FI"},
+    {"key": "details", "label": "Details", "icon": "DT"},
+    {"key": "diary", "label": "Diary", "icon": "DY"},
+    {"key": "settings", "label": "Settings", "icon": "SE"},
+    {"key": "guide", "label": "Guide", "icon": "GD"},
+]
+
+
+def active_nav_key() -> str:
+    try:
+        view = st.query_params.get("view", "life")
+    except Exception:
+        params = st.experimental_get_query_params()
+        view = params.get("view", ["life"])
+
+    if isinstance(view, list):
+        view = view[0] if view else "life"
+
+    valid_keys = {item["key"] for item in NAV_ITEMS}
+    return view if view in valid_keys else "life"
+
+
+def render_circle_navigation(active_key: str) -> None:
+    nav_html = []
+    for item in NAV_ITEMS:
+        active_class = " active" if item["key"] == active_key else ""
+        nav_html.append(
+            f"""
+            <a class="circle-nav-item{active_class}" href="?view={item['key']}" target="_self" aria-label="{item['label']}">
+                <span class="circle-nav-content">
+                    <span class="circle-nav-icon">{item['icon']}</span>
+                    <span class="circle-nav-label">{item['label']}</span>
+                </span>
+            </a>
+            """
+        )
+
+    st.markdown(
+        f"""
+        <div class="circle-nav-wrap">
+            <div class="circle-nav">
+                {''.join(nav_html)}
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def render_life_compact_panel() -> None:
+    st.markdown(
+        """
+        <div class="life-compact-panel">
+            <h1>Life Design Control Center</h1>
+            <p>
+                LY-STScope connects market analysis with personal financial decisions.
+                Use the circular menu above to move between valuation, portfolio risk,
+                real estate exposure, personal finance, calculation transparency, and diary reflection.
+            </p>
+            <div class="life-compact-grid">
+                <div class="life-compact-card"><b>Income</b><span>Understand monthly cash flow before taking investment risk.</span></div>
+                <div class="life-compact-card"><b>Savings</b><span>Check liquidity and emergency capacity.</span></div>
+                <div class="life-compact-card"><b>Investments</b><span>Review stock value, beta, risk, and diversification.</span></div>
+                <div class="life-compact-card"><b>Real Estate</b><span>Study REIT and property-linked exposure.</span></div>
+                <div class="life-compact-card"><b>Diary</b><span>Save snapshots and reflect on next actions.</span></div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def render_main_app() -> None:
     render_sidebar()
 
@@ -4252,64 +4529,32 @@ def render_main_app() -> None:
 
     sync_selected_detail_from_query()
 
-    (
-        tab_life,
-        tab_search,
-        tab_compare,
-        tab_portfolio,
-        tab_reit,
-        tab_personal,
-        tab_calculation,
-        tab_diary,
-        tab_settings,
-        tab_guide,
-    ) = st.tabs(
-        [
-            "Life Design",
-            "Search",
-            "Compare",
-            "Portfolio",
-            "REIT Analysis",
-            "Personal Finance",
-            "Calculation Details",
-            "Financial Diary",
-            "Settings",
-            "User Guide",
-        ]
-    )
+    active_view = active_nav_key()
+    render_circle_navigation(active_view)
 
-    with tab_life:
-        render_life_entry_screen(standalone=False)
-
-    with tab_search:
+    if active_view == "life":
+        render_life_compact_panel()
+    elif active_view == "search":
         search_tab()
-
-    with tab_compare:
+    elif active_view == "compare":
         compare_tab()
-
-    with tab_portfolio:
+    elif active_view == "portfolio":
         portfolio_tab()
-
-    with tab_reit:
+    elif active_view == "reit":
         from reit_analysis_module import main as render_reit_analysis
 
         render_reit_analysis(include_sidebar=False)
-
-    with tab_personal:
+    elif active_view == "finance":
         from personal_finance_module import render_personal_finance
 
         render_personal_finance()
-
-    with tab_calculation:
+    elif active_view == "details":
         calculation_details_tab()
-
-    with tab_diary:
+    elif active_view == "diary":
         financial_diary_tab()
-
-    with tab_settings:
+    elif active_view == "settings":
         settings_tab()
-
-    with tab_guide:
+    elif active_view == "guide":
         guide_tab()
 
     render_footer()
