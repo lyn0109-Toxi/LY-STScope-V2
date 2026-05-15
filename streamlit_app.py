@@ -893,7 +893,7 @@ st.markdown(
         min-height: 86vh;
         display: grid;
         align-items: center;
-        padding: 36px 0 54px;
+        padding: 28px 0 46px;
     }
     .life-entry {
         position: relative;
@@ -905,39 +905,50 @@ st.markdown(
             radial-gradient(circle at 24% 24%, rgba(16, 185, 129, 0.16), transparent 28%),
             linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(17, 24, 39, 0.94) 48%, rgba(4, 9, 15, 0.98));
         box-shadow: 0 32px 90px rgba(0, 0, 0, 0.34);
-        padding: clamp(34px, 5vw, 70px);
+        padding: clamp(30px, 4.2vw, 58px);
     }
     .life-entry::before {
         content: "";
         position: absolute;
         inset: 0;
-        opacity: 0.30;
+        opacity: 0.22;
         background:
             linear-gradient(90deg, rgba(34,211,238,0.12) 1px, transparent 1px),
             linear-gradient(0deg, rgba(16,185,129,0.09) 1px, transparent 1px);
         background-size: 48px 48px;
         animation: dataSweep 18s linear infinite;
     }
+    .life-entry::after {
+        content: "";
+        position: absolute;
+        inset: auto -18% 0 -18%;
+        height: 38%;
+        opacity: 0.24;
+        background:
+            linear-gradient(90deg, transparent, rgba(34, 211, 238, 0.26), transparent),
+            radial-gradient(ellipse at 50% 100%, rgba(20, 184, 166, 0.22), transparent 62%);
+        animation: lifeBeam 8s ease-in-out infinite;
+    }
     .life-entry-grid {
         position: relative;
         z-index: 1;
         display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(340px, 0.86fr);
-        gap: clamp(28px, 4vw, 64px);
+        grid-template-columns: minmax(0, 0.92fr) minmax(390px, 1.08fr);
+        gap: clamp(34px, 4vw, 70px);
         align-items: center;
     }
     .life-kicker {
         color: #67e8f9;
-        font-size: 0.9rem;
+        font-size: 0.82rem;
         font-weight: 900;
-        letter-spacing: 0.18em;
+        letter-spacing: 0.22em;
         text-transform: uppercase;
         margin-bottom: 14px;
     }
     .life-title {
         color: #f8fafc;
-        font-size: clamp(3rem, 6vw, 6.6rem);
-        line-height: 0.92;
+        font-size: clamp(2.6rem, 4.7vw, 5.25rem);
+        line-height: 1.02;
         letter-spacing: 0;
         font-weight: 950;
         margin: 0;
@@ -945,96 +956,246 @@ st.markdown(
     .life-title span {
         color: #67e8f9;
         text-shadow: 0 0 32px rgba(34, 211, 238, 0.36);
+        animation: titleGlow 5s ease-in-out infinite;
     }
     .life-copy {
-        max-width: 760px;
-        margin: 24px 0 26px;
-        color: #dbe7f3;
-        font-size: clamp(1.05rem, 1.8vw, 1.32rem);
-        line-height: 1.65;
-        font-weight: 700;
+        max-width: 720px;
+        margin: 24px 0 24px;
+        color: #e2e8f0;
+        font-size: clamp(1rem, 1.45vw, 1.17rem);
+        line-height: 1.58;
+        font-weight: 760;
+        padding: 20px 22px;
+        border-radius: 22px;
+        background: rgba(8, 13, 22, 0.38);
+        border: 1px solid rgba(148, 163, 184, 0.14);
     }
     .life-pill-row {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 11px;
         margin-top: 18px;
     }
     .life-pill {
-        border: 1px solid rgba(103, 232, 249, 0.30);
-        background: rgba(15, 23, 42, 0.70);
-        color: #e0f2fe;
+        border: 1px solid rgba(103, 232, 249, 0.42);
+        background: rgba(15, 23, 42, 0.82);
+        color: #f0f9ff;
         border-radius: 999px;
-        padding: 8px 13px;
-        font-size: 0.86rem;
-        font-weight: 850;
-    }
-    .life-map {
-        min-height: 520px;
-        border-radius: 30px;
-        border: 1px solid rgba(148, 163, 184, 0.26);
-        background:
-            radial-gradient(circle at 50% 44%, rgba(34, 211, 238, 0.20), transparent 32%),
-            linear-gradient(160deg, rgba(15, 23, 42, 0.74), rgba(8, 13, 22, 0.94));
-        box-shadow: inset 0 0 46px rgba(34, 211, 238, 0.08);
+        padding: 9px 15px;
+        font-size: 0.84rem;
+        font-weight: 900;
+        box-shadow: inset 0 0 18px rgba(34, 211, 238, 0.06);
         position: relative;
         overflow: hidden;
     }
+    .life-pill::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(110deg, transparent 0%, rgba(255,255,255,0.18) 45%, transparent 70%);
+        transform: translateX(-120%);
+        animation: pillShine 7s ease-in-out infinite;
+    }
+    .life-map {
+        min-height: 560px;
+        border-radius: 32px;
+        border: 1px solid rgba(148, 163, 184, 0.34);
+        background:
+            radial-gradient(circle at 50% 48%, rgba(34, 211, 238, 0.24), transparent 33%),
+            radial-gradient(circle at 18% 20%, rgba(96, 165, 250, 0.10), transparent 23%),
+            linear-gradient(160deg, rgba(15, 23, 42, 0.74), rgba(8, 13, 22, 0.94));
+        box-shadow: inset 0 0 46px rgba(34, 211, 238, 0.10), 0 20px 48px rgba(0, 0, 0, 0.25);
+        position: relative;
+        overflow: hidden;
+    }
+    .life-horizon {
+        position: absolute;
+        left: -18%;
+        right: -18%;
+        top: 50%;
+        height: 44%;
+        pointer-events: none;
+        opacity: 0.30;
+        background:
+            radial-gradient(ellipse at 50% 50%, rgba(103, 232, 249, 0.18), transparent 44%),
+            linear-gradient(90deg, transparent, rgba(34, 211, 238, 0.28), rgba(20, 184, 166, 0.20), transparent);
+        filter: blur(10px);
+        transform: translateY(-50%) rotate(-8deg);
+        animation: lifeHorizon 9s ease-in-out infinite;
+    }
+    .life-stream {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 3px;
+        height: 46%;
+        transform-origin: 50% 0;
+        pointer-events: none;
+        z-index: 1;
+        opacity: 0.54;
+        background: linear-gradient(180deg, rgba(103, 232, 249, 0.74), rgba(20, 184, 166, 0.18), transparent);
+        filter: drop-shadow(0 0 10px rgba(34, 211, 238, 0.45));
+        animation: streamPulse 4.6s ease-in-out infinite;
+    }
+    .life-stream.s1 { transform: rotate(0deg); animation-delay: -0.2s; }
+    .life-stream.s2 { transform: rotate(60deg); animation-delay: -0.8s; }
+    .life-stream.s3 { transform: rotate(120deg); animation-delay: -1.4s; }
+    .life-stream.s4 { transform: rotate(180deg); animation-delay: -2.0s; }
+    .life-stream.s5 { transform: rotate(240deg); animation-delay: -2.6s; }
+    .life-stream.s6 { transform: rotate(300deg); animation-delay: -3.2s; }
+    .life-spark {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: #a7f3d0;
+        box-shadow: 0 0 18px rgba(103, 232, 249, 0.88), 0 0 36px rgba(20, 184, 166, 0.45);
+        z-index: 3;
+        pointer-events: none;
+        animation: sparkOrbit 8s linear infinite;
+    }
+    .life-spark.two {
+        width: 7px;
+        height: 7px;
+        background: #67e8f9;
+        animation: sparkOrbit 11s linear infinite reverse;
+        animation-delay: -3s;
+    }
+    .life-spark.three {
+        width: 6px;
+        height: 6px;
+        background: #fef3c7;
+        animation: sparkOrbitWide 13s linear infinite;
+        animation-delay: -5s;
+    }
+    .life-map::before {
+        content: "";
+        position: absolute;
+        left: 13%;
+        right: 13%;
+        top: 49%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(103, 232, 249, 0.38), transparent);
+        animation: flowLine 4.8s ease-in-out infinite;
+    }
+    .life-map::after {
+        content: "";
+        position: absolute;
+        top: 12%;
+        bottom: 12%;
+        left: 49.8%;
+        width: 2px;
+        background: linear-gradient(180deg, transparent, rgba(20, 184, 166, 0.30), transparent);
+        animation: flowLine 5.4s ease-in-out infinite reverse;
+    }
     .life-orbit {
         position: absolute;
-        inset: 64px;
-        border: 1px solid rgba(148, 163, 184, 0.20);
+        inset: 70px;
+        border: 1px solid rgba(148, 163, 184, 0.26);
         border-radius: 50%;
-        animation: graphFloat 9s ease-in-out infinite;
+        animation: orbitSpin 24s linear infinite;
     }
     .life-orbit.two {
-        inset: 112px;
-        animation-delay: -2s;
+        inset: 126px;
+        border-color: rgba(103, 232, 249, 0.26);
+        animation: orbitSpin 18s linear infinite reverse;
     }
     .life-core {
         position: absolute;
         left: 50%;
         top: 50%;
         transform: translate(-50%, -50%);
-        width: 162px;
-        height: 162px;
+        width: 174px;
+        height: 174px;
         border-radius: 50%;
         display: grid;
         place-items: center;
         text-align: center;
         color: #f8fafc;
-        font-size: 1.05rem;
+        font-size: 1.08rem;
+        line-height: 1.5;
         font-weight: 950;
         background:
             radial-gradient(circle at 35% 26%, rgba(255,255,255,0.34), transparent 22%),
             linear-gradient(135deg, rgba(34, 211, 238, 0.38), rgba(20, 184, 166, 0.24)),
             rgba(15, 23, 42, 0.92);
         border: 1px solid rgba(103, 232, 249, 0.48);
-        box-shadow: 0 0 48px rgba(34, 211, 238, 0.28);
+        box-shadow: 0 0 48px rgba(34, 211, 238, 0.32);
+        animation: corePulse 3.6s ease-in-out infinite;
     }
     .life-node {
         position: absolute;
-        width: 124px;
-        min-height: 70px;
+        width: 138px;
+        min-height: 74px;
         display: grid;
         place-items: center;
         text-align: center;
         border-radius: 20px;
-        padding: 12px;
-        color: #e0f2fe;
+        padding: 12px 13px;
+        color: #f8fafc;
         font-size: 0.88rem;
-        line-height: 1.15;
+        line-height: 1.18;
         font-weight: 900;
-        background: rgba(15, 23, 42, 0.74);
-        border: 1px solid rgba(148, 163, 184, 0.28);
+        background: rgba(15, 23, 42, 0.88);
+        border: 1px solid rgba(148, 163, 184, 0.38);
         box-shadow: 0 14px 36px rgba(0, 0, 0, 0.22);
+        z-index: 2;
+        animation: nodeFloat 7s ease-in-out infinite;
     }
-    .life-node.income { left: 44px; top: 72px; }
-    .life-node.saving { right: 44px; top: 78px; }
-    .life-node.risk { left: 34px; bottom: 88px; }
-    .life-node.assets { right: 34px; bottom: 88px; }
-    .life-node.goals { left: 50%; top: 32px; transform: translateX(-50%); }
-    .life-node.diary { left: 50%; bottom: 32px; transform: translateX(-50%); }
+    .life-node.income { left: 54px; top: 110px; animation-delay: -0.5s; }
+    .life-node.saving { right: 54px; top: 118px; animation-delay: -1.2s; }
+    .life-node.risk { left: 54px; bottom: 118px; animation-delay: -2.1s; }
+    .life-node.assets { right: 54px; bottom: 118px; animation-delay: -3.0s; }
+    .life-node.goals { left: 50%; top: 46px; transform: translateX(-50%); animation-delay: -1.7s; }
+    .life-node.diary { left: 50%; bottom: 46px; transform: translateX(-50%); animation-delay: -2.7s; }
+    @keyframes orbitSpin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    @keyframes corePulse {
+        0%, 100% { box-shadow: 0 0 42px rgba(34, 211, 238, 0.26); }
+        50% { box-shadow: 0 0 68px rgba(34, 211, 238, 0.46); }
+    }
+    @keyframes nodeFloat {
+        0%, 100% { margin-top: 0; }
+        50% { margin-top: -8px; }
+    }
+    @keyframes flowLine {
+        0%, 100% { opacity: 0.14; transform: scaleX(0.72); }
+        50% { opacity: 0.52; transform: scaleX(1); }
+    }
+    @keyframes lifeBeam {
+        0%, 100% { transform: translateX(-8%); opacity: 0.16; }
+        50% { transform: translateX(8%); opacity: 0.30; }
+    }
+    @keyframes lifeHorizon {
+        0%, 100% { transform: translateY(-50%) rotate(-8deg) translateX(-4%); opacity: 0.18; }
+        50% { transform: translateY(-50%) rotate(8deg) translateX(4%); opacity: 0.36; }
+    }
+    @keyframes streamPulse {
+        0%, 100% { opacity: 0.16; height: 34%; }
+        45% { opacity: 0.70; height: 48%; }
+        70% { opacity: 0.30; height: 42%; }
+    }
+    @keyframes sparkOrbit {
+        from { transform: rotate(0deg) translateX(154px) rotate(0deg); }
+        to { transform: rotate(360deg) translateX(154px) rotate(-360deg); }
+    }
+    @keyframes sparkOrbitWide {
+        from { transform: rotate(0deg) translateX(218px) rotate(0deg); }
+        to { transform: rotate(360deg) translateX(218px) rotate(-360deg); }
+    }
+    @keyframes titleGlow {
+        0%, 100% { text-shadow: 0 0 24px rgba(34, 211, 238, 0.26); }
+        50% { text-shadow: 0 0 44px rgba(34, 211, 238, 0.58); }
+    }
+    @keyframes pillShine {
+        0%, 72% { transform: translateX(-120%); }
+        86% { transform: translateX(120%); }
+        100% { transform: translateX(120%); }
+    }
     div[data-testid="stButton"] button[kind="primary"] {
         border-radius: 999px;
         padding: 0.78rem 1.4rem;
@@ -1049,11 +1210,29 @@ st.markdown(
             grid-template-columns: 1fr;
         }
         .life-map {
-            min-height: 430px;
+            min-height: 460px;
         }
         .life-node {
             width: 112px;
-            font-size: 0.78rem;
+            min-height: 62px;
+            font-size: 0.76rem;
+        }
+        .life-node.income { left: 18px; top: 94px; }
+        .life-node.saving { right: 18px; top: 94px; }
+        .life-node.risk { left: 18px; bottom: 94px; }
+        .life-node.assets { right: 18px; bottom: 94px; }
+        .life-node.goals { top: 26px; }
+        .life-node.diary { bottom: 26px; }
+        .life-stream {
+            height: 38%;
+        }
+        @keyframes sparkOrbit {
+            from { transform: rotate(0deg) translateX(118px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(118px) rotate(-360deg); }
+        }
+        @keyframes sparkOrbitWide {
+            from { transform: rotate(0deg) translateX(160px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(160px) rotate(-360deg); }
         }
     }
     .app-footer {
@@ -3467,6 +3646,16 @@ def render_life_entry_screen(standalone: bool = True) -> None:
                         </div>
                     </div>
                     <div class="life-map" aria-label="Life design map">
+                        <div class="life-horizon"></div>
+                        <div class="life-stream s1"></div>
+                        <div class="life-stream s2"></div>
+                        <div class="life-stream s3"></div>
+                        <div class="life-stream s4"></div>
+                        <div class="life-stream s5"></div>
+                        <div class="life-stream s6"></div>
+                        <div class="life-spark"></div>
+                        <div class="life-spark two"></div>
+                        <div class="life-spark three"></div>
                         <div class="life-orbit"></div>
                         <div class="life-orbit two"></div>
                         <div class="life-core">Life<br>Design<br>Dashboard</div>
