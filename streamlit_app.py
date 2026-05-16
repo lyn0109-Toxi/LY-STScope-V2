@@ -2331,6 +2331,420 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+st.markdown(
+    """
+    <style>
+    html body .stApp .st-key-circle_nav {
+        padding: 34px 32px 28px !important;
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_life,
+    html body .stApp .st-key-circle_nav .st-key-nav_search,
+    html body .stApp .st-key-circle_nav .st-key-nav_compare,
+    html body .stApp .st-key-circle_nav .st-key-nav_portfolio,
+    html body .stApp .st-key-circle_nav .st-key-nav_reit,
+    html body .stApp .st-key-circle_nav .st-key-nav_finance,
+    html body .stApp .st-key-circle_nav .st-key-nav_details,
+    html body .stApp .st-key-circle_nav .st-key-nav_diary,
+    html body .stApp .st-key-circle_nav .st-key-nav_settings,
+    html body .stApp .st-key-circle_nav .st-key-nav_guide {
+        --sig-a: rgba(14, 165, 233, 0.34);
+        --sig-b: rgba(45, 212, 191, 0.28);
+        --sig-c: rgba(255, 255, 255, 0.92);
+        --sig-line: rgba(14, 165, 233, 0.38);
+        --sig-shadow: rgba(14, 165, 233, 0.18);
+        --sig-symbol:
+            radial-gradient(circle at 50% 50%, rgba(255,255,255,0.72), transparent 13%),
+            radial-gradient(circle at 50% 50%, rgba(14,165,233,0.30), transparent 36%);
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_life {
+        --sig-a: rgba(45, 212, 191, 0.48);
+        --sig-b: rgba(125, 211, 252, 0.40);
+        --sig-line: rgba(20, 184, 166, 0.46);
+        --sig-shadow: rgba(45, 212, 191, 0.24);
+        --sig-symbol:
+            radial-gradient(circle at 50% 62%, rgba(255,255,255,0.84), transparent 12%),
+            radial-gradient(circle at 50% 62%, rgba(45,212,191,0.48), transparent 27%),
+            linear-gradient(90deg, transparent 0 43%, rgba(20,184,166,0.54) 43% 57%, transparent 57% 100%),
+            linear-gradient(0deg, transparent 0 43%, rgba(14,165,233,0.36) 43% 57%, transparent 57% 100%);
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_search {
+        --sig-a: rgba(59, 130, 246, 0.44);
+        --sig-b: rgba(14, 165, 233, 0.34);
+        --sig-line: rgba(59, 130, 246, 0.50);
+        --sig-shadow: rgba(59, 130, 246, 0.22);
+        --sig-symbol:
+            radial-gradient(circle at 45% 45%, transparent 0 23%, rgba(37,99,235,0.54) 24% 30%, transparent 31%),
+            linear-gradient(135deg, transparent 0 58%, rgba(37,99,235,0.54) 59% 65%, transparent 66%),
+            linear-gradient(0deg, transparent 0 46%, rgba(14,165,233,0.26) 47% 53%, transparent 54% 100%);
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_compare {
+        --sig-a: rgba(168, 85, 247, 0.36);
+        --sig-b: rgba(96, 165, 250, 0.28);
+        --sig-line: rgba(124, 58, 237, 0.44);
+        --sig-shadow: rgba(124, 58, 237, 0.18);
+        --sig-symbol:
+            linear-gradient(90deg, transparent 0 18%, rgba(124,58,237,0.50) 19% 24%, transparent 25% 75%, rgba(96,165,250,0.52) 76% 81%, transparent 82%),
+            linear-gradient(0deg, transparent 0 38%, rgba(124,58,237,0.40) 39% 44%, transparent 45% 56%, rgba(96,165,250,0.40) 57% 62%, transparent 63%);
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_portfolio {
+        --sig-a: rgba(34, 197, 94, 0.36);
+        --sig-b: rgba(250, 204, 21, 0.34);
+        --sig-line: rgba(34, 197, 94, 0.46);
+        --sig-shadow: rgba(34, 197, 94, 0.18);
+        --sig-symbol:
+            conic-gradient(from 20deg, rgba(34,197,94,0.58) 0 34%, rgba(59,130,246,0.52) 34% 62%, rgba(250,204,21,0.54) 62% 82%, rgba(45,212,191,0.44) 82% 100%),
+            radial-gradient(circle, rgba(255,255,255,0.90) 0 30%, transparent 31%);
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_reit {
+        --sig-a: rgba(251, 191, 36, 0.42);
+        --sig-b: rgba(20, 184, 166, 0.28);
+        --sig-line: rgba(217, 119, 6, 0.42);
+        --sig-shadow: rgba(251, 191, 36, 0.18);
+        --sig-symbol:
+            linear-gradient(90deg, transparent 0 16%, rgba(217,119,6,0.50) 17% 31%, transparent 32% 39%, rgba(20,184,166,0.42) 40% 58%, transparent 59% 66%, rgba(251,191,36,0.54) 67% 83%, transparent 84%),
+            repeating-linear-gradient(0deg, transparent 0 12px, rgba(255,255,255,0.54) 13px 15px);
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_finance {
+        --sig-a: rgba(16, 185, 129, 0.42);
+        --sig-b: rgba(59, 130, 246, 0.28);
+        --sig-line: rgba(5, 150, 105, 0.50);
+        --sig-shadow: rgba(16, 185, 129, 0.20);
+        --sig-symbol:
+            radial-gradient(circle at 26% 62%, rgba(16,185,129,0.56), transparent 8%),
+            radial-gradient(circle at 48% 42%, rgba(59,130,246,0.48), transparent 8%),
+            radial-gradient(circle at 72% 34%, rgba(34,197,94,0.54), transparent 8%),
+            linear-gradient(135deg, transparent 0 45%, rgba(5,150,105,0.50) 46% 52%, transparent 53% 100%);
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_details {
+        --sig-a: rgba(14, 165, 233, 0.36);
+        --sig-b: rgba(99, 102, 241, 0.26);
+        --sig-line: rgba(2, 132, 199, 0.44);
+        --sig-shadow: rgba(14, 165, 233, 0.17);
+        --sig-symbol:
+            radial-gradient(circle at 30% 30%, rgba(2,132,199,0.58) 0 5%, transparent 6%),
+            radial-gradient(circle at 70% 30%, rgba(99,102,241,0.48) 0 5%, transparent 6%),
+            radial-gradient(circle at 30% 70%, rgba(45,212,191,0.48) 0 5%, transparent 6%),
+            radial-gradient(circle at 70% 70%, rgba(14,165,233,0.58) 0 5%, transparent 6%),
+            linear-gradient(90deg, transparent 0 48%, rgba(2,132,199,0.35) 49% 51%, transparent 52%),
+            linear-gradient(0deg, transparent 0 48%, rgba(2,132,199,0.35) 49% 51%, transparent 52%);
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_diary {
+        --sig-a: rgba(244, 114, 182, 0.34);
+        --sig-b: rgba(251, 191, 36, 0.26);
+        --sig-line: rgba(219, 39, 119, 0.40);
+        --sig-shadow: rgba(244, 114, 182, 0.18);
+        --sig-symbol:
+            linear-gradient(135deg, transparent 0 36%, rgba(219,39,119,0.48) 37% 43%, transparent 44%),
+            linear-gradient(90deg, transparent 0 24%, rgba(251,191,36,0.28) 25% 76%, transparent 77%),
+            repeating-linear-gradient(0deg, transparent 0 12px, rgba(219,39,119,0.22) 13px 15px);
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_settings {
+        --sig-a: rgba(100, 116, 139, 0.34);
+        --sig-b: rgba(14, 165, 233, 0.22);
+        --sig-line: rgba(71, 85, 105, 0.46);
+        --sig-shadow: rgba(71, 85, 105, 0.18);
+        --sig-symbol:
+            repeating-conic-gradient(from 0deg, rgba(71,85,105,0.52) 0 10deg, transparent 10deg 24deg),
+            radial-gradient(circle, rgba(255,255,255,0.94) 0 28%, transparent 29% 100%);
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_guide {
+        --sig-a: rgba(250, 204, 21, 0.42);
+        --sig-b: rgba(59, 130, 246, 0.28);
+        --sig-line: rgba(202, 138, 4, 0.42);
+        --sig-shadow: rgba(250, 204, 21, 0.18);
+        --sig-symbol:
+            conic-gradient(from 45deg, transparent 0 12%, rgba(202,138,4,0.54) 12% 18%, transparent 18% 62%, rgba(59,130,246,0.46) 62% 68%, transparent 68%),
+            radial-gradient(circle, rgba(255,255,255,0.88) 0 12%, transparent 13% 100%),
+            linear-gradient(90deg, transparent 0 48%, rgba(202,138,4,0.34) 49% 51%, transparent 52%),
+            linear-gradient(0deg, transparent 0 48%, rgba(202,138,4,0.34) 49% 51%, transparent 52%);
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button {
+        position: relative !important;
+        isolation: isolate;
+        overflow: hidden !important;
+        width: min(136px, 100%) !important;
+        height: auto !important;
+        min-height: 0 !important;
+        aspect-ratio: 1 / 1 !important;
+        max-width: 136px;
+        margin: 0 auto !important;
+        border-radius: 999px !important;
+        border: 1px solid rgba(59, 130, 246, 0.18) !important;
+        color: #0f172a !important;
+        -webkit-text-fill-color: #0f172a !important;
+        background:
+            radial-gradient(circle at 30% 22%, rgba(255,255,255,0.96), transparent 23%),
+            radial-gradient(circle at 72% 78%, var(--sig-a), transparent 42%),
+            conic-gradient(from 130deg, var(--sig-a), rgba(255,255,255,0.92), var(--sig-b), rgba(255,255,255,0.88), var(--sig-a)),
+            linear-gradient(145deg, rgba(255,255,255,0.94), rgba(224,242,254,0.80)) !important;
+        box-shadow:
+            0 20px 42px var(--sig-shadow),
+            inset 0 0 0 1px rgba(255,255,255,0.62),
+            inset 0 0 34px rgba(255,255,255,0.34) !important;
+        transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button::before {
+        content: "";
+        position: absolute;
+        inset: 10px;
+        z-index: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        opacity: 0.84;
+        background:
+            radial-gradient(circle at 30% 24%, rgba(255,255,255,0.78), transparent 16%),
+            var(--sig-symbol);
+        filter: saturate(1.08);
+        animation: signatureBreath 5.5s ease-in-out infinite;
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button::after {
+        content: "";
+        position: absolute;
+        inset: 3px;
+        z-index: 1;
+        border-radius: inherit;
+        pointer-events: none;
+        opacity: 0.78;
+        border: 1px solid var(--sig-line);
+        background:
+            conic-gradient(from 0deg, transparent 0 12%, var(--sig-line) 13% 16%, transparent 17% 52%, rgba(255,255,255,0.64) 53% 56%, transparent 57% 100%);
+        mask: radial-gradient(circle, transparent 0 57%, #000 58% 100%);
+        -webkit-mask: radial-gradient(circle, transparent 0 57%, #000 58% 100%);
+        animation: signatureOrbit 12s linear infinite;
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button p,
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button span,
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button div {
+        position: relative;
+        z-index: 2;
+        color: #0f172a !important;
+        -webkit-text-fill-color: #0f172a !important;
+        font-weight: 900 !important;
+        text-shadow: 0 1px 8px rgba(255,255,255,0.86);
+        line-height: 1.08 !important;
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button:hover {
+        transform: translateY(-4px) scale(1.025);
+        border-color: var(--sig-line) !important;
+        box-shadow:
+            0 0 0 8px rgba(255,255,255,0.42),
+            0 24px 52px var(--sig-shadow),
+            0 0 38px var(--sig-a),
+            inset 0 0 0 1px rgba(255,255,255,0.68) !important;
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        background:
+            radial-gradient(circle at 34% 22%, rgba(255,255,255,0.38), transparent 21%),
+            radial-gradient(circle at 50% 56%, var(--sig-a), transparent 54%),
+            conic-gradient(from 120deg, var(--sig-line), var(--sig-a), var(--sig-b), var(--sig-line)),
+            linear-gradient(135deg, #2563eb, #06b6d4 52%, #10b981) !important;
+        border-color: rgba(255, 255, 255, 0.56) !important;
+        box-shadow:
+            0 0 0 10px rgba(125, 211, 252, 0.23),
+            0 0 48px var(--sig-a),
+            0 24px 52px var(--sig-shadow),
+            inset 0 0 34px rgba(255,255,255,0.18) !important;
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] p,
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] span,
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] div {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.22);
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"]::before {
+        opacity: 0.52;
+        filter: saturate(1.3) brightness(1.12);
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"]::after {
+        opacity: 0.95;
+        border-color: rgba(255,255,255,0.74);
+    }
+    @keyframes signatureBreath {
+        0%, 100% { transform: scale(0.94); opacity: 0.70; }
+        50% { transform: scale(1.04); opacity: 0.95; }
+    }
+    @keyframes signatureOrbit {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    @media (max-width: 920px) {
+        html body .stApp .st-key-circle_nav {
+            padding: 24px 18px !important;
+        }
+        html body .stApp .st-key-circle_nav div[data-testid="stButton"] button {
+            width: min(116px, 100%) !important;
+            max-width: 116px;
+        }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+st.markdown(
+    """
+    <style>
+    html body .stApp .st-key-circle_nav .st-key-nav_life {
+        --nav-core: #14b8a6;
+        --nav-core-2: #38bdf8;
+        --nav-soft: rgba(45, 212, 191, 0.24);
+        --nav-icon: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cpath d=%22M32 7c8 8 12 15 12 24 0 11-7 20-12 26-5-6-12-15-12-26 0-9 4-16 12-24Z%22 fill=%22black%22/%3E%3Cpath d=%22M18 36c8-2 20-2 28 0M32 18v30M23 26c6 3 12 3 18 0%22 fill=%22none%22 stroke=%22black%22 stroke-width=%225%22 stroke-linecap=%22round%22/%3E%3C/svg%3E');
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_search {
+        --nav-core: #2563eb;
+        --nav-core-2: #22d3ee;
+        --nav-soft: rgba(59, 130, 246, 0.22);
+        --nav-icon: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Ccircle cx=%2228%22 cy=%2228%22 r=%2217%22 fill=%22none%22 stroke=%22black%22 stroke-width=%227%22/%3E%3Cpath d=%22M41 41l15 15%22 stroke=%22black%22 stroke-width=%227%22 stroke-linecap=%22round%22/%3E%3Cpath d=%22M18 28h20M28 18v20%22 stroke=%22black%22 stroke-width=%224%22 stroke-linecap=%22round%22 opacity=%22.65%22/%3E%3C/svg%3E');
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_compare {
+        --nav-core: #7c3aed;
+        --nav-core-2: #60a5fa;
+        --nav-soft: rgba(124, 58, 237, 0.20);
+        --nav-icon: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cpath d=%22M32 10v44M16 18h32M16 18l-9 18h18l-9-18ZM48 18l-9 18h18l-9-18ZM20 54h24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%225%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E');
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_portfolio {
+        --nav-core: #22c55e;
+        --nav-core-2: #facc15;
+        --nav-soft: rgba(34, 197, 94, 0.20);
+        --nav-icon: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cpath d=%22M32 8a24 24 0 1 0 24 24H32V8Z%22 fill=%22black%22/%3E%3Cpath d=%22M38 8v18h18A24 24 0 0 0 38 8Z%22 fill=%22black%22 opacity=%22.55%22/%3E%3Cpath d=%22M18 42h20%22 stroke=%22white%22 stroke-width=%224%22 stroke-linecap=%22round%22 opacity=%22.9%22/%3E%3C/svg%3E');
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_reit {
+        --nav-core: #f59e0b;
+        --nav-core-2: #2dd4bf;
+        --nav-soft: rgba(245, 158, 11, 0.22);
+        --nav-icon: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cpath d=%22M10 56h44M16 56V20h17v36M35 56V10h15v46%22 fill=%22none%22 stroke=%22black%22 stroke-width=%226%22 stroke-linejoin=%22round%22/%3E%3Cpath d=%22M22 28h5M22 38h5M41 18h4M41 28h4M41 38h4%22 stroke=%22black%22 stroke-width=%224%22 stroke-linecap=%22round%22/%3E%3C/svg%3E');
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_finance {
+        --nav-core: #10b981;
+        --nav-core-2: #3b82f6;
+        --nav-soft: rgba(16, 185, 129, 0.22);
+        --nav-icon: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cpath d=%22M12 22h40a6 6 0 0 1 6 6v22a6 6 0 0 1-6 6H12a6 6 0 0 1-6-6V18a6 6 0 0 1 6-6h32%22 fill=%22none%22 stroke=%22black%22 stroke-width=%226%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3Ccircle cx=%2248%22 cy=%2239%22 r=%224%22 fill=%22black%22/%3E%3Cpath d=%22M18 39h18%22 stroke=%22black%22 stroke-width=%224%22 stroke-linecap=%22round%22/%3E%3C/svg%3E');
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_details {
+        --nav-core: #0ea5e9;
+        --nav-core-2: #6366f1;
+        --nav-soft: rgba(14, 165, 233, 0.20);
+        --nav-icon: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect x=%2210%22 y=%2210%22 width=%2244%22 height=%2244%22 rx=%228%22 fill=%22none%22 stroke=%22black%22 stroke-width=%226%22/%3E%3Cpath d=%22M20 24h24M20 34h10M38 34h6M20 44h24%22 stroke=%22black%22 stroke-width=%224%22 stroke-linecap=%22round%22/%3E%3Cpath d=%22M20 24l7 10-7 10%22 fill=%22none%22 stroke=%22black%22 stroke-width=%224%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 opacity=%22.65%22/%3E%3C/svg%3E');
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_diary {
+        --nav-core: #ec4899;
+        --nav-core-2: #fbbf24;
+        --nav-soft: rgba(236, 72, 153, 0.18);
+        --nav-icon: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cpath d=%22M14 10h30a8 8 0 0 1 8 8v36H18a6 6 0 0 1-6-6V12a2 2 0 0 1 2-2Z%22 fill=%22none%22 stroke=%22black%22 stroke-width=%226%22 stroke-linejoin=%22round%22/%3E%3Cpath d=%22M24 24h16M24 34h14M24 44h9%22 stroke=%22black%22 stroke-width=%224%22 stroke-linecap=%22round%22/%3E%3Cpath d=%22M45 13v38%22 stroke=%22black%22 stroke-width=%224%22 opacity=%22.45%22/%3E%3C/svg%3E');
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_settings {
+        --nav-core: #64748b;
+        --nav-core-2: #38bdf8;
+        --nav-soft: rgba(100, 116, 139, 0.18);
+        --nav-icon: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cpath d=%22M32 8l5 8 9-1 3 9 7 5-5 8 1 9-9 3-5 7-8-5-9 1-3-9-7-5 5-8-1-9 9-3 5-7 8 5Z%22 fill=%22none%22 stroke=%22black%22 stroke-width=%225%22 stroke-linejoin=%22round%22/%3E%3Ccircle cx=%2232%22 cy=%2232%22 r=%229%22 fill=%22none%22 stroke=%22black%22 stroke-width=%225%22/%3E%3C/svg%3E');
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_guide {
+        --nav-core: #facc15;
+        --nav-core-2: #3b82f6;
+        --nav-soft: rgba(250, 204, 21, 0.20);
+        --nav-icon: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Ccircle cx=%2232%22 cy=%2232%22 r=%2224%22 fill=%22none%22 stroke=%22black%22 stroke-width=%225%22/%3E%3Cpath d=%22M41 18l-6 17-17 6 6-17 17-6Z%22 fill=%22black%22/%3E%3Ccircle cx=%2232%22 cy=%2232%22 r=%223%22 fill=%22white%22/%3E%3C/svg%3E');
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button {
+        display: flex !important;
+        align-items: flex-end !important;
+        justify-content: center !important;
+        padding: 74px 12px 22px !important;
+        color: #102033 !important;
+        -webkit-text-fill-color: #102033 !important;
+        background:
+            radial-gradient(circle at 30% 22%, rgba(255,255,255,0.98), transparent 23%),
+            radial-gradient(circle at 52% 30%, color-mix(in srgb, var(--nav-core) 26%, transparent), transparent 26%),
+            radial-gradient(circle at 72% 78%, var(--nav-soft), transparent 42%),
+            conic-gradient(from 130deg, color-mix(in srgb, var(--nav-core) 30%, white), rgba(255,255,255,0.94), color-mix(in srgb, var(--nav-core-2) 26%, white), rgba(255,255,255,0.88), color-mix(in srgb, var(--nav-core) 30%, white)),
+            linear-gradient(145deg, rgba(255,255,255,0.96), rgba(224,242,254,0.82)) !important;
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button::before {
+        content: "";
+        position: absolute;
+        top: 22px;
+        left: 50%;
+        width: 46px;
+        height: 46px;
+        z-index: 2;
+        border-radius: 16px;
+        pointer-events: none;
+        opacity: 1;
+        transform: translateX(-50%);
+        background:
+            linear-gradient(135deg, var(--nav-core), var(--nav-core-2)) !important;
+        box-shadow:
+            0 10px 24px color-mix(in srgb, var(--nav-core) 30%, transparent),
+            0 0 0 10px rgba(255, 255, 255, 0.32);
+        -webkit-mask: var(--nav-icon) center / 100% 100% no-repeat;
+        mask: var(--nav-icon) center / 100% 100% no-repeat;
+        filter: drop-shadow(0 2px 4px rgba(255,255,255,0.62));
+        animation: navIconFloat 5.2s ease-in-out infinite;
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button::after {
+        border-color: color-mix(in srgb, var(--nav-core) 42%, white) !important;
+        background:
+            conic-gradient(from 0deg, transparent 0 12%, color-mix(in srgb, var(--nav-core) 52%, transparent) 13% 17%, transparent 18% 52%, rgba(255,255,255,0.76) 53% 57%, transparent 58% 100%) !important;
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button p,
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button span,
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button div {
+        color: #102033 !important;
+        -webkit-text-fill-color: #102033 !important;
+        font-size: 1rem !important;
+        letter-spacing: 0 !important;
+        line-height: 1.05 !important;
+        text-shadow: 0 1px 9px rgba(255,255,255,0.92);
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        background:
+            radial-gradient(circle at 35% 18%, rgba(255,255,255,0.42), transparent 22%),
+            radial-gradient(circle at 52% 32%, color-mix(in srgb, var(--nav-core-2) 54%, transparent), transparent 28%),
+            conic-gradient(from 120deg, var(--nav-core), var(--nav-core-2), rgba(255,255,255,0.72), var(--nav-core)),
+            linear-gradient(135deg, var(--nav-core), var(--nav-core-2)) !important;
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"]::before {
+        opacity: 1;
+        background: #ffffff !important;
+        box-shadow:
+            0 10px 28px color-mix(in srgb, var(--nav-core) 34%, transparent),
+            0 0 0 11px rgba(255,255,255,0.20);
+        filter: drop-shadow(0 2px 6px rgba(0,0,0,0.16));
+        transform: translateX(-50%) scale(1.03);
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] p,
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] span,
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] div {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.24);
+    }
+    @keyframes navIconFloat {
+        0%, 100% { transform: translateX(-50%) translateY(0) scale(1); }
+        50% { transform: translateX(-50%) translateY(-3px) scale(1.04); }
+    }
+    @media (max-width: 920px) {
+        html body .stApp .st-key-circle_nav div[data-testid="stButton"] button {
+            padding: 62px 8px 18px !important;
+        }
+        html body .stApp .st-key-circle_nav div[data-testid="stButton"] button::before {
+            width: 38px;
+            height: 38px;
+            top: 18px;
+        }
+        html body .stApp .st-key-circle_nav div[data-testid="stButton"] button p {
+            font-size: 0.88rem !important;
+        }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 
 def get_finnhub_api_key() -> str:
     try:
@@ -4856,7 +5270,7 @@ def render_circle_navigation(active_key: str) -> None:
         for start in range(0, len(NAV_ITEMS), 5):
             cols = st.columns(5, gap="medium")
             for col, item in zip(cols, NAV_ITEMS[start : start + 5]):
-                button_label = f"{item['icon']}\n{item['label']}"
+                button_label = item["label"]
                 with col:
                     st.button(
                         button_label,
