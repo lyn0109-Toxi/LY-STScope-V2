@@ -2227,6 +2227,105 @@ st.markdown(
         color: #64748b !important;
         opacity: 1 !important;
     }
+    div[data-testid="stButton"] button:not([kind="primary"]),
+    div[data-testid="stFormSubmitButton"] button,
+    div[data-testid="stDownloadButton"] button {
+        color: #ffffff !important;
+        background:
+            radial-gradient(circle at 30% 20%, rgba(255,255,255,0.16), transparent 24%),
+            linear-gradient(135deg, #1f2937 0%, #111827 58%, #0f172a 100%) !important;
+        border-color: rgba(226, 232, 240, 0.32) !important;
+        box-shadow: 0 14px 30px rgba(15, 23, 42, 0.18), inset 0 0 18px rgba(255,255,255,0.05) !important;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.24);
+    }
+    div[data-testid="stButton"] button:not([kind="primary"]) *,
+    div[data-testid="stFormSubmitButton"] button *,
+    div[data-testid="stDownloadButton"] button * {
+        color: #ffffff !important;
+    }
+    div[data-testid="stButton"] button:not([kind="primary"]):hover,
+    div[data-testid="stFormSubmitButton"] button:hover,
+    div[data-testid="stDownloadButton"] button:hover {
+        color: #ffffff !important;
+        border-color: rgba(125, 211, 252, 0.64) !important;
+        background:
+            radial-gradient(circle at 30% 20%, rgba(255,255,255,0.20), transparent 24%),
+            linear-gradient(135deg, #273449 0%, #172033 56%, #111827 100%) !important;
+        box-shadow: 0 18px 36px rgba(14, 116, 144, 0.16), inset 0 0 22px rgba(125,211,252,0.06) !important;
+    }
+    .st-key-circle_nav div[data-testid="stButton"] button:not([kind="primary"]) {
+        color: #102033 !important;
+        background:
+            radial-gradient(circle at 34% 22%, rgba(255,255,255,0.86), transparent 24%),
+            radial-gradient(circle at 50% 56%, rgba(125,211,252,0.24), transparent 58%),
+            linear-gradient(145deg, rgba(255,255,255,0.86), rgba(224,242,254,0.74)) !important;
+        border-color: rgba(37, 99, 235, 0.16) !important;
+        text-shadow: none;
+    }
+    .st-key-circle_nav div[data-testid="stButton"] button:not([kind="primary"]) * {
+        color: #102033 !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+st.markdown(
+    """
+    <style>
+    html body .stApp div[data-testid="stButton"] button,
+    html body .stApp div[data-testid="stFormSubmitButton"] button,
+    html body .stApp div[data-testid="stDownloadButton"] button {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+    }
+    html body .stApp div[data-testid="stButton"] button p,
+    html body .stApp div[data-testid="stButton"] button span,
+    html body .stApp div[data-testid="stButton"] button div,
+    html body .stApp div[data-testid="stFormSubmitButton"] button p,
+    html body .stApp div[data-testid="stFormSubmitButton"] button span,
+    html body .stApp div[data-testid="stFormSubmitButton"] button div,
+    html body .stApp div[data-testid="stDownloadButton"] button p,
+    html body .stApp div[data-testid="stDownloadButton"] button span,
+    html body .stApp div[data-testid="stDownloadButton"] button div {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        opacity: 1 !important;
+    }
+    html body .stApp div[data-testid="stButton"] button:disabled,
+    html body .stApp div[data-testid="stFormSubmitButton"] button:disabled,
+    html body .stApp div[data-testid="stDownloadButton"] button:disabled {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        opacity: 0.92 !important;
+    }
+    html body .stApp div[data-testid="stButton"] button:disabled p,
+    html body .stApp div[data-testid="stButton"] button:disabled span,
+    html body .stApp div[data-testid="stButton"] button:disabled div,
+    html body .stApp div[data-testid="stFormSubmitButton"] button:disabled p,
+    html body .stApp div[data-testid="stFormSubmitButton"] button:disabled span,
+    html body .stApp div[data-testid="stFormSubmitButton"] button:disabled div,
+    html body .stApp div[data-testid="stDownloadButton"] button:disabled p,
+    html body .stApp div[data-testid="stDownloadButton"] button:disabled span,
+    html body .stApp div[data-testid="stDownloadButton"] button:disabled div {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        opacity: 1 !important;
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button,
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button p,
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button span,
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button div {
+        color: #102033 !important;
+        -webkit-text-fill-color: #102033 !important;
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"],
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] p,
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] span,
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] div {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+    }
     </style>
     """,
     unsafe_allow_html=True,
