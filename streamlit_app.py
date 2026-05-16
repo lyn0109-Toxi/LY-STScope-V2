@@ -2754,8 +2754,10 @@ def get_finnhub_api_key() -> str:
 
 
 FINNHUB_API_KEY = get_finnhub_api_key()
-RISK_FREE_RATE = 0.045
-EQUITY_RISK_PREMIUM = 0.045
+DEFAULT_RISK_FREE_RATE = 0.045
+DEFAULT_EQUITY_RISK_PREMIUM = 0.045
+RISK_FREE_RATE = DEFAULT_RISK_FREE_RATE
+EQUITY_RISK_PREMIUM = DEFAULT_EQUITY_RISK_PREMIUM
 
 
 GUIDE_PDF_PATH = Path(__file__).with_name("LY-STScope_User_Guide.pdf")
@@ -2988,6 +2990,14 @@ def init_state() -> None:
     st.session_state.setdefault("portfolio_base_currency", "USD")
     st.session_state.setdefault("manual_usdkrw", 1350.0)
     st.session_state.setdefault("use_live_fx", True)
+    st.session_state.setdefault("risk_free_rate_pct", DEFAULT_RISK_FREE_RATE * 100)
+    st.session_state.setdefault("equity_risk_premium_pct", DEFAULT_EQUITY_RISK_PREMIUM * 100)
+    st.session_state.setdefault("macro_risk_free_rate_pct_text", f"{DEFAULT_RISK_FREE_RATE * 100:.2f}")
+    st.session_state.setdefault("macro_equity_risk_premium_pct_text", f"{DEFAULT_EQUITY_RISK_PREMIUM * 100:.2f}")
+    st.session_state.setdefault(
+        "_macro_assumptions_applied",
+        (DEFAULT_RISK_FREE_RATE * 100, DEFAULT_EQUITY_RISK_PREMIUM * 100),
+    )
     st.session_state.setdefault("last_query", "")
     st.session_state.setdefault("selected_detail", None)
     st.session_state.setdefault("comments", [])
@@ -3073,6 +3083,18 @@ def effective_usdkrw() -> tuple[float, str, str]:
         if live.get("rate"):
             return float(live["rate"]), str(live.get("source") or "Yahoo Finance KRW=X"), str(live.get("date") or "Latest")
     return manual_rate, "Manual fallback", "User input"
+
+
+def macro_assumptions() -> tuple[float, float]:
+    risk_free_rate = float(
+        st.session_state.get("risk_free_rate_pct", DEFAULT_RISK_FREE_RATE * 100)
+        or DEFAULT_RISK_FREE_RATE * 100
+    )
+    equity_risk_premium = float(
+        st.session_state.get("equity_risk_premium_pct", DEFAULT_EQUITY_RISK_PREMIUM * 100)
+        or DEFAULT_EQUITY_RISK_PREMIUM * 100
+    )
+    return max(risk_free_rate, 0.0) / 100, max(equity_risk_premium, 0.0) / 100
 
 
 def convert_value(value: float, from_currency: str, to_currency: str, usdkrw: float) -> float:
@@ -3251,7 +3273,8 @@ def calculate_valuation(stock: dict[str, Any]) -> dict[str, Any]:
     peer_pe = float(stock.get("peer_average_pe") or 15)
     price = float(stock.get("price") or 0)
 
-    expected_return = RISK_FREE_RATE + beta * EQUITY_RISK_PREMIUM
+    risk_free_rate, equity_risk_premium = macro_assumptions()
+    expected_return = risk_free_rate + beta * equity_risk_premium
     max_implied_pe = 50
     values = []
 
@@ -3296,6 +3319,8 @@ def calculate_valuation(stock: dict[str, Any]) -> dict[str, Any]:
     stock.update(
         {
             "expected_return": expected_return,
+            "risk_free_rate": risk_free_rate,
+            "equity_risk_premium": equity_risk_premium,
             "fair_price": fair_price,
             "valuation_status": status,
             "triangulation": {
@@ -3308,6 +3333,14 @@ def calculate_valuation(stock: dict[str, Any]) -> dict[str, Any]:
         }
     )
     return stock
+
+
+def recalculate_loaded_stocks() -> int:
+    count = 0
+    for symbol, stock in list(st.session_state.get("stocks", {}).items()):
+        st.session_state.stocks[symbol] = calculate_valuation(stock)
+        count += 1
+    return count
 
 
 def load_korean_stock(query: str) -> dict[str, Any]:
@@ -4413,6 +4446,7 @@ def calculation_details_tab() -> None:
             - **Income Approach:** Gordon Growth Model when dividends are available; otherwise EPS capitalization.
             - **Asset Approach:** Graham Number = square root of `22.5 x EPS x Book Value per Share`.
             - **Market Approach:** `EPS x Peer Average P/E`.
+            - **CAPM Required Return:** `Risk-Free Rate + Beta x Equity Risk Premium`; users can adjust these assumptions in Settings.
             - **Valuation Status:** if current price is more than 5% above fair value, it is marked Overvalued; if more than 5% below, Undervalued.
             """
         )
@@ -4428,6 +4462,9 @@ def calculation_details_tab() -> None:
                     {"Input": "Book Value / Share", "Value": stock_money(stock, float(stock.get("book_value") or 0))},
                     {"Input": "Dividend / Share", "Value": stock_money(stock, float(stock.get("dividend") or 0))},
                     {"Input": "Beta", "Value": fmt_number(stock.get("beta"))},
+                    {"Input": "Risk-Free Rate", "Value": f"{float(stock.get('risk_free_rate') or macro_assumptions()[0]) * 100:.2f}%"},
+                    {"Input": "Equity Risk Premium", "Value": f"{float(stock.get('equity_risk_premium') or macro_assumptions()[1]) * 100:.2f}%"},
+                    {"Input": "CAPM Required Return", "Value": f"{float(stock.get('expected_return') or 0) * 100:.2f}%"},
                     {"Input": "Growth Rate", "Value": f"{float(stock.get('growth_rate') or 0) * 100:.1f}%"},
                     {"Input": "Peer Average P/E", "Value": fmt_number(stock.get("peer_average_pe"))},
                 ],
@@ -4847,8 +4884,78 @@ def settings_tab() -> None:
         """
     )
     st.subheader("Macroeconomic Variables")
-    st.write(f"Risk-Free Rate: **{RISK_FREE_RATE * 100:.2f}%**")
-    st.write(f"Equity Risk Premium: **{EQUITY_RISK_PREMIUM * 100:.2f}%**")
+    st.caption(
+        "The app starts with 4.50% for both values. Users can revise these assumptions, "
+        "and the updated values will be reflected in CAPM required return and valuation calculations."
+    )
+
+    if st.button("Reset macro assumptions to 4.50%", use_container_width=True):
+        st.session_state.risk_free_rate_pct = DEFAULT_RISK_FREE_RATE * 100
+        st.session_state.equity_risk_premium_pct = DEFAULT_EQUITY_RISK_PREMIUM * 100
+        st.session_state.macro_risk_free_rate_pct_text = f"{DEFAULT_RISK_FREE_RATE * 100:.2f}"
+        st.session_state.macro_equity_risk_premium_pct_text = f"{DEFAULT_EQUITY_RISK_PREMIUM * 100:.2f}"
+        st.session_state["_macro_assumptions_applied"] = (
+            DEFAULT_RISK_FREE_RATE * 100,
+            DEFAULT_EQUITY_RISK_PREMIUM * 100,
+        )
+        recalculated = recalculate_loaded_stocks()
+        st.success(
+            "Default assumptions restored."
+            + (f" {recalculated} loaded stock(s) were recalculated." if recalculated else "")
+        )
+
+    with st.form("macro_assumptions_form"):
+        macro_cols = st.columns(2)
+        with macro_cols[0]:
+            risk_free_pct_text = st.text_input(
+                "Risk-Free Rate (%)",
+                value=f"{float(st.session_state.get('risk_free_rate_pct', DEFAULT_RISK_FREE_RATE * 100)):.2f}",
+                help="Used as the base rate in CAPM. Enter a percent value such as 4.50.",
+            )
+        with macro_cols[1]:
+            equity_risk_premium_pct_text = st.text_input(
+                "Equity Risk Premium (%)",
+                value=f"{float(st.session_state.get('equity_risk_premium_pct', DEFAULT_EQUITY_RISK_PREMIUM * 100)):.2f}",
+                help="Used as the market risk premium in CAPM. Enter a percent value such as 4.50.",
+            )
+        apply_macro = st.form_submit_button(
+            "Apply macro assumptions to calculations",
+            type="primary",
+            use_container_width=True,
+        )
+
+    if apply_macro:
+        try:
+            risk_free_pct = float(str(risk_free_pct_text).strip().replace("%", ""))
+            equity_risk_premium_pct = float(str(equity_risk_premium_pct_text).strip().replace("%", ""))
+        except ValueError:
+            st.error("Please enter valid numeric percentages, for example 4.50 or 5.25.")
+            return
+
+        if risk_free_pct < 0 or equity_risk_premium_pct < 0:
+            st.error("Macro assumptions cannot be negative.")
+            return
+        if risk_free_pct > 25 or equity_risk_premium_pct > 25:
+            st.error("Please keep macro assumptions at or below 25.00%.")
+            return
+
+        st.session_state.risk_free_rate_pct = risk_free_pct
+        st.session_state.equity_risk_premium_pct = equity_risk_premium_pct
+        st.session_state.macro_risk_free_rate_pct_text = f"{risk_free_pct:.2f}"
+        st.session_state.macro_equity_risk_premium_pct_text = f"{equity_risk_premium_pct:.2f}"
+        current_macro = (round(risk_free_pct, 4), round(equity_risk_premium_pct, 4))
+        recalculated = recalculate_loaded_stocks()
+        st.session_state["_macro_assumptions_applied"] = current_macro
+        if recalculated:
+            st.success(f"Updated assumptions applied. {recalculated} loaded stock(s) were recalculated.")
+        else:
+            st.info("Updated assumptions saved. New stock searches will use these values.")
+
+    risk_free_rate, equity_risk_premium = macro_assumptions()
+    st.info(
+        f"Current CAPM assumption: Required Return = {risk_free_rate * 100:.2f}% "
+        f"+ Beta x {equity_risk_premium * 100:.2f}%."
+    )
 
 
 def guide_tab() -> None:
