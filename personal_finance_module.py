@@ -46,7 +46,8 @@ def render_personal_finance() -> None:
         unsafe_allow_html=True,
     )
     st.caption(
-        "This module is educational decision support. It does not provide financial, tax, legal, or investment advice."
+        "Educational prototype only. Do not enter sensitive personal financial information. "
+        "This module does not provide financial, tax, legal, or investment advice."
     )
 
     st.subheader("Financial Inputs")

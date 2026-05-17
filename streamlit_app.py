@@ -2745,6 +2745,45 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+st.markdown(
+    """
+    <style>
+    html body .stApp div[data-testid="stForm"] {
+        background:
+            radial-gradient(circle at 18% 12%, rgba(125, 211, 252, 0.16), transparent 26%),
+            linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(22, 38, 57, 0.88)) !important;
+        border-color: rgba(14, 165, 233, 0.52) !important;
+    }
+    html body .stApp div[data-testid="stForm"] div[data-testid="stTextInput"] label,
+    html body .stApp div[data-testid="stForm"] div[data-testid="stTextInput"] label *,
+    html body .stApp div[data-testid="stForm"] div[data-testid="stWidgetLabel"],
+    html body .stApp div[data-testid="stForm"] div[data-testid="stWidgetLabel"] *,
+    html body .stApp div[data-testid="stForm"] label,
+    html body .stApp div[data-testid="stForm"] label p,
+    html body .stApp div[data-testid="stForm"] label span {
+        color: #f8fafc !important;
+        -webkit-text-fill-color: #f8fafc !important;
+        opacity: 1 !important;
+        font-weight: 900 !important;
+        text-shadow: 0 1px 7px rgba(0, 0, 0, 0.28) !important;
+    }
+    html body .stApp div[data-testid="stForm"] button[title],
+    html body .stApp div[data-testid="stForm"] button[aria-label*="Help"] {
+        color: #e0f2fe !important;
+        -webkit-text-fill-color: #e0f2fe !important;
+        opacity: 0.95 !important;
+    }
+    html body .stApp div[data-testid="stForm"] div[data-baseweb="input"] {
+        border-color: #22d3ee !important;
+        box-shadow:
+            0 0 0 4px rgba(34, 211, 238, 0.18),
+            0 12px 28px rgba(2, 6, 23, 0.20) !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 
 def get_finnhub_api_key() -> str:
     try:
@@ -5095,6 +5134,28 @@ def guide_tab() -> None:
         External users do not need to enter a key, and the token is not stored in their browser.
         """
     )
+    st.markdown(
+        """
+        - Risk-Free Rate and Equity Risk Premium begin at 4.50% each, but users can update them in Settings.
+        - Updated macro assumptions are applied to CAPM required return and valuation calculations.
+        - API keys should never be pasted into public code, screenshots, or browser-side scripts.
+        """
+    )
+
+    st.subheader("11. Data, Privacy, and License")
+    st.warning(
+        "Prototype privacy notice: do not enter sensitive personal financial information such as bank "
+        "account numbers, tax IDs, passwords, or confidential financial records."
+    )
+    st.markdown(
+        """
+        - LY-STScope is an educational prototype, not financial, investment, tax, legal, accounting, or professional advice.
+        - Market data and charts may be provided by Finnhub, TradingView, Yahoo Finance, and yfinance, subject to their own terms.
+        - TradingView attribution should remain visible when chart widgets are used.
+        - Third-party company names, ticker symbols, trademarks, and data remain the property of their respective owners.
+        - For commercial use, review `LICENSE`, `DATA_SOURCES.md`, `PRIVACY_NOTICE.md`, and `THIRD_PARTY_NOTICES.md`.
+        """
+    )
 
 
 def remove_sidebar_item(collection: str, symbol: str, key: str) -> None:
@@ -5186,12 +5247,13 @@ def render_footer() -> None:
     st.markdown(
         """
         <div class="app-footer">
-            <b>LY-STScope</b> is provided for educational and informational use only and does not constitute
-            financial, investment, legal, tax, or professional advice. Market data and charts may be provided
-            by third-party services such as Finnhub, TradingView, and Yahoo Finance, subject to their own terms.
+            <b>LY-STScope</b> is provided for educational and informational use only and does not constitute or provide
+            financial, investment, legal, tax, accounting, or professional advice. Do not enter sensitive personal financial information
+            into this prototype. Market data and charts may be provided
+            by third-party services such as Finnhub, TradingView, and Yahoo Finance/yfinance, subject to their own terms.
             All trademarks, company names, and ticker symbols remain the property of their respective owners.
             This interface uses original CSS/HTML design elements and does not claim ownership of third-party data,
-            logos, or trademarks.
+            logos, or trademarks. Data may be delayed, incomplete, or unavailable and should be verified independently.
         </div>
         """,
         unsafe_allow_html=True,

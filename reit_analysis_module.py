@@ -675,7 +675,9 @@ def main(include_sidebar: bool = True) -> None:
 
     st.divider()
     st.caption(
-        "LY-STScope Ver.2 is an educational prototype. It does not provide investment, legal, tax, or financial advice."
+        "LY-STScope Ver.2 is an educational prototype. It does not provide investment, legal, tax, "
+        "financial, accounting, or professional advice. Third-party market data remains subject to "
+        "the terms of its providers."
     )
 
 
