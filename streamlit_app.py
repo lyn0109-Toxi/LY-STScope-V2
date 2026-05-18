@@ -2984,8 +2984,7 @@ st.markdown(
             line-height: 1.35;
         }
         html body .stApp .nav-flow-strip {
-            grid-template-columns: 1fr;
-            margin-bottom: 10px;
+            display: none !important;
         }
         html body .stApp .st-key-circle_nav {
             display: none !important;
@@ -3019,6 +3018,319 @@ st.markdown(
 st.markdown(
     """
     <style>
+    html body .stApp .mobile-only-deck {
+        display: none;
+    }
+    html body .stApp .mobile-card-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin: 12px 0 16px;
+    }
+    html body .stApp .mobile-card,
+    html body .stApp .mobile-holding-card,
+    html body .stApp .mobile-diary-card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 18px;
+        border: 1px solid rgba(14, 165, 233, 0.20);
+        background:
+            radial-gradient(circle at 16% 18%, rgba(34, 211, 238, 0.16), transparent 32%),
+            linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 249, 255, 0.86));
+        box-shadow: 0 14px 32px rgba(14, 165, 233, 0.10);
+    }
+    html body .stApp .mobile-card {
+        padding: 14px;
+        min-height: 98px;
+    }
+    html body .stApp .mobile-card .eyebrow,
+    html body .stApp .mobile-holding-card .eyebrow,
+    html body .stApp .mobile-diary-card .eyebrow {
+        margin: 0 0 7px;
+        color: #0f766e;
+        font-size: 0.68rem;
+        font-weight: 950;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+    html body .stApp .mobile-card .value {
+        color: #0f172a;
+        font-size: 1.22rem;
+        line-height: 1.05;
+        font-weight: 950;
+        overflow-wrap: anywhere;
+    }
+    html body .stApp .mobile-card .label,
+    html body .stApp .mobile-card .hint,
+    html body .stApp .mobile-holding-card .hint,
+    html body .stApp .mobile-diary-card .hint {
+        display: block;
+        margin-top: 6px;
+        color: #475569;
+        font-size: 0.82rem;
+        line-height: 1.28;
+        font-weight: 760;
+    }
+    html body .stApp .mobile-focus-card {
+        margin: 12px 0;
+        padding: 16px;
+        border-radius: 20px;
+        border: 1px solid rgba(14, 165, 233, 0.22);
+        background:
+            radial-gradient(circle at 88% 18%, rgba(139, 92, 246, 0.13), transparent 30%),
+            linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(236, 253, 245, 0.86));
+        box-shadow: 0 16px 36px rgba(14, 165, 233, 0.12);
+    }
+    html body .stApp .mobile-focus-card h3 {
+        margin: 0 0 8px;
+        color: #0f172a;
+        font-size: 1.05rem;
+        line-height: 1.15;
+        font-weight: 950;
+    }
+    html body .stApp .mobile-focus-card p {
+        margin: 0;
+        color: #334155;
+        line-height: 1.38;
+        font-weight: 760;
+    }
+    html body .stApp .mobile-holding-grid,
+    html body .stApp .mobile-diary-feed {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin: 10px 0 16px;
+    }
+    html body .stApp .mobile-holding-card,
+    html body .stApp .mobile-diary-card {
+        padding: 14px;
+    }
+    html body .stApp .mobile-holding-card .title,
+    html body .stApp .mobile-diary-card .title {
+        color: #0f172a;
+        font-size: 1rem;
+        line-height: 1.18;
+        font-weight: 950;
+        overflow-wrap: anywhere;
+    }
+    html body .stApp .mobile-holding-card .meta,
+    html body .stApp .mobile-diary-card .meta {
+        margin-top: 8px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+    html body .stApp .mobile-mini-stat {
+        padding: 8px 9px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.66);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+    }
+    html body .stApp .mobile-mini-stat b {
+        display: block;
+        color: #0f172a;
+        font-size: 0.9rem;
+        line-height: 1.1;
+        overflow-wrap: anywhere;
+    }
+    html body .stApp .mobile-mini-stat span {
+        display: block;
+        margin-top: 3px;
+        color: #64748b;
+        font-size: 0.68rem;
+        line-height: 1;
+        font-weight: 850;
+        text-transform: uppercase;
+    }
+    html body .stApp .mobile-positive {
+        color: #059669 !important;
+    }
+    html body .stApp .mobile-negative {
+        color: #dc2626 !important;
+    }
+    html body .stApp .mobile-link-nav {
+        display: none;
+    }
+    html body .stApp .mobile-link-nav a {
+        flex: 0 0 auto;
+        min-width: 82px;
+        padding: 10px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(14, 165, 233, 0.20);
+        background: rgba(255, 255, 255, 0.82);
+        color: #0f172a;
+        font-size: 0.78rem;
+        line-height: 1;
+        font-weight: 900;
+        text-align: center;
+        text-decoration: none;
+        box-shadow: 0 8px 20px rgba(14, 165, 233, 0.08);
+        white-space: nowrap;
+    }
+    html body .stApp .mobile-link-nav a.active {
+        border-color: rgba(255, 255, 255, 0.72);
+        background: linear-gradient(135deg, #0ea5e9, #14b8a6);
+        color: #ffffff;
+        box-shadow: 0 12px 28px rgba(14, 165, 233, 0.22);
+    }
+    html body .stApp .mobile-view-summary {
+        margin: 10px auto 16px;
+    }
+    html body .stApp .mobile-view-summary .mobile-card-grid {
+        margin-bottom: 0;
+    }
+    html body .stApp .mobile-orbit-nav {
+        display: none;
+    }
+    html body .stApp .mobile-orbit-shell {
+        position: relative;
+        width: min(354px, 96vw);
+        height: 354px;
+        margin: 10px auto 16px;
+        border-radius: 30px;
+        border: 1px solid rgba(14, 165, 233, 0.20);
+        background:
+            radial-gradient(circle at 50% 50%, rgba(255,255,255,0.96), rgba(240,249,255,0.82) 58%, rgba(236,253,245,0.74)),
+            linear-gradient(135deg, rgba(255,255,255,0.94), rgba(240,249,255,0.82));
+        box-shadow: 0 18px 42px rgba(14, 165, 233, 0.12);
+        overflow: hidden;
+    }
+    html body .stApp .mobile-orbit-shell::before {
+        content: "";
+        position: absolute;
+        inset: 26px;
+        border-radius: 50%;
+        border: 1px solid rgba(14, 165, 233, 0.18);
+        background:
+            conic-gradient(from 0deg, rgba(14,165,233,0.0), rgba(14,165,233,0.24), rgba(20,184,166,0.10), rgba(14,165,233,0.0));
+        animation: mobileOrbitSpin 24s linear infinite;
+        opacity: 0.72;
+    }
+    html body .stApp .mobile-orbit-shell::after {
+        content: "";
+        position: absolute;
+        inset: 70px;
+        border-radius: 50%;
+        border: 1px dashed rgba(15, 118, 110, 0.20);
+    }
+    html body .stApp .mobile-orbit-center,
+    html body .stApp .mobile-orbit-item,
+    html body .stApp .mobile-orbit-mini {
+        position: absolute;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        text-decoration: none;
+        color: #0f172a;
+        -webkit-text-fill-color: #0f172a;
+        box-shadow: 0 12px 28px rgba(14, 165, 233, 0.13);
+    }
+    html body .stApp .mobile-orbit-center {
+        left: 50%;
+        top: 50%;
+        width: 116px;
+        height: 116px;
+        transform: translate(-50%, -50%);
+        flex-direction: column;
+        gap: 5px;
+        border-radius: 50%;
+        border: 2px solid rgba(20, 184, 166, 0.36);
+        background: linear-gradient(135deg, rgba(14,165,233,0.95), rgba(20,184,166,0.88));
+        color: #ffffff;
+        -webkit-text-fill-color: #ffffff;
+    }
+    html body .stApp .mobile-orbit-center b {
+        font-size: 1.03rem;
+        line-height: 1;
+        font-weight: 950;
+    }
+    html body .stApp .mobile-orbit-center span {
+        font-size: 0.64rem;
+        line-height: 1;
+        font-weight: 850;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+    html body .stApp .mobile-orbit-item {
+        width: 68px;
+        height: 68px;
+        flex-direction: column;
+        gap: 4px;
+        border-radius: 50%;
+        border: 1px solid rgba(14, 165, 233, 0.24);
+        background:
+            radial-gradient(circle at 28% 22%, rgba(255,255,255,0.98), transparent 34%),
+            linear-gradient(135deg, rgba(255,255,255,0.92), rgba(236,253,245,0.76));
+    }
+    html body .stApp .mobile-orbit-item b {
+        font-size: 0.88rem;
+        line-height: 1;
+        font-weight: 950;
+    }
+    html body .stApp .mobile-orbit-item span {
+        font-size: 0.55rem;
+        line-height: 1;
+        font-weight: 850;
+        letter-spacing: 0;
+    }
+    html body .stApp .mobile-orbit-item.active,
+    html body .stApp .mobile-orbit-center.active,
+    html body .stApp .mobile-orbit-mini.active {
+        border-color: rgba(255,255,255,0.78);
+        background: linear-gradient(135deg, #0ea5e9, #14b8a6);
+        color: #ffffff;
+        -webkit-text-fill-color: #ffffff;
+        box-shadow: 0 16px 32px rgba(14, 165, 233, 0.24);
+    }
+    html body .stApp .mobile-orbit-top { left: calc(50% - 34px); top: 14px; }
+    html body .stApp .mobile-orbit-top-right { right: 48px; top: 48px; }
+    html body .stApp .mobile-orbit-right { right: 14px; top: calc(50% - 34px); }
+    html body .stApp .mobile-orbit-bottom-right { right: 48px; bottom: 48px; }
+    html body .stApp .mobile-orbit-bottom { left: calc(50% - 34px); bottom: 14px; }
+    html body .stApp .mobile-orbit-bottom-left { left: 48px; bottom: 48px; }
+    html body .stApp .mobile-orbit-left { left: 14px; top: calc(50% - 34px); }
+    html body .stApp .mobile-orbit-top-left { left: 48px; top: 48px; }
+    html body .stApp .mobile-orbit-mini-row {
+        position: absolute;
+        z-index: 3;
+        left: 50%;
+        bottom: 86px;
+        display: flex;
+        gap: 8px;
+        transform: translateX(-50%);
+    }
+    html body .stApp .mobile-orbit-mini {
+        position: relative;
+        min-width: 62px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(14, 165, 233, 0.20);
+        background: rgba(255,255,255,0.82);
+        font-size: 0.68rem;
+        font-weight: 900;
+    }
+    @keyframes mobileOrbitSpin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    html body .stApp .st-key-mobile_nav div[data-testid="stButton"] button:not([kind="primary"]),
+    html body .stApp .st-key-mobile_nav div[data-testid="stButton"] button:not([kind="primary"]) p,
+    html body .stApp .st-key-mobile_nav div[data-testid="stButton"] button:not([kind="primary"]) span,
+    html body .stApp .st-key-mobile_nav div[data-testid="stButton"] button:not([kind="primary"]) div {
+        color: #0f172a !important;
+        -webkit-text-fill-color: #0f172a !important;
+        text-shadow: none !important;
+    }
+    html body .stApp .st-key-mobile_nav div[data-testid="stButton"] button[kind="primary"],
+    html body .stApp .st-key-mobile_nav div[data-testid="stButton"] button[kind="primary"] p,
+    html body .stApp .st-key-mobile_nav div[data-testid="stButton"] button[kind="primary"] span,
+    html body .stApp .st-key-mobile_nav div[data-testid="stButton"] button[kind="primary"] div {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        text-shadow: 0 1px 8px rgba(15, 23, 42, 0.22) !important;
+    }
     html body .stApp div[data-testid="stForm"] {
         background:
             radial-gradient(circle at 18% 12%, rgba(125, 211, 252, 0.16), transparent 26%),
@@ -3049,6 +3361,60 @@ st.markdown(
         box-shadow:
             0 0 0 4px rgba(34, 211, 238, 0.18),
             0 12px 28px rgba(2, 6, 23, 0.20) !important;
+    }
+    @media (max-width: 680px) {
+        html body .stApp .mobile-only-deck {
+            display: block;
+        }
+        html body .stApp .mobile-link-nav {
+            position: fixed;
+            left: 50%;
+            right: auto;
+            bottom: max(10px, env(safe-area-inset-bottom));
+            z-index: 50;
+            display: flex !important;
+            gap: 8px;
+            overflow-x: auto;
+            width: min(380px, 96%);
+            margin: 0;
+            padding: 9px;
+            transform: translateX(-50%);
+            border-radius: 18px;
+            border: 1px solid rgba(14, 165, 233, 0.18);
+            background: rgba(248, 252, 255, 0.88);
+            box-shadow: 0 14px 30px rgba(14, 165, 233, 0.12);
+            backdrop-filter: blur(16px);
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        html body .stApp .mobile-orbit-nav {
+            display: block;
+        }
+        html body .stApp .mobile-link-nav::-webkit-scrollbar {
+            display: none;
+        }
+        html body .stApp .block-container {
+            padding-bottom: 96px;
+        }
+        html body .stApp .mobile-card-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        html body .stApp .mobile-card {
+            min-height: 86px;
+            padding: 12px;
+        }
+        html body .stApp .mobile-card .value {
+            font-size: 1.02rem;
+        }
+        html body .stApp .mobile-card .label,
+        html body .stApp .mobile-card .hint {
+            font-size: 0.75rem;
+        }
+        html body .stApp .mobile-holding-card .meta,
+        html body .stApp .mobile-diary-card .meta {
+            grid-template-columns: 1fr 1fr;
+        }
     }
     </style>
     """,
@@ -3085,6 +3451,8 @@ HOMEPAGE_BG_PATH = Path(__file__).parent / "assets" / "homepage_life_design.png"
 DEVELOPER_NAME = "Young Lee"
 DEVELOPER_EMAIL = "lyn0109@gmail.com"
 LIFE_ENTRY_VERSION = "life-homepage-2026-05-15-v4"
+MAX_DIARY_RESTORE_BYTES = 250_000
+MAX_DIARY_RESTORE_ENTRIES = 50
 
 
 @st.cache_data(show_spinner=False)
@@ -3794,8 +4162,8 @@ def metric_card(label: str, value: str, color: str = "#102033") -> None:
     st.markdown(
         f"""
         <div class="metric-card">
-            <div class="label">{label}</div>
-            <div class="value" style="color:{color};">{value}</div>
+            <div class="label">{escape(str(label))}</div>
+            <div class="value" style="color:{escape(str(color))};">{escape(str(value))}</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -3851,7 +4219,10 @@ def render_stock_card(stock: dict[str, Any]) -> None:
     compare_active = symbol in st.session_state.compare
     portfolio_active = symbol in st.session_state.portfolio
     detail_href = f"?detail={quote(symbol)}"
-    logo_text = symbol[:2].upper()
+    safe_symbol = escape(str(symbol))
+    safe_industry = escape(str(stock.get("industry", "N/A")))
+    safe_status = escape(str(status))
+    logo_text = escape(str(symbol[:2].upper()))
     with st.container(border=True):
         st.markdown(
             f"""
@@ -3861,7 +4232,7 @@ def render_stock_card(stock: dict[str, Any]) -> None:
                     <div class="company-logo">{logo_text}</div>
                     <div>
                         <div class="company-title">{escape(str(stock['name']))}</div>
-                        <div class="company-meta"><span class="ticker-pill">{symbol}</span>{stock['industry']}</div>
+                        <div class="company-meta"><span class="ticker-pill">{safe_symbol}</span>{safe_industry}</div>
                     </div>
                 </div>
                 <div class="stock-card-price">
@@ -3869,7 +4240,7 @@ def render_stock_card(stock: dict[str, Any]) -> None:
                         <div class="price">{stock_money(stock, stock['price'])}</div>
                         <div style="color:{'#059669' if stock['change_pct'] >= 0 else '#dc2626'};font-weight:850;margin-top:7px;">{stock['change_pct']:+.2f}% today</div>
                     </div>
-                    <span class="status-chip" style="background:{status_color(status)};">{status}</span>
+                    <span class="status-chip" style="background:{status_color(status)};">{safe_status}</span>
                 </div>
                 <div class="stock-card-stats">
                     <span>Market Cap<b>{fmt_market_cap(stock['market_cap'], stock.get('currency', 'USD'))}</b></span>
@@ -4773,6 +5144,93 @@ def portfolio_gain_loss_summary(holdings: list[dict[str, Any]] | None = None) ->
     }
 
 
+def mobile_signed_class(value: Any) -> str:
+    numeric = safe_float(value, 4)
+    if numeric is None:
+        return ""
+    return "mobile-positive" if numeric >= 0 else "mobile-negative"
+
+
+def render_mobile_portfolio_deck(
+    current_holdings: list[tuple],
+    total_value: float,
+    weighted_beta: float | None,
+    valuation_score: float | None,
+    total_cost_basis: float,
+    total_unrealized_gain: float | None,
+    total_unrealized_return_pct: float | None,
+) -> None:
+    base_currency = st.session_state.get("portfolio_base_currency", "USD")
+    value_text = fmt_money(total_value, base_currency)
+    beta_text = fmt_number(weighted_beta)
+    valuation_text = "N/A" if valuation_score is None else f"{valuation_score:+.1f}%"
+    cost_text = "Missing" if total_cost_basis <= 0 else fmt_money(total_cost_basis, base_currency)
+    pnl_text = (
+        "Needs cost basis"
+        if total_unrealized_gain is None
+        else fmt_signed_money(total_unrealized_gain, base_currency)
+    )
+    return_text = "N/A" if total_unrealized_return_pct is None else f"{total_unrealized_return_pct:+.1f}%"
+    pnl_class = mobile_signed_class(total_unrealized_gain)
+
+    holding_cards = []
+    current_total = sum(float(item[5]) for item in current_holdings)
+    for item in current_holdings[:6]:
+        (
+            symbol,
+            stock,
+            shares,
+            purchase_price,
+            _native_value,
+            base_value,
+            _native_cost_basis,
+            _base_cost_basis,
+            base_unrealized_gain,
+            unrealized_return_pct,
+        ) = item
+        weight = base_value / current_total * 100 if current_total else 0
+        holding_return = "N/A" if unrealized_return_pct is None else f"{unrealized_return_pct:+.1f}%"
+        holding_pnl = fmt_signed_money(base_unrealized_gain, base_currency)
+        holding_class = mobile_signed_class(base_unrealized_gain)
+        purchase_text = "Missing" if purchase_price <= 0 else stock_money(stock, purchase_price)
+        holding_cards.append(
+            f"""
+            <div class="mobile-holding-card">
+                <div class="eyebrow">Holding</div>
+                <div class="title">{escape(symbol)} · {escape(str(stock.get("name", symbol)))}</div>
+                <span class="hint">{shares:g} shares · cost {escape(purchase_text)}</span>
+                <div class="meta">
+                    <div class="mobile-mini-stat"><b>{escape(fmt_money(base_value, base_currency))}</b><span>Market</span></div>
+                    <div class="mobile-mini-stat"><b class="{holding_class}">{escape(holding_pnl)}</b><span>P/L</span></div>
+                    <div class="mobile-mini-stat"><b>{holding_return}</b><span>Return</span></div>
+                    <div class="mobile-mini-stat"><b>{weight:.1f}%</b><span>Weight</span></div>
+                </div>
+            </div>
+            """
+        )
+
+    st.markdown(
+        f"""
+        <div class="mobile-only-deck">
+            <div class="mobile-focus-card">
+                <h3>Mobile Portfolio Snapshot</h3>
+                <p>Start with value, cost basis, P/L, and risk readiness. The wide table below remains available for desktop-style review.</p>
+            </div>
+            <div class="mobile-card-grid">
+                <div class="mobile-card"><div class="eyebrow">Value</div><div class="value">{escape(value_text)}</div><span class="label">Current market value</span></div>
+                <div class="mobile-card"><div class="eyebrow">Cost</div><div class="value">{escape(cost_text)}</div><span class="label">Entered cost basis</span></div>
+                <div class="mobile-card"><div class="eyebrow">P/L</div><div class="value {pnl_class}">{escape(pnl_text)}</div><span class="label">Unrealized return {escape(return_text)}</span></div>
+                <div class="mobile-card"><div class="eyebrow">Risk</div><div class="value">{escape(beta_text)}</div><span class="label">Weighted beta · valuation {escape(valuation_text)}</span></div>
+            </div>
+            <div class="mobile-holding-grid">
+                {''.join(holding_cards)}
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def build_financial_snapshot(note: str, mood: str, next_action: str) -> dict[str, Any]:
     total_value, weighted_beta, valuation_score, _ = portfolio_metrics()
     usdkrw, fx_source, fx_date = effective_usdkrw()
@@ -5262,6 +5720,46 @@ def format_ai_coach_direct_links(
     return "### Direct App Links\n" + "\n".join(rows)
 
 
+def render_mobile_ai_coach_deck(context: dict[str, Any], readiness: dict[str, Any]) -> None:
+    portfolio = context["portfolio"]
+    personal = context.get("personal") or {}
+    missing = context.get("missing", [])
+    holdings = portfolio.get("holdings", [])
+    base_currency = portfolio.get("base_currency", "USD")
+    gain_loss = portfolio_gain_loss_summary(holdings)
+    pnl_text = (
+        "Needs cost basis"
+        if gain_loss.get("unrealized_gain") is None
+        else fmt_signed_money(gain_loss.get("unrealized_gain"), base_currency)
+    )
+    pnl_class = mobile_signed_class(gain_loss.get("unrealized_gain"))
+    health_text = (
+        "Missing"
+        if not personal
+        else f"{float(personal.get('financial_health_score') or 0):.1f}/100"
+    )
+    next_needed = missing[0] if missing else "Ready for focused question"
+    scenario_status = "Ready" if context.get("scenario") else "Run once"
+
+    st.markdown(
+        f"""
+        <div class="mobile-only-deck">
+            <div class="mobile-focus-card">
+                <h3>Mobile AI Coach Brief</h3>
+                <p>Use this as the phone-first control panel: readiness, missing context, portfolio P/L, and the next question to ask.</p>
+            </div>
+            <div class="mobile-card-grid">
+                <div class="mobile-card"><div class="eyebrow">Readiness</div><div class="value">{escape(readiness['label'])}</div><span class="label">{readiness['score']:.0f}/100 rule-based</span></div>
+                <div class="mobile-card"><div class="eyebrow">Next Input</div><div class="value">{escape(next_needed)}</div><span class="label">Fill this first</span></div>
+                <div class="mobile-card"><div class="eyebrow">Portfolio P/L</div><div class="value {pnl_class}">{escape(pnl_text)}</div><span class="label">{len(holdings)} holding(s)</span></div>
+                <div class="mobile-card"><div class="eyebrow">Finance</div><div class="value">{escape(health_text)}</div><span class="label">Scenario {escape(scenario_status)}</span></div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def detect_ai_coach_intent(question: str) -> str:
     q = question.lower()
     if any(token in q for token in ("ready", "readiness", "invest", "투자", "준비")):
@@ -5282,6 +5780,52 @@ def compact_text(value: Any, max_chars: int = 360) -> str:
     if len(text) <= max_chars:
         return text
     return text[: max_chars - 3].rstrip() + "..."
+
+
+def clean_restored_json_value(value: Any, max_depth: int = 3) -> Any:
+    if max_depth <= 0:
+        return compact_text(value, 300)
+    if isinstance(value, dict):
+        cleaned: dict[str, Any] = {}
+        for key, item in list(value.items())[:40]:
+            cleaned[compact_text(key, 80)] = clean_restored_json_value(item, max_depth - 1)
+        return cleaned
+    if isinstance(value, list):
+        return [clean_restored_json_value(item, max_depth - 1) for item in value[:100]]
+    if isinstance(value, str):
+        return compact_text(value, 1200)
+    if isinstance(value, (int, float, bool)) or value is None:
+        return value
+    return compact_text(value, 300)
+
+
+def clean_restored_diary_entries(restored: Any) -> list[dict[str, Any]]:
+    if not isinstance(restored, list):
+        raise ValueError("The uploaded diary file must contain a list of entries.")
+    if len(restored) > MAX_DIARY_RESTORE_ENTRIES:
+        raise ValueError(f"Diary restore is limited to {MAX_DIARY_RESTORE_ENTRIES} entries.")
+
+    cleaned_entries: list[dict[str, Any]] = []
+    for entry in restored:
+        if not isinstance(entry, dict):
+            raise ValueError("Each diary entry must be a JSON object.")
+        cleaned_entries.append(
+            {
+                "time": compact_text(entry.get("time", "Restored"), 80),
+                "mood": compact_text(entry.get("mood", "Restored"), 40),
+                "note": compact_text(entry.get("note", ""), 1800),
+                "next_action": compact_text(entry.get("next_action", ""), 600),
+                "base_currency": compact_text(entry.get("base_currency", "USD"), 12),
+                "usdkrw": clean_restored_json_value(entry.get("usdkrw")),
+                "fx_source": compact_text(entry.get("fx_source", ""), 80),
+                "fx_date": compact_text(entry.get("fx_date", ""), 40),
+                "portfolio": clean_restored_json_value(entry.get("portfolio", {})),
+                "risk": clean_restored_json_value(entry.get("risk")),
+                "complementarity": clean_restored_json_value(entry.get("complementarity")),
+                "personal_finance": clean_restored_json_value(entry.get("personal_finance", {})),
+            }
+        )
+    return cleaned_entries
 
 
 def safe_float(value: Any, digits: int = 4) -> float | None:
@@ -5817,6 +6361,8 @@ def render_ai_coach() -> None:
         unsafe_allow_html=True,
     )
 
+    render_mobile_ai_coach_deck(context, readiness)
+
     with st.expander("Verified AI Model Settings", expanded=False):
         if OPENAI_API_KEY:
             st.success(f"OPENAI_API_KEY is configured. Model: {OPENAI_MODEL}.")
@@ -6284,6 +6830,96 @@ def build_current_situation_report_text() -> str:
     return "\n".join(lines)
 
 
+def render_mobile_diary_deck(report_text: str) -> None:
+    context = ai_coach_context_snapshot()
+    readiness = ai_coach_readiness(context)
+    diary = st.session_state.get("financial_diary", [])
+    latest = diary[-1] if diary else {}
+    portfolio = context["portfolio"]
+    holdings = portfolio.get("holdings", [])
+    gain_loss = portfolio_gain_loss_summary(holdings)
+    base_currency = portfolio.get("base_currency", "USD")
+    pnl_text = (
+        "No cost basis"
+        if gain_loss.get("unrealized_gain") is None
+        else fmt_signed_money(gain_loss.get("unrealized_gain"), base_currency)
+    )
+    pnl_class = mobile_signed_class(gain_loss.get("unrealized_gain"))
+    latest_action = latest.get("next_action") or "Save today's next action"
+    report_lines = len([line for line in report_text.splitlines() if line.strip()])
+
+    st.markdown(
+        f"""
+        <div class="mobile-only-deck">
+            <div class="mobile-focus-card">
+                <h3>Mobile Diary Memory</h3>
+                <p>The diary becomes AI memory only when you save a snapshot. Keep notes short, non-sensitive, and action-oriented.</p>
+            </div>
+            <div class="mobile-card-grid">
+                <div class="mobile-card"><div class="eyebrow">Readiness</div><div class="value">{escape(readiness['label'])}</div><span class="label">{readiness['score']:.0f}/100 now</span></div>
+                <div class="mobile-card"><div class="eyebrow">Entries</div><div class="value">{len(diary)}</div><span class="label">Session memory</span></div>
+                <div class="mobile-card"><div class="eyebrow">P/L Context</div><div class="value {pnl_class}">{escape(pnl_text)}</div><span class="label">Portfolio link</span></div>
+                <div class="mobile-card"><div class="eyebrow">Report</div><div class="value">{report_lines}</div><span class="label">Lines ready</span></div>
+            </div>
+            <div class="mobile-diary-feed">
+                <div class="mobile-diary-card">
+                    <div class="eyebrow">Next Action</div>
+                    <div class="title">{escape(compact_text(latest_action, 180))}</div>
+                    <span class="hint">Use this as the first sentence for AI Coach reflection.</span>
+                </div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def render_mobile_saved_diary_cards(entries: list[dict[str, Any]]) -> None:
+    cards = []
+    for idx, entry in reversed(list(enumerate(entries, start=1))):
+        if len(cards) >= 4:
+            break
+        portfolio = entry.get("portfolio", {})
+        gain_loss = portfolio.get("gain_loss") or {}
+        personal = entry.get("personal_finance") or {}
+        base_currency = entry.get("base_currency", "USD")
+        entry_gain = gain_loss.get("unrealized_gain")
+        pnl_text = fmt_signed_money(entry_gain, base_currency) if entry_gain is not None else "N/A"
+        pnl_class = mobile_signed_class(entry_gain)
+        health_text = (
+            "N/A"
+            if not personal
+            else f"{float(personal.get('financial_health_score', 0)):.1f}/100"
+        )
+        cards.append(
+            f"""
+            <div class="mobile-diary-card">
+                <div class="eyebrow">Entry {idx}</div>
+                <div class="title">{escape(str(entry.get("time", "No time")))} · {escape(str(entry.get("mood", "N/A")))}</div>
+                <span class="hint">{escape(compact_text(entry.get("next_action") or "No next action recorded.", 180))}</span>
+                <div class="meta">
+                    <div class="mobile-mini-stat"><b>{escape(fmt_money(portfolio.get("total_market_value"), base_currency))}</b><span>Portfolio</span></div>
+                    <div class="mobile-mini-stat"><b class="{pnl_class}">{escape(pnl_text)}</b><span>P/L</span></div>
+                    <div class="mobile-mini-stat"><b>{escape(health_text)}</b><span>Health</span></div>
+                    <div class="mobile-mini-stat"><b>{len(portfolio.get("holdings") or [])}</b><span>Holdings</span></div>
+                </div>
+            </div>
+            """
+        )
+
+    if cards:
+        st.markdown(
+            f"""
+            <div class="mobile-only-deck">
+                <div class="mobile-diary-feed">
+                    {''.join(cards)}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+
 def financial_diary_tab() -> None:
     st.markdown(
         """
@@ -6300,6 +6936,7 @@ def financial_diary_tab() -> None:
 
     st.subheader("Current Situation Report")
     report_text = build_current_situation_report_text()
+    render_mobile_diary_deck(report_text)
     st.text_area(
         "Auto-generated report from Portfolio and Personal Finance",
         value=report_text,
@@ -6367,12 +7004,16 @@ def financial_diary_tab() -> None:
     uploaded = st.file_uploader("Restore diary JSON", type=["json"], key="diary_restore")
     if uploaded is not None:
         try:
-            restored = json.loads(uploaded.getvalue().decode("utf-8"))
-            if isinstance(restored, list):
-                st.session_state.financial_diary = restored
-                st.success("Diary restored for this session.")
-            else:
-                st.warning("The uploaded diary file must contain a list of entries.")
+            if getattr(uploaded, "size", 0) and uploaded.size > MAX_DIARY_RESTORE_BYTES:
+                st.warning("Diary restore file is too large for this public prototype.")
+                return
+            raw_bytes = uploaded.getvalue()
+            if len(raw_bytes) > MAX_DIARY_RESTORE_BYTES:
+                st.warning("Diary restore file is too large for this public prototype.")
+                return
+            restored = json.loads(raw_bytes.decode("utf-8"))
+            st.session_state.financial_diary = clean_restored_diary_entries(restored)
+            st.success("Diary restored for this session.")
         except Exception as exc:
             st.warning(f"Could not restore diary file: {exc}")
 
@@ -6405,6 +7046,7 @@ def financial_diary_tab() -> None:
                 else f"{float(personal.get('financial_health_score', 0)):.1f}/100",
             }
         )
+    render_mobile_saved_diary_cards(st.session_state.financial_diary)
     st.dataframe(summary_rows, hide_index=True, width="stretch")
 
     for idx, entry in reversed(list(enumerate(st.session_state.financial_diary, start=1))):
@@ -6562,6 +7204,7 @@ def portfolio_tab() -> None:
     )
 
     if not st.session_state.portfolio:
+        render_mobile_portfolio_deck([], total_value, weighted_beta, valuation_score, 0, None, None)
         st.info("No stocks in your portfolio yet. Add them from the search results.")
         st.button(
             "Ask AI Coach About Portfolio Setup",
@@ -6675,6 +7318,16 @@ def portfolio_tab() -> None:
             metric_card("Unrealized Return", f"{total_unrealized_return_pct:+.1f}%", pl_color)
     else:
         st.info("Enter each holding's average purchase price to compare your cost basis with current market value.")
+
+    render_mobile_portfolio_deck(
+        current_holdings,
+        current_total_value,
+        weighted_beta,
+        valuation_score,
+        total_cost_basis,
+        total_unrealized_gain,
+        total_unrealized_return_pct,
+    )
 
     st.button(
         "Ask AI Coach About Portfolio P/L",
@@ -7351,27 +8004,111 @@ def render_circle_navigation(active_key: str) -> None:
 
 
 def render_mobile_navigation(active_key: str) -> None:
-    mobile_items = [
-        {"key": "ai", "label": "AI Coach"},
-        {"key": "scenario", "label": "Scenario"},
-        {"key": "finance", "label": "Finance"},
-        {"key": "portfolio", "label": "Portfolio"},
-        {"key": "diary", "label": "Diary"},
-        {"key": "search", "label": "Search"},
+    orbit_items = [
+        {"key": "life", "label": "Life", "icon": "LF", "slot": "mobile-orbit-top"},
+        {"key": "ai", "label": "AI", "icon": "AI", "slot": "mobile-orbit-top-right"},
+        {"key": "portfolio", "label": "Port", "icon": "PF", "slot": "mobile-orbit-right"},
+        {"key": "scenario", "label": "Scenario", "icon": "SC", "slot": "mobile-orbit-bottom-right"},
+        {"key": "search", "label": "Search", "icon": "SR", "slot": "mobile-orbit-bottom"},
+        {"key": "details", "label": "Details", "icon": "DT", "slot": "mobile-orbit-bottom-left"},
+        {"key": "finance", "label": "Finance", "icon": "FI", "slot": "mobile-orbit-left"},
+        {"key": "reit", "label": "REIT", "icon": "RE", "slot": "mobile-orbit-top-left"},
     ]
-    with st.container(key="mobile_nav"):
-        for start in range(0, len(mobile_items), 2):
-            cols = st.columns(2, gap="small")
-            for col, item in zip(cols, mobile_items[start : start + 2]):
-                with col:
-                    st.button(
-                        item["label"],
-                        key=f"mobile_nav_{item['key']}",
-                        type="primary" if item["key"] == active_key else "secondary",
-                        width="stretch",
-                        on_click=set_active_nav_key,
-                        args=(item["key"],),
-                    )
+    orbit_links = []
+    for item in orbit_items:
+        active_class = " active" if item["key"] == active_key else ""
+        orbit_links.append(
+            f'<a class="mobile-orbit-item {item["slot"]}{active_class}" href="?view={quote(item["key"])}" aria-label="{escape(item["label"])}">'
+            f'<b>{escape(item["icon"])}</b><span>{escape(item["label"])}</span></a>'
+        )
+    center_active = " active" if active_key == "diary" else ""
+    settings_active = " active" if active_key == "settings" else ""
+    guide_active = " active" if active_key == "guide" else ""
+    st.markdown(
+        (
+            '<div class="mobile-orbit-nav mobile-only-deck" aria-label="Mobile LY-STScope orbit navigation">'
+            '<div class="mobile-orbit-shell">'
+            f'{"".join(orbit_links)}'
+            f'<a class="mobile-orbit-center{center_active}" href="?view=diary" aria-label="Personal Diary">'
+            '<b>Diary</b><span>Personal Memory</span></a>'
+            '<div class="mobile-orbit-mini-row">'
+            f'<a class="mobile-orbit-mini{settings_active}" href="?view=settings">Settings</a>'
+            f'<a class="mobile-orbit-mini{guide_active}" href="?view=guide">Guide</a>'
+            '</div></div></div>'
+        ),
+        unsafe_allow_html=True,
+    )
+
+
+def render_mobile_view_summary(active_key: str) -> None:
+    title_map = {
+        "life": "Life Context",
+        "finance": "Finance Readiness",
+        "portfolio": "Portfolio Check",
+        "ai": "AI Coach",
+        "diary": "Diary Memory",
+        "scenario": "Scenario Lab",
+        "search": "Market Search",
+        "compare": "Compare",
+        "reit": "REIT",
+        "details": "Calculation Details",
+        "settings": "Settings",
+        "guide": "Guide",
+    }
+    next_map = {
+        "life": "Start with Finance or Search.",
+        "finance": "Check surplus, reserve, debt, and savings.",
+        "portfolio": "Enter shares and average purchase price.",
+        "ai": "Ask one focused question from your current data.",
+        "diary": "Save one short next action after review.",
+        "scenario": "Run one downside stress test.",
+        "search": "Search a ticker, then add it to Portfolio.",
+        "compare": "Compare up to three selected stocks.",
+        "reit": "Use REIT signals as sector education.",
+        "details": "Review formulas before trusting outputs.",
+        "settings": "Check API and macro assumptions.",
+        "guide": "Use this for professor/demo walkthroughs.",
+    }
+
+    if active_key == "finance":
+        personal = st.session_state.get("last_personal_finance_result") or {}
+        data_text = (
+            f"Health {float(personal.get('financial_health_score', 0)):.0f}/100"
+            if personal
+            else "Inputs ready"
+        )
+    elif active_key == "portfolio":
+        data_text = f"{len(st.session_state.get('portfolio', {}))} holding(s)"
+    elif active_key == "ai":
+        context = ai_coach_context_snapshot()
+        readiness = ai_coach_readiness(context)
+        data_text = f"{readiness['label']} {readiness['score']:.0f}/100"
+    elif active_key == "diary":
+        data_text = f"{len(st.session_state.get('financial_diary', []))} entr{'y' if len(st.session_state.get('financial_diary', [])) == 1 else 'ies'}"
+    elif active_key == "scenario":
+        data_text = "Packet ready" if st.session_state.get("last_scenario_packet") else "No packet yet"
+    elif active_key == "search":
+        data_text = f"{len(st.session_state.get('stocks', {}))} loaded"
+    elif active_key == "compare":
+        data_text = f"{len(st.session_state.get('compare', []))}/3 selected"
+    else:
+        data_text = "Mobile view"
+
+    st.markdown(
+        f"""
+        <div class="mobile-only-deck mobile-view-summary">
+            <div class="mobile-card-grid">
+                <div class="mobile-card"><div class="eyebrow">Now</div><div class="value">{escape(title_map.get(active_key, 'LY-STScope'))}</div><span class="label">Current screen</span></div>
+                <div class="mobile-card"><div class="eyebrow">Data</div><div class="value">{escape(data_text)}</div><span class="label">Context status</span></div>
+            </div>
+            <div class="mobile-focus-card">
+                <h3>Next mobile step</h3>
+                <p>{escape(next_map.get(active_key, 'Review the current screen, then ask AI Coach for a linked summary.'))}</p>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 def render_life_compact_panel() -> None:
@@ -7424,6 +8161,7 @@ def render_main_app() -> None:
     active_view = active_nav_key()
     render_circle_navigation(active_view)
     render_mobile_navigation(active_view)
+    render_mobile_view_summary(active_view)
 
     if active_view == "life":
         render_life_compact_panel()

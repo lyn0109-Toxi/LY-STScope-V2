@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from html import escape
 
 import altair as alt
 import pandas as pd
@@ -225,8 +226,8 @@ def metric_card(label: str, value: str, color: str = "#0f172a") -> None:
     st.markdown(
         f"""
         <div class="metric-card">
-            <div class="metric-label">{label}</div>
-            <div class="metric-value" style="color:{color};">{value}</div>
+            <div class="metric-label">{escape(str(label))}</div>
+            <div class="metric-value" style="color:{escape(str(color))};">{escape(str(value))}</div>
         </div>
         """,
         unsafe_allow_html=True,

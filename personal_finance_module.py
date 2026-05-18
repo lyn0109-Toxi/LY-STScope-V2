@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from html import escape
+
 import altair as alt
 import pandas as pd
 import streamlit as st
@@ -27,8 +29,43 @@ def pf_metric(label: str, value: str, color: str = "#0f172a") -> None:
     st.markdown(
         f"""
         <div class="metric-card">
-            <div class="metric-label">{label}</div>
-            <div class="metric-value" style="color:{color};">{value}</div>
+            <div class="metric-label">{escape(str(label))}</div>
+            <div class="metric-value" style="color:{escape(str(color))};">{escape(str(value))}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def mobile_finance_deck(result: dict[str, float | list[str]]) -> None:
+    health = float(result["financial_health_score"])
+    surplus = float(result["monthly_surplus"])
+    emergency = float(result["emergency_months"])
+    dti = float(result["debt_to_income"])
+    savings = float(result["savings_rate"])
+    risk_capacity = float(result["risk_capacity_score"])
+    surplus_class = "mobile-positive" if surplus >= 0 else "mobile-negative"
+    priority = "Build liquidity first"
+    if emergency >= 3 and surplus > 0 and dti <= 0.36:
+        priority = "Review portfolio risk"
+    if health >= 70 and risk_capacity >= 70:
+        priority = "Ready for scenario stress"
+
+    st.markdown(
+        f"""
+        <div class="mobile-only-deck">
+            <div class="mobile-focus-card">
+                <h3>Mobile Finance Readiness</h3>
+                <p>Start here before portfolio decisions. These cards compress cash flow, liquidity, debt pressure, and risk capacity into a phone-first view.</p>
+            </div>
+            <div class="mobile-card-grid">
+                <div class="mobile-card"><div class="eyebrow">Health</div><div class="value">{health:.1f}/100</div><span class="label">Financial score</span></div>
+                <div class="mobile-card"><div class="eyebrow">Surplus</div><div class="value {surplus_class}">{escape(money(surplus))}</div><span class="label">Monthly cash flow</span></div>
+                <div class="mobile-card"><div class="eyebrow">Reserve</div><div class="value">{emergency:.1f} mo</div><span class="label">Emergency fund</span></div>
+                <div class="mobile-card"><div class="eyebrow">Debt</div><div class="value">{dti * 100:.1f}%</div><span class="label">Debt-to-income</span></div>
+                <div class="mobile-card"><div class="eyebrow">Savings</div><div class="value">{savings * 100:.1f}%</div><span class="label">Savings rate</span></div>
+                <div class="mobile-card"><div class="eyebrow">Priority</div><div class="value">{escape(priority)}</div><span class="label">Next review point</span></div>
+            </div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -49,6 +86,7 @@ def render_personal_finance() -> None:
         "Educational prototype only. Do not enter sensitive personal financial information. "
         "This module does not provide financial, tax, legal, or investment advice."
     )
+    mobile_summary_slot = st.container()
 
     st.subheader("Financial Inputs")
     income_col, expense_col, asset_col = st.columns(3)
@@ -102,6 +140,9 @@ def render_personal_finance() -> None:
     result = calculate_personal_finance(profile)
     st.session_state["last_personal_finance_profile"] = profile.__dict__
     st.session_state["last_personal_finance_result"] = result
+
+    with mobile_summary_slot:
+        mobile_finance_deck(result)
 
     st.subheader("Financial Snapshot")
     c1, c2, c3 = st.columns(3)
