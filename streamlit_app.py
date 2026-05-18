@@ -2334,8 +2334,74 @@ st.markdown(
 st.markdown(
     """
     <style>
+    html body .stApp .nav-flow-strip {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 10px;
+        width: min(1180px, 94%);
+        margin: 4px auto 16px;
+        padding: 10px;
+        border: 1px solid rgba(14, 165, 233, 0.20);
+        border-radius: 18px;
+        background:
+            linear-gradient(90deg, rgba(240, 249, 255, 0.92), rgba(255, 251, 235, 0.72)),
+            rgba(255, 255, 255, 0.82);
+        box-shadow:
+            0 16px 36px rgba(14, 165, 233, 0.10),
+            inset 0 0 0 1px rgba(255,255,255,0.70);
+    }
+    html body .stApp .nav-flow-step {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 48px;
+        padding: 9px 11px;
+        border-radius: 14px;
+        color: #0f172a;
+        background: rgba(255, 255, 255, 0.68);
+        border: 1px solid rgba(148, 163, 184, 0.20);
+    }
+    html body .stApp .nav-flow-step strong {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        flex: 0 0 30px;
+        border-radius: 999px;
+        color: #ffffff;
+        font-size: 0.78rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #0ea5e9, #14b8a6);
+        box-shadow: 0 8px 18px rgba(14, 165, 233, 0.20);
+    }
+    html body .stApp .nav-flow-step span {
+        display: block;
+        color: #0f172a;
+        font-size: 0.92rem;
+        line-height: 1.05;
+        font-weight: 900;
+        letter-spacing: 0;
+    }
+    html body .stApp .nav-flow-step small {
+        display: block;
+        margin-top: 2px;
+        color: #475569;
+        font-size: 0.72rem;
+        line-height: 1;
+        font-weight: 800;
+        letter-spacing: 0;
+    }
+    html body .stApp .nav-flow-step.scenario strong {
+        background: linear-gradient(135deg, #f97316, #ef4444);
+        box-shadow: 0 8px 18px rgba(249, 115, 22, 0.20);
+    }
+    html body .stApp .nav-flow-step.ai strong {
+        background: linear-gradient(135deg, #06b6d4, #8b5cf6);
+        box-shadow: 0 8px 18px rgba(6, 182, 212, 0.20);
+    }
     html body .stApp .st-key-circle_nav {
-        padding: 34px 32px 28px !important;
+        padding: 30px 30px 28px !important;
     }
     html body .stApp .st-key-circle_nav .st-key-nav_life,
     html body .stApp .st-key-circle_nav .st-key-nav_search,
@@ -2650,11 +2716,23 @@ st.markdown(
         --nav-soft: rgba(16, 185, 129, 0.22);
         --nav-icon: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cpath d=%22M12 22h40a6 6 0 0 1 6 6v22a6 6 0 0 1-6 6H12a6 6 0 0 1-6-6V18a6 6 0 0 1 6-6h32%22 fill=%22none%22 stroke=%22black%22 stroke-width=%226%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3Ccircle cx=%2248%22 cy=%2239%22 r=%224%22 fill=%22black%22/%3E%3Cpath d=%22M18 39h18%22 stroke=%22black%22 stroke-width=%224%22 stroke-linecap=%22round%22/%3E%3C/svg%3E');
     }
+    html body .stApp .st-key-circle_nav .st-key-nav_scenario {
+        --nav-core: #f97316;
+        --nav-core-2: #ef4444;
+        --nav-soft: rgba(249, 115, 22, 0.22);
+        --nav-icon: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cpath d=%22M10 50h44%22 stroke=%22black%22 stroke-width=%226%22 stroke-linecap=%22round%22/%3E%3Cpath d=%22M13 44l11-13 10 8 13-21 7 5%22 fill=%22none%22 stroke=%22black%22 stroke-width=%226%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3Ccircle cx=%2224%22 cy=%2231%22 r=%225%22 fill=%22black%22/%3E%3Ccircle cx=%2247%22 cy=%2218%22 r=%225%22 fill=%22black%22/%3E%3C/svg%3E');
+    }
     html body .stApp .st-key-circle_nav .st-key-nav_details {
         --nav-core: #0ea5e9;
         --nav-core-2: #6366f1;
         --nav-soft: rgba(14, 165, 233, 0.20);
         --nav-icon: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect x=%2210%22 y=%2210%22 width=%2244%22 height=%2244%22 rx=%228%22 fill=%22none%22 stroke=%22black%22 stroke-width=%226%22/%3E%3Cpath d=%22M20 24h24M20 34h10M38 34h6M20 44h24%22 stroke=%22black%22 stroke-width=%224%22 stroke-linecap=%22round%22/%3E%3Cpath d=%22M20 24l7 10-7 10%22 fill=%22none%22 stroke=%22black%22 stroke-width=%224%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 opacity=%22.65%22/%3E%3C/svg%3E');
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_ai {
+        --nav-core: #06b6d4;
+        --nav-core-2: #8b5cf6;
+        --nav-soft: rgba(6, 182, 212, 0.22);
+        --nav-icon: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cpath d=%22M21 20l22 24M43 20L21 44M32 14v36M14 32h36%22 stroke=%22black%22 stroke-width=%224%22 stroke-linecap=%22round%22 opacity=%22.72%22/%3E%3Ccircle cx=%2232%22 cy=%2232%22 r=%2210%22 fill=%22black%22/%3E%3Ccircle cx=%2215%22 cy=%2215%22 r=%226%22 fill=%22black%22/%3E%3Ccircle cx=%2249%22 cy=%2215%22 r=%226%22 fill=%22black%22/%3E%3Ccircle cx=%2215%22 cy=%2249%22 r=%226%22 fill=%22black%22/%3E%3Ccircle cx=%2249%22 cy=%2249%22 r=%226%22 fill=%22black%22/%3E%3C/svg%3E');
     }
     html body .stApp .st-key-circle_nav .st-key-nav_diary {
         --nav-core: #ec4899;
@@ -2736,11 +2814,11 @@ st.markdown(
     }
     html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"]::before {
         opacity: 1;
-        background: #ffffff !important;
+        background: #0f172a !important;
         box-shadow:
-            0 10px 28px color-mix(in srgb, var(--nav-core) 34%, transparent),
-            0 0 0 11px rgba(255,255,255,0.20);
-        filter: drop-shadow(0 2px 6px rgba(0,0,0,0.16));
+            0 10px 28px rgba(15,23,42,0.20),
+            0 0 0 11px rgba(255,255,255,0.28);
+        filter: drop-shadow(0 2px 6px rgba(255,255,255,0.36));
         transform: translateX(-50%) scale(1.03);
     }
     html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] p,
@@ -2755,6 +2833,10 @@ st.markdown(
         50% { transform: translateX(-50%) translateY(-3px) scale(1.04); }
     }
     @media (max-width: 920px) {
+        html body .stApp .nav-flow-strip {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            width: min(720px, 94%);
+        }
         html body .stApp .st-key-circle_nav div[data-testid="stButton"] button {
             padding: 62px 8px 18px !important;
         }
@@ -2765,6 +2847,11 @@ st.markdown(
         }
         html body .stApp .st-key-circle_nav div[data-testid="stButton"] button p {
             font-size: 0.88rem !important;
+        }
+    }
+    @media (max-width: 560px) {
+        html body .stApp .nav-flow-strip {
+            grid-template-columns: 1fr;
         }
     }
     </style>
@@ -5723,17 +5810,17 @@ def render_life_entry_screen(standalone: bool = True) -> None:
 
 NAV_ITEMS = [
     {"key": "life", "label": "Life", "icon": "LF"},
+    {"key": "finance", "label": "Finance", "icon": "FI"},
+    {"key": "portfolio", "label": "Portfolio", "icon": "PF"},
+    {"key": "diary", "label": "Diary", "icon": "DY"},
     {"key": "search", "label": "Search", "icon": "SR"},
     {"key": "compare", "label": "Compare", "icon": "CP"},
-    {"key": "portfolio", "label": "Portfolio", "icon": "PF"},
     {"key": "reit", "label": "REIT", "icon": "RE"},
-    {"key": "finance", "label": "Finance", "icon": "FI"},
-    {"key": "scenario", "label": "Scenario", "icon": "SC"},
     {"key": "details", "label": "Details", "icon": "DT"},
+    {"key": "scenario", "label": "Scenario", "icon": "SC"},
     {"key": "ai", "label": "AI Ready", "icon": "AI"},
-    {"key": "diary", "label": "Diary", "icon": "DY"},
-    {"key": "settings", "label": "Settings", "icon": "SE"},
     {"key": "guide", "label": "Guide", "icon": "GD"},
+    {"key": "settings", "label": "Settings", "icon": "SE"},
 ]
 
 
@@ -5769,17 +5856,29 @@ def set_active_nav_key(view: str) -> None:
 
 
 def render_circle_navigation(active_key: str) -> None:
+    st.markdown(
+        """
+        <div class="nav-flow-strip" aria-label="LY-STScope workflow map">
+            <div class="nav-flow-step"><strong>01</strong><span>Life<small>Context</small></span></div>
+            <div class="nav-flow-step"><strong>02</strong><span>Market<small>Analysis</small></span></div>
+            <div class="nav-flow-step scenario"><strong>03</strong><span>Scenario<small>Stress Test</small></span></div>
+            <div class="nav-flow-step ai"><strong>04</strong><span>AI Ready<small>Reasoning Packet</small></span></div>
+            <div class="nav-flow-step"><strong>05</strong><span>Diary<small>Memory</small></span></div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
     with st.container(key="circle_nav"):
-        for start in range(0, len(NAV_ITEMS), 5):
-            cols = st.columns(5, gap="medium")
-            for col, item in zip(cols, NAV_ITEMS[start : start + 5]):
+        for start in range(0, len(NAV_ITEMS), 4):
+            cols = st.columns(4, gap="large")
+            for col, item in zip(cols, NAV_ITEMS[start : start + 4]):
                 button_label = item["label"]
                 with col:
                     st.button(
                         button_label,
                         key=f"nav_{item['key']}",
                         type="primary" if item["key"] == active_key else "secondary",
-                        use_container_width=True,
+                        width="stretch",
                         on_click=set_active_nav_key,
                         args=(item["key"],),
                     )
