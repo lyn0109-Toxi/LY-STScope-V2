@@ -2400,6 +2400,87 @@ st.markdown(
         background: linear-gradient(135deg, #06b6d4, #8b5cf6);
         box-shadow: 0 8px 18px rgba(6, 182, 212, 0.20);
     }
+    html body .stApp .st-key-mobile_nav {
+        display: none !important;
+    }
+    html body .stApp .st-key-mobile_nav div[data-testid="stButton"] button {
+        min-height: 46px !important;
+        border-radius: 14px !important;
+        border: 1px solid rgba(14, 165, 233, 0.24) !important;
+        color: #0f172a !important;
+        -webkit-text-fill-color: #0f172a !important;
+        background:
+            radial-gradient(circle at 18% 18%, rgba(255,255,255,0.96), transparent 30%),
+            linear-gradient(135deg, rgba(240,249,255,0.94), rgba(236,253,245,0.86)) !important;
+        box-shadow: 0 10px 26px rgba(14, 165, 233, 0.10) !important;
+        font-weight: 900 !important;
+    }
+    html body .stApp .st-key-mobile_nav div[data-testid="stButton"] button[kind="primary"] {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        background: linear-gradient(135deg, #0ea5e9, #14b8a6) !important;
+        border-color: rgba(255,255,255,0.54) !important;
+    }
+    html body .stApp .ai-coach-hero {
+        width: min(1120px, 100%);
+        margin: 0 auto 18px;
+        padding: 22px 24px;
+        border-radius: 24px;
+        border: 1px solid rgba(14, 165, 233, 0.24);
+        background:
+            radial-gradient(circle at 14% 18%, rgba(34,211,238,0.20), transparent 28%),
+            radial-gradient(circle at 88% 16%, rgba(139,92,246,0.16), transparent 26%),
+            linear-gradient(135deg, rgba(255,255,255,0.94), rgba(240,249,255,0.82));
+        box-shadow: 0 22px 48px rgba(14, 165, 233, 0.12);
+    }
+    html body .stApp .ai-coach-hero h1 {
+        margin: 0 0 8px;
+        color: #0f172a;
+        font-size: 2rem;
+        font-weight: 950;
+        letter-spacing: 0;
+    }
+    html body .stApp .ai-coach-hero p {
+        margin: 0;
+        max-width: 760px;
+        color: #334155;
+        font-weight: 750;
+        line-height: 1.45;
+    }
+    html body .stApp .ai-coach-strip {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        margin: 16px 0 0;
+    }
+    html body .stApp .ai-coach-signal {
+        padding: 10px 12px;
+        border-radius: 16px;
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        background: rgba(255,255,255,0.72);
+    }
+    html body .stApp .ai-coach-signal b {
+        display: block;
+        color: #0f172a;
+        font-size: 0.9rem;
+        line-height: 1.05;
+    }
+    html body .stApp .ai-coach-signal span {
+        display: block;
+        margin-top: 4px;
+        color: #475569;
+        font-size: 0.78rem;
+        line-height: 1.15;
+        font-weight: 750;
+    }
+    html body .stApp .coach-disclaimer {
+        padding: 12px 14px;
+        border-radius: 16px;
+        color: #334155;
+        background: rgba(255, 251, 235, 0.86);
+        border: 1px solid rgba(245, 158, 11, 0.24);
+        font-weight: 760;
+    }
     html body .stApp .st-key-circle_nav {
         padding: 30px 30px 28px !important;
     }
@@ -2850,8 +2931,47 @@ st.markdown(
         }
     }
     @media (max-width: 560px) {
+        html body .stApp .brand-header {
+            padding: 24px 16px 20px;
+            margin-bottom: 10px;
+            border-radius: 22px;
+        }
+        html body .stApp .brand-name {
+            font-size: 2.2rem !important;
+            line-height: 0.98 !important;
+        }
+        html body .stApp .brand-subtitle {
+            font-size: 0.72rem !important;
+            letter-spacing: 0 !important;
+            text-align: center;
+            line-height: 1.35;
+        }
         html body .stApp .nav-flow-strip {
             grid-template-columns: 1fr;
+            margin-bottom: 10px;
+        }
+        html body .stApp .st-key-circle_nav {
+            display: none !important;
+        }
+        html body .stApp .st-key-mobile_nav {
+            display: block !important;
+            width: min(360px, 94%);
+            margin: 0 auto 16px;
+            padding: 10px;
+            border-radius: 18px;
+            border: 1px solid rgba(14, 165, 233, 0.18);
+            background: rgba(255,255,255,0.72);
+            box-shadow: 0 14px 34px rgba(14, 165, 233, 0.10);
+        }
+        html body .stApp .ai-coach-hero {
+            padding: 18px 16px;
+            border-radius: 20px;
+        }
+        html body .stApp .ai-coach-hero h1 {
+            font-size: 1.55rem;
+        }
+        html body .stApp .ai-coach-strip {
+            grid-template-columns: 1fr 1fr;
         }
     }
     </style>
@@ -3155,6 +3275,8 @@ def init_state() -> None:
     st.session_state.setdefault("selected_detail", None)
     st.session_state.setdefault("comments", [])
     st.session_state.setdefault("financial_diary", [])
+    st.session_state.setdefault("ai_coach_messages", [])
+    st.session_state.setdefault("last_scenario_packet", None)
     st.session_state.setdefault("life_entry_complete", False)
     st.session_state.setdefault("life_entry_version_seen", "")
 
@@ -4758,6 +4880,7 @@ def what_if_scenario_tab() -> None:
         "personal_finance": stressed_result,
         "interpretation": interpretation,
     }
+    st.session_state.last_scenario_packet = scenario_packet
     with st.expander("Structured Scenario Packet for Future AI Coach"):
         st.json(scenario_packet)
         st.download_button(
@@ -4769,61 +4892,424 @@ def what_if_scenario_tab() -> None:
         )
 
 
-def ai_reasoning_readiness_tab() -> None:
+def ai_coach_context_snapshot() -> dict[str, Any]:
+    total_value, weighted_beta, valuation_score, _ = portfolio_metrics()
+    risk = portfolio_risk_metrics()
+    comp = complementarity_summary()
+    personal = st.session_state.get("last_personal_finance_result") or {}
+    profile = st.session_state.get("last_personal_finance_profile") or {}
+    diary = st.session_state.get("financial_diary", [])
+    scenario = st.session_state.get("last_scenario_packet")
+    holdings = portfolio_holdings_snapshot()
+
+    missing: list[str] = []
+    if not personal:
+        missing.append("Personal Finance baseline")
+    if not holdings:
+        missing.append("Portfolio holdings")
+    if not risk and len(holdings) < 2:
+        missing.append("At least two holdings for covariance risk")
+    if not scenario:
+        missing.append("Scenario stress packet")
+    if not diary:
+        missing.append("Diary memory snapshot")
+
+    return {
+        "portfolio": {
+            "total_value": total_value,
+            "base_currency": st.session_state.get("portfolio_base_currency", "USD"),
+            "weighted_beta": weighted_beta,
+            "valuation_score": valuation_score,
+            "holdings": holdings,
+            "risk": risk,
+            "complementarity": comp,
+        },
+        "personal": personal,
+        "profile": profile,
+        "scenario": scenario,
+        "diary": diary,
+        "missing": missing,
+    }
+
+
+def ai_coach_readiness(context: dict[str, Any]) -> dict[str, Any]:
+    personal = context["personal"]
+    portfolio = context["portfolio"]
+    holdings = portfolio["holdings"]
+    risk = portfolio["risk"]
+    comp = portfolio["complementarity"]
+    diary = context["diary"]
+    scenario = context["scenario"]
+
+    score = 0.0
+    reasons: list[str] = []
+
+    if personal:
+        health = float(personal.get("financial_health_score") or 0)
+        emergency_months = float(personal.get("emergency_months") or 0)
+        dti = float(personal.get("debt_to_income") or 0)
+        monthly_surplus = float(personal.get("monthly_surplus") or 0)
+        score += max(0.0, min(42.0, health * 0.42))
+        if emergency_months >= 6:
+            score += 10
+            reasons.append("Emergency fund is strong.")
+        elif emergency_months >= 3:
+            score += 7
+            reasons.append("Emergency fund is usable but still worth monitoring.")
+        else:
+            score += 2
+            reasons.append("Emergency fund is below the usual 3-month reference point.")
+        if dti <= 0.25:
+            score += 6
+            reasons.append("Debt pressure looks manageable.")
+        elif dti <= 0.36:
+            score += 4
+            reasons.append("Debt pressure is moderate.")
+        else:
+            score += 1
+            reasons.append("Debt-to-income is above the common 36% reference point.")
+        if monthly_surplus > 0:
+            score += 6
+            reasons.append("Monthly surplus is positive.")
+        else:
+            reasons.append("Monthly surplus is not positive.")
+    else:
+        reasons.append("Personal finance baseline is missing.")
+
+    if holdings:
+        score += 8
+        beta = portfolio["weighted_beta"]
+        valuation_score = portfolio["valuation_score"]
+        if beta is not None:
+            score += 5 if float(beta) <= 1.2 else 2
+            reasons.append(f"Weighted beta is {fmt_number(beta)}.")
+        if valuation_score is not None:
+            score += 5
+            reasons.append(f"Portfolio valuation score is {float(valuation_score):+.1f}%.")
+        if risk:
+            annual_vol = float(risk["annual_vol"])
+            if annual_vol <= 0.18:
+                score += 9
+                reasons.append("Estimated annualized portfolio risk is relatively low.")
+            elif annual_vol <= 0.30:
+                score += 6
+                reasons.append("Estimated annualized portfolio risk is moderate.")
+            else:
+                score += 2
+                reasons.append("Estimated annualized portfolio risk is high.")
+        if comp:
+            comp_score = float(comp["complementarity_score"])
+            score += 5 if comp_score >= 60 else 3 if comp_score >= 35 else 1
+            reasons.append(f"Complementarity score is {comp_score:.1f}.")
+    else:
+        reasons.append("Portfolio holdings are missing.")
+
+    if scenario:
+        score += 5
+        reasons.append("A scenario stress packet is available.")
+    if diary:
+        score += 4
+        reasons.append("Diary memory exists for reflection.")
+
+    score = max(0.0, min(100.0, score))
+    if not personal or not holdings:
+        label = "Data Needed"
+    elif score >= 75:
+        label = "Prepared"
+    elif score >= 55:
+        label = "Developing"
+    elif score >= 35:
+        label = "Caution"
+    else:
+        label = "Fragile"
+
+    return {"score": score, "label": label, "reasons": reasons}
+
+
+def detect_ai_coach_intent(question: str) -> str:
+    q = question.lower()
+    if any(token in q for token in ("ready", "readiness", "invest", "투자", "준비")):
+        return "readiness"
+    if any(token in q for token in ("risk", "위험", "beta", "volatility", "correlation", "diversification")):
+        return "risk"
+    if any(token in q for token in ("scenario", "what if", "shock", "rate", "fx", "환율", "금리", "시나리오")):
+        return "scenario"
+    if any(token in q for token in ("diary", "memory", "remember", "지난", "기억", "메모리")):
+        return "memory"
+    if any(token in q for token in ("privacy", "legal", "f-1", "visa", "비자", "법", "개인정보")):
+        return "caution"
+    return "overview"
+
+
+def ai_coach_response(question: str) -> str:
+    context = ai_coach_context_snapshot()
+    readiness = ai_coach_readiness(context)
+    intent = detect_ai_coach_intent(question)
+    portfolio = context["portfolio"]
+    personal = context["personal"]
+    scenario = context["scenario"]
+    diary = context["diary"]
+    missing = context["missing"]
+    base_currency = portfolio["base_currency"]
+
+    evidence: list[str] = []
+    if personal:
+        evidence.extend(
+            [
+                f"Financial health score: {float(personal.get('financial_health_score') or 0):.1f}/100.",
+                f"Emergency fund: {float(personal.get('emergency_months') or 0):.1f} months.",
+                f"Monthly surplus: {fmt_money(float(personal.get('monthly_surplus') or 0))}.",
+                f"Debt-to-income: {float(personal.get('debt_to_income') or 0) * 100:.1f}%.",
+            ]
+        )
+    if portfolio["holdings"]:
+        evidence.append(f"Portfolio value: {fmt_money(portfolio['total_value'], base_currency)}.")
+        evidence.append(f"Holdings tracked: {len(portfolio['holdings'])}.")
+        if portfolio["weighted_beta"] is not None:
+            evidence.append(f"Weighted beta: {fmt_number(portfolio['weighted_beta'])}.")
+        if portfolio["valuation_score"] is not None:
+            evidence.append(f"Valuation score: {float(portfolio['valuation_score']):+.1f}%.")
+    if portfolio["risk"]:
+        evidence.append(f"Annualized portfolio risk: {float(portfolio['risk']['annual_vol']) * 100:.1f}%.")
+    if scenario:
+        evidence.append(f"Last scenario portfolio move: {float(scenario['inputs']['portfolio_change_pct']):+.0f}%.")
+        evidence.append(f"Last scenario result: {float(scenario['portfolio']['scenario_delta_pct']):+.1f}%.")
+    if diary:
+        latest = diary[-1]
+        evidence.append(f"Latest diary mood: {latest.get('mood', 'N/A')}.")
+        if latest.get("next_action"):
+            evidence.append(f"Latest next action: {latest.get('next_action')}.")
+
+    if intent == "readiness":
+        short = (
+            f"Your current investment readiness is **{readiness['label']}** "
+            f"with a rule-based score of **{readiness['score']:.0f}/100**. "
+            "This is a preparation signal, not a buy/sell recommendation."
+        )
+        next_step = "Complete the missing inputs, then run a downside scenario before making any real decision."
+    elif intent == "risk":
+        short = (
+            "The main risk view should combine life capacity, portfolio volatility, beta, and diversification. "
+            f"Current readiness label: **{readiness['label']}**."
+        )
+        next_step = "Check Portfolio Risk and Scenario together; risk is weaker when life liquidity and portfolio concentration both look strained."
+    elif intent == "scenario":
+        if scenario:
+            short = (
+                "The latest scenario packet is available and can be interpreted now. "
+                f"It shows a **{float(scenario['portfolio']['scenario_delta_pct']):+.1f}%** portfolio-level scenario change."
+            )
+        else:
+            short = "No scenario packet is available yet. Run the Scenario tab once, then ask this again."
+        next_step = "Use Scenario to test income, expenses, market drawdown, FX, and rate pressure together."
+    elif intent == "memory":
+        short = (
+            f"I found **{len(diary)} diary entr{'y' if len(diary) == 1 else 'ies'}** for memory-style reflection."
+            if diary
+            else "There is no diary memory yet. Save a Financial Diary snapshot first."
+        )
+        next_step = "Save a diary entry after each major review so future AI can compare your thinking over time."
+    elif intent == "caution":
+        short = (
+            "Use this prototype as educational analysis only. For F-1 venture activity, monetization, work authorization, "
+            "data licensing, and legal boundaries should be reviewed with the DSO and qualified counsel."
+        )
+        next_step = "Keep sensitive data out of the public prototype and document privacy, data source, and user consent boundaries."
+    else:
+        short = (
+            f"I can summarize your current financial reasoning context. Rule-based readiness is "
+            f"**{readiness['label']} ({readiness['score']:.0f}/100)**."
+        )
+        next_step = "Ask about readiness, risk, scenario, or memory to get a more focused answer."
+
+    evidence_text = "\n".join(f"- {item}" for item in evidence) if evidence else "- Not enough app data has been entered yet."
+    assumptions_text = "\n".join(
+        [
+            "- This response uses only data currently available inside this Streamlit session.",
+            "- The coach is rule-based; no external LLM API is connected yet.",
+            "- Scores are educational heuristics and should be treated as prompts for review.",
+        ]
+    )
+    missing_text = "\n".join(f"- {item}" for item in missing) if missing else "- No major missing context detected for this prototype."
+    reason_text = "\n".join(f"- {item}" for item in readiness["reasons"][:6])
+
+    return f"""### Short Answer
+{short}
+
+### Evidence From Your Data
+{evidence_text}
+
+### Rule-Based Reasoning
+{reason_text}
+
+### Assumptions
+{assumptions_text}
+
+### Missing Inputs
+{missing_text}
+
+### Next Safe Step
+{next_step}
+
+### Caution
+This is educational scenario reasoning only. It is not financial, investment, legal, tax, or immigration advice.
+"""
+
+
+def render_ai_coach() -> None:
+    context = ai_coach_context_snapshot()
+    readiness = ai_coach_readiness(context)
+    portfolio = context["portfolio"]
+    personal = context["personal"]
+    diary = context["diary"]
+    score = readiness["score"]
+    label = readiness["label"]
+    health_text = (
+        f"{float(personal.get('financial_health_score') or 0):.1f}/100"
+        if personal
+        else "Missing"
+    )
+    portfolio_text = (
+        fmt_money(portfolio["total_value"], portfolio["base_currency"])
+        if portfolio["holdings"]
+        else "Missing"
+    )
+
     st.markdown(
-        """
-        <div class="hero-panel">
-            <h1 style="margin:0 0 8px;">AI Reasoning Readiness</h1>
-            <div class="hero-muted">Prepare LY-STScope for conversational, scenario-based, explainable financial intelligence.</div>
+        f"""
+        <div class="ai-coach-hero">
+            <h1>AI Coach</h1>
+            <p>Ask LY-STScope direct questions about readiness, risk, scenarios, and memory. This beta uses transparent rules first, then can later connect to an LLM API.</p>
+            <div class="ai-coach-strip">
+                <div class="ai-coach-signal"><b>{escape(label)}</b><span>Readiness {score:.0f}/100</span></div>
+                <div class="ai-coach-signal"><b>{escape(health_text)}</b><span>Personal finance</span></div>
+                <div class="ai-coach-signal"><b>{escape(portfolio_text)}</b><span>Portfolio context</span></div>
+                <div class="ai-coach-signal"><b>{len(diary)}</b><span>Diary memories</span></div>
+            </div>
         </div>
         """,
         unsafe_allow_html=True,
     )
-    st.info(
-        "This page makes the new direction visible: LY-STScope is not an AI stock picker. "
-        "It is a preparation-stage financial reasoning prototype for education, validation, and future venture exploration."
-    )
-
-    st.subheader("Product Thesis")
-    st.write(
-        """
-        AI interfaces are moving toward voice, agents, and continuous assistance. A future user may ask:
-        "Can I absorb this risk?", "What changes if rates rise?", or "What did I decide last time?"
-        LY-STScope prepares the structured context needed to answer those questions responsibly.
-        """
-    )
-
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        metric_card("Core Position", "Reasoning, not stock picking", "#0f766e")
-    with c2:
-        metric_card("User Value", "Understand trade-offs", "#1d4ed8")
-    with c3:
-        metric_card("Launch Stage", "Educational beta", "#92400e")
-
-    st.subheader("AI Coach Foundations")
-    st.dataframe(
-        [
-            {"Layer": "Scenario", "Current foundation": "What-if Scenario Lab", "Future question": "What if income falls, FX moves, or rates rise?"},
-            {"Layer": "Portfolio", "Current foundation": "Valuation score, beta, covariance, correlation", "Future question": "Where is my risk concentrated?"},
-            {"Layer": "Personal finance", "Current foundation": "Surplus, emergency fund, DTI, health score", "Future question": "Can my life absorb this investment risk?"},
-            {"Layer": "Memory", "Current foundation": "Financial Diary JSON", "Future question": "How has my thinking changed over time?"},
-            {"Layer": "Explainability", "Current foundation": "Calculation Details", "Future question": "Which formula and assumption produced this signal?"},
-        ],
-        hide_index=True,
-        use_container_width=True,
-    )
-
-    st.subheader("Responsible Boundaries")
     st.markdown(
         """
-        - Keep outputs educational and scenario-based; avoid buy/sell instructions.
-        - Do not collect sensitive real account data in this public prototype.
-        - Review data licenses before commercial use.
-        - For F-1 venture exploration, treat this as prototype validation and consult the DSO/immigration counsel before monetization.
-        - Make every future AI answer show assumptions, evidence, limitations, and missing data.
-        """
+        <div class="coach-disclaimer">
+            Rule-based AI Coach beta: educational reasoning only. The response shows evidence, assumptions, missing inputs, and limits before any future LLM connection.
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
+
+    if not st.session_state.ai_coach_messages:
+        st.session_state.ai_coach_messages.append(
+            {
+                "role": "assistant",
+                "content": (
+                    "I am ready to review investment readiness, portfolio risk, scenario stress, and diary memory. "
+                    "Start with a quick question or type your own."
+                ),
+            }
+        )
+
+    st.subheader("Quick Questions")
+    quick_questions = [
+        "Am I investment ready?",
+        "Explain my biggest risk.",
+        "What happens in my latest scenario?",
+        "What should I track next?",
+        "Summarize my diary memory.",
+        "What privacy or F-1 caution matters?",
+    ]
+    pending_question = None
+    quick_cols = st.columns(2)
+    for idx, question in enumerate(quick_questions):
+        with quick_cols[idx % 2]:
+            if st.button(question, key=f"ai_quick_{idx}", width="stretch"):
+                pending_question = question
+
+    typed_question = st.chat_input("Ask LY-STScope AI Coach about readiness, risk, scenario, or memory")
+    if typed_question:
+        pending_question = typed_question
+
+    if pending_question:
+        st.session_state.ai_coach_messages.append({"role": "user", "content": pending_question})
+        st.session_state.ai_coach_messages.append(
+            {"role": "assistant", "content": ai_coach_response(pending_question)}
+        )
+
+    reset_col, save_col = st.columns([1, 1])
+    with reset_col:
+        if st.button("Reset AI Coach Chat", width="stretch"):
+            st.session_state.ai_coach_messages = []
+            st.rerun()
+    with save_col:
+        if st.button("Save AI Summary to Diary", width="stretch"):
+            last_answer = next(
+                (
+                    message["content"]
+                    for message in reversed(st.session_state.ai_coach_messages)
+                    if message["role"] == "assistant"
+                ),
+                "",
+            )
+            if last_answer:
+                st.session_state.financial_diary.append(
+                    build_financial_snapshot(
+                        "AI Coach summary saved from chat.",
+                        "Planning",
+                        last_answer[:600],
+                    )
+                )
+                st.success("AI Coach summary saved to Financial Diary memory for this session.")
+
+    st.subheader("Conversation")
+    for message in st.session_state.ai_coach_messages[-8:]:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+
+
+def ai_reasoning_readiness_tab() -> None:
+    render_ai_coach()
+
+    with st.expander("AI Reasoning Product Thesis", expanded=False):
+        st.write(
+            """
+            AI interfaces are moving toward voice, agents, and continuous assistance. A future user may ask:
+            "Can I absorb this risk?", "What changes if rates rise?", or "What did I decide last time?"
+            LY-STScope prepares the structured context needed to answer those questions responsibly.
+            """
+        )
+
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            metric_card("Core Position", "Reasoning, not stock picking", "#0f766e")
+        with c2:
+            metric_card("User Value", "Understand trade-offs", "#1d4ed8")
+        with c3:
+            metric_card("Launch Stage", "Educational beta", "#92400e")
+
+        st.subheader("AI Coach Foundations")
+        st.dataframe(
+            [
+                {"Layer": "Scenario", "Current foundation": "What-if Scenario Lab", "Future question": "What if income falls, FX moves, or rates rise?"},
+                {"Layer": "Portfolio", "Current foundation": "Valuation score, beta, covariance, correlation", "Future question": "Where is my risk concentrated?"},
+                {"Layer": "Personal finance", "Current foundation": "Surplus, emergency fund, DTI, health score", "Future question": "Can my life absorb this investment risk?"},
+                {"Layer": "Memory", "Current foundation": "Financial Diary JSON", "Future question": "How has my thinking changed over time?"},
+                {"Layer": "Explainability", "Current foundation": "Calculation Details", "Future question": "Which formula and assumption produced this signal?"},
+            ],
+            hide_index=True,
+            width="stretch",
+        )
+
+        st.subheader("Responsible Boundaries")
+        st.markdown(
+            """
+            - Keep outputs educational and scenario-based; avoid buy/sell instructions.
+            - Do not collect sensitive real account data in this public prototype.
+            - Review data licenses before commercial use.
+            - For F-1 venture exploration, treat this as prototype validation and consult the DSO/immigration counsel before monetization.
+            - Make every future AI answer show assumptions, evidence, limitations, and missing data.
+            """
+        )
 
 
 def calculation_details_tab() -> None:
@@ -5503,13 +5989,13 @@ def guide_tab() -> None:
         """
     )
 
-    st.subheader("8. AI Reasoning Readiness")
+    st.subheader("8. AI Coach and Reasoning Readiness")
     st.write(
         """
-        The AI Ready menu explains how LY-STScope can evolve from a dashboard into a future AI financial
-        reasoning companion. The goal is not automated stock picking. The goal is to support scenario thinking,
-        explain assumptions, connect life context with portfolio risk, and prepare for conversational or
-        voice-based interfaces.
+        The AI Coach menu turns LY-STScope from a dashboard into a conversation-first financial reasoning
+        prototype. The current version is rule-based: it reads Personal Finance, Portfolio, Scenario, and
+        Financial Diary context, then returns a structured answer with evidence, assumptions, missing inputs,
+        next safe step, and caution. Later, this structure can connect to an LLM API.
         """
     )
 
@@ -5818,7 +6304,7 @@ NAV_ITEMS = [
     {"key": "reit", "label": "REIT", "icon": "RE"},
     {"key": "details", "label": "Details", "icon": "DT"},
     {"key": "scenario", "label": "Scenario", "icon": "SC"},
-    {"key": "ai", "label": "AI Ready", "icon": "AI"},
+    {"key": "ai", "label": "AI Coach", "icon": "AI"},
     {"key": "guide", "label": "Guide", "icon": "GD"},
     {"key": "settings", "label": "Settings", "icon": "SE"},
 ]
@@ -5862,7 +6348,7 @@ def render_circle_navigation(active_key: str) -> None:
             <div class="nav-flow-step"><strong>01</strong><span>Life<small>Context</small></span></div>
             <div class="nav-flow-step"><strong>02</strong><span>Market<small>Analysis</small></span></div>
             <div class="nav-flow-step scenario"><strong>03</strong><span>Scenario<small>Stress Test</small></span></div>
-            <div class="nav-flow-step ai"><strong>04</strong><span>AI Ready<small>Reasoning Packet</small></span></div>
+            <div class="nav-flow-step ai"><strong>04</strong><span>AI Coach<small>Rule-Based Beta</small></span></div>
             <div class="nav-flow-step"><strong>05</strong><span>Diary<small>Memory</small></span></div>
         </div>
         """,
@@ -5877,6 +6363,30 @@ def render_circle_navigation(active_key: str) -> None:
                     st.button(
                         button_label,
                         key=f"nav_{item['key']}",
+                        type="primary" if item["key"] == active_key else "secondary",
+                        width="stretch",
+                        on_click=set_active_nav_key,
+                        args=(item["key"],),
+                    )
+
+
+def render_mobile_navigation(active_key: str) -> None:
+    mobile_items = [
+        {"key": "ai", "label": "AI Coach"},
+        {"key": "scenario", "label": "Scenario"},
+        {"key": "finance", "label": "Finance"},
+        {"key": "portfolio", "label": "Portfolio"},
+        {"key": "diary", "label": "Diary"},
+        {"key": "search", "label": "Search"},
+    ]
+    with st.container(key="mobile_nav"):
+        for start in range(0, len(mobile_items), 2):
+            cols = st.columns(2, gap="small")
+            for col, item in zip(cols, mobile_items[start : start + 2]):
+                with col:
+                    st.button(
+                        item["label"],
+                        key=f"mobile_nav_{item['key']}",
                         type="primary" if item["key"] == active_key else "secondary",
                         width="stretch",
                         on_click=set_active_nav_key,
@@ -5901,7 +6411,7 @@ def render_life_compact_panel() -> None:
                 <div class="life-compact-card"><b>Investments</b><span>Review stock value, beta, risk, and diversification.</span></div>
                 <div class="life-compact-card"><b>Real Estate</b><span>Study REIT and property-linked exposure.</span></div>
                 <div class="life-compact-card"><b>Scenario</b><span>Stress-test income, FX, rates, and portfolio shocks.</span></div>
-                <div class="life-compact-card"><b>AI Ready</b><span>Structure evidence for future reasoning assistants.</span></div>
+                <div class="life-compact-card"><b>AI Coach</b><span>Ask rule-based questions about readiness, risk, scenario, and memory.</span></div>
                 <div class="life-compact-card"><b>Diary</b><span>Save snapshots and reflect on next actions.</span></div>
             </div>
         </div>
@@ -5923,7 +6433,7 @@ def render_main_app() -> None:
                     <div class="brand-subtitle">A I&nbsp;&nbsp; F I N A N C I A L&nbsp;&nbsp; R E A S O N I N G</div>
                 </div>
             </div>
-            <div class="brand-badge">Scenario Lab + AI Ready prototype</div>
+            <div class="brand-badge">Scenario Lab + AI Coach beta</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -5933,6 +6443,7 @@ def render_main_app() -> None:
 
     active_view = active_nav_key()
     render_circle_navigation(active_view)
+    render_mobile_navigation(active_view)
 
     if active_view == "life":
         render_life_compact_panel()
