@@ -50,7 +50,7 @@ Because the founder is considering venture creation while in F-1 student status,
 - Calculation Details: transparent formulas, data inputs, assumptions, valuation contribution, covariance, correlation, and personal finance score breakdown.
 - Financial Diary: session-based portfolio and personal finance snapshots, current situation reports, user notes, next actions, and JSON download/restore.
 - Life Design entry screen: one-click first screen that frames LY-STScope as a personal life and financial intelligence dashboard before entering the main app.
-- AI Coach: rule-based by default, with an optional verified OpenAI Responses API layer for structured reasoning answers.
+- AI Coach: rule-based by default, with linked guidance cards for Portfolio, Personal Finance, Scenario, Diary, and Calculation Details plus an optional verified OpenAI Responses API layer for structured reasoning answers.
 - Structured Scenario Packet: downloadable JSON context that can later become an input format for an AI financial reasoning coach.
 
 ## Streamlit Cloud

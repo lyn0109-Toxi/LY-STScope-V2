@@ -2481,6 +2481,44 @@ st.markdown(
         border: 1px solid rgba(245, 158, 11, 0.24);
         font-weight: 760;
     }
+    html body .stApp .linked-coach-card {
+        min-height: 170px;
+        margin: 0 0 10px;
+        padding: 15px 16px;
+        border-radius: 18px;
+        border: 1px solid rgba(14, 165, 233, 0.20);
+        background:
+            radial-gradient(circle at 16% 18%, rgba(34,211,238,0.16), transparent 32%),
+            linear-gradient(135deg, rgba(255,255,255,0.94), rgba(241,245,249,0.86));
+        box-shadow: 0 16px 34px rgba(14, 165, 233, 0.10);
+    }
+    html body .stApp .linked-coach-card .eyebrow {
+        color: #0f766e;
+        font-size: 0.72rem;
+        font-weight: 950;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 7px;
+    }
+    html body .stApp .linked-coach-card h3 {
+        color: #0f172a;
+        font-size: 1.02rem;
+        margin: 0 0 6px;
+        letter-spacing: 0;
+    }
+    html body .stApp .linked-coach-card .status {
+        color: #0369a1;
+        font-weight: 900;
+        margin-bottom: 8px;
+        line-height: 1.25;
+    }
+    html body .stApp .linked-coach-card p {
+        color: #334155;
+        font-size: 0.9rem;
+        font-weight: 720;
+        line-height: 1.38;
+        margin: 0;
+    }
     html body .stApp .st-key-circle_nav {
         padding: 30px 30px 28px !important;
     }
@@ -3285,6 +3323,7 @@ def init_state() -> None:
     st.session_state.setdefault("comments", [])
     st.session_state.setdefault("financial_diary", [])
     st.session_state.setdefault("ai_coach_messages", [])
+    st.session_state.setdefault("pending_ai_question", None)
     st.session_state.setdefault("last_scenario_packet", None)
     st.session_state.setdefault("use_verified_ai_model", bool(OPENAI_API_KEY) and OPENAI_AI_DEFAULT_ON)
     st.session_state.setdefault("include_diary_text_for_ai", False)
@@ -5105,6 +5144,121 @@ def ai_coach_readiness(context: dict[str, Any]) -> dict[str, Any]:
     return {"score": score, "label": label, "reasons": reasons}
 
 
+def app_view_link(view: str, label: str) -> str:
+    return f"[{label}](?view={quote(view)})"
+
+
+def build_ai_coach_linked_guidance(
+    context: dict[str, Any],
+    readiness: dict[str, Any],
+) -> list[dict[str, str]]:
+    portfolio = context["portfolio"]
+    holdings = portfolio.get("holdings", [])
+    base_currency = portfolio.get("base_currency", "USD")
+    personal = context.get("personal") or {}
+    scenario = context.get("scenario")
+    diary = context.get("diary", [])
+    gain_loss = portfolio_gain_loss_summary(holdings)
+
+    if not holdings:
+        portfolio_status = "Needs holdings"
+        portfolio_advice = "Add stocks first, then enter shares and average purchase price so the coach can compare cost basis with current value."
+    elif gain_loss["unrealized_gain"] is None:
+        portfolio_status = "Needs purchase prices"
+        portfolio_advice = "Enter average purchase price for each holding to unlock personal unrealized P/L and return analysis."
+    else:
+        portfolio_status = (
+            f"{fmt_signed_money(gain_loss['unrealized_gain'], base_currency)} "
+            f"({float(gain_loss['unrealized_return_pct']):+.1f}%)"
+        )
+        if float(gain_loss["unrealized_gain"]) >= 0:
+            portfolio_advice = "Compare gains with concentration, beta, and cash-flow capacity before treating performance as readiness."
+        else:
+            portfolio_advice = "Separate market drawdown from life liquidity; review whether cash flow can absorb the current unrealized loss."
+
+    if personal:
+        health = float(personal.get("financial_health_score") or 0)
+        emergency = float(personal.get("emergency_months") or 0)
+        surplus = float(personal.get("monthly_surplus") or 0)
+        personal_status = f"Health {health:.1f}/100"
+        if emergency < 3:
+            personal_advice = "Emergency reserve is the first readiness checkpoint before adding investment risk."
+        elif surplus <= 0:
+            personal_advice = "Monthly cash flow should be stabilized before using portfolio gains or losses as the main signal."
+        else:
+            personal_advice = "Use surplus, emergency reserve, and DTI together with portfolio P/L for investment readiness."
+    else:
+        personal_status = "Needs baseline"
+        personal_advice = "Complete Personal Finance once so the coach can connect risk capacity with portfolio behavior."
+
+    if scenario:
+        scenario_delta = float(scenario.get("portfolio", {}).get("scenario_delta_pct") or 0)
+        scenario_status = f"Latest scenario {scenario_delta:+.1f}%"
+        scenario_advice = "Ask the coach to compare this stress result with emergency fund, P/L, and current portfolio exposure."
+    else:
+        scenario_status = "Needs scenario"
+        scenario_advice = "Run one what-if scenario so the coach can reason about downside, FX, rate, income, and expense shocks."
+
+    diary_status = f"{len(diary)} saved entr{'y' if len(diary) == 1 else 'ies'}"
+    if diary:
+        diary_advice = "Use diary memory to compare today's decision context with prior notes and next actions."
+    else:
+        diary_advice = "Save the Current Situation Report so the coach has a memory checkpoint for future review."
+
+    details_status = "Formulas ready"
+    details_advice = "Open Calculation Details when you need the formula, assumption, or limit behind a coach answer."
+
+    return [
+        {
+            "title": "Portfolio P/L",
+            "view": "portfolio",
+            "status": portfolio_status,
+            "advice": portfolio_advice,
+            "question": "Use my portfolio cost basis, unrealized P/L, current value, and risk metrics to explain my investment readiness.",
+        },
+        {
+            "title": "Personal Finance",
+            "view": "finance",
+            "status": personal_status,
+            "advice": personal_advice,
+            "question": "Connect my personal finance baseline with my portfolio risk and tell me what readiness issue matters most.",
+        },
+        {
+            "title": "Scenario Stress",
+            "view": "scenario",
+            "status": scenario_status,
+            "advice": scenario_advice,
+            "question": "Use my latest what-if scenario to explain the safest next review step.",
+        },
+        {
+            "title": "Diary Report",
+            "view": "diary",
+            "status": diary_status,
+            "advice": diary_advice,
+            "question": "Use my Current Situation Report and diary memory to summarize what I should review next.",
+        },
+        {
+            "title": "Calculation Details",
+            "view": "details",
+            "status": details_status,
+            "advice": details_advice,
+            "question": "Explain the formulas and assumptions behind my current portfolio P/L, readiness, and risk signals.",
+        },
+    ]
+
+
+def format_ai_coach_direct_links(
+    context: dict[str, Any],
+    readiness: dict[str, Any],
+) -> str:
+    linked_items = build_ai_coach_linked_guidance(context, readiness)
+    rows = [
+        f"- {app_view_link(item['view'], item['title'])}: {item['status']} - {item['advice']}"
+        for item in linked_items
+    ]
+    return "### Direct App Links\n" + "\n".join(rows)
+
+
 def detect_ai_coach_intent(question: str) -> str:
     q = question.lower()
     if any(token in q for token in ("ready", "readiness", "invest", "투자", "준비")):
@@ -5214,6 +5368,16 @@ def build_verified_ai_context(
             for entry in diary_entries
         ],
         "missing_inputs": context.get("missing", []),
+        "linked_app_guidance": [
+            {
+                "section": item["title"],
+                "app_view": item["view"],
+                "status": item["status"],
+                "coach_hint": item["advice"],
+                "suggested_question": item["question"],
+            }
+            for item in build_ai_coach_linked_guidance(context, readiness)
+        ],
     }
 
 
@@ -5253,6 +5417,7 @@ Rules:
 - Do not provide legal, tax, accounting, immigration, or professional advice.
 - If the user asks about F-1, work authorization, monetization, or company formation, give only general caution and tell them to consult the DSO and qualified counsel.
 - Ground every answer in the provided LY-STScope context.
+- Use linked_app_guidance to point the user toward the Portfolio, Personal Finance, Scenario, Diary, or Calculation Details view when relevant.
 - If data is missing, say so clearly.
 - Keep the answer useful on mobile: concise, structured, and direct.
 - Return only JSON matching the requested schema.
@@ -5499,12 +5664,13 @@ def ai_coach_response(question: str) -> str:
     assumptions_text = "\n".join(
         [
             "- This response uses only data currently available inside this Streamlit session.",
-            "- The coach is rule-based; no external LLM API is connected yet.",
+            "- This local response is rule-based unless the verified OpenAI model layer is enabled.",
             "- Scores are educational heuristics and should be treated as prompts for review.",
         ]
     )
     missing_text = "\n".join(f"- {item}" for item in missing) if missing else "- No major missing context detected for this prototype."
     reason_text = "\n".join(f"- {item}" for item in readiness["reasons"][:6])
+    direct_links_text = format_ai_coach_direct_links(context, readiness)
 
     return f"""### Short Answer
 {short}
@@ -5521,6 +5687,8 @@ def ai_coach_response(question: str) -> str:
 ### Missing Inputs
 {missing_text}
 
+{direct_links_text}
+
 ### Next Safe Step
 {next_step}
 
@@ -5534,7 +5702,8 @@ def verified_or_rule_based_ai_response(question: str, use_verified_model: bool, 
     readiness = ai_coach_readiness(context)
     if use_verified_model and OPENAI_API_KEY:
         try:
-            return call_verified_openai_model(question, context, readiness, include_diary_text)
+            verified_answer = call_verified_openai_model(question, context, readiness, include_diary_text)
+            return f"{verified_answer}\n\n{format_ai_coach_direct_links(context, readiness)}"
         except Exception as exc:
             fallback = ai_coach_response(question)
             return (
@@ -5544,6 +5713,62 @@ def verified_or_rule_based_ai_response(question: str, use_verified_model: bool, 
                 f"- Reason: {compact_text(exc, 260)}"
             )
     return ai_coach_response(question)
+
+
+def render_ai_coach_linked_guidance(
+    context: dict[str, Any],
+    readiness: dict[str, Any],
+) -> str | None:
+    st.subheader("Linked Coach Guidance")
+    st.caption(
+        "These cards are generated from Portfolio, Personal Finance, Scenario, Diary, and Calculation Details. "
+        "Open the source view or ask AI Coach with that exact context."
+    )
+    pending_question = None
+    linked_items = build_ai_coach_linked_guidance(context, readiness)
+    for start in range(0, len(linked_items), 2):
+        cols = st.columns(2, gap="medium")
+        for idx, item in enumerate(linked_items[start : start + 2], start=start):
+            with cols[idx - start]:
+                st.markdown(
+                    f"""
+                    <div class="linked-coach-card">
+                        <div class="eyebrow">Linked source</div>
+                        <h3>{escape(item['title'])}</h3>
+                        <div class="status">{escape(item['status'])}</div>
+                        <p>{escape(item['advice'])}</p>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+                open_col, ask_col = st.columns(2)
+                with open_col:
+                    st.button(
+                        "Open",
+                        key=f"linked_open_{item['view']}_{idx}",
+                        width="stretch",
+                        on_click=set_active_nav_key,
+                        args=(item["view"],),
+                    )
+                with ask_col:
+                    if st.button("Ask Coach", key=f"linked_ask_{item['view']}_{idx}", width="stretch"):
+                        pending_question = item["question"]
+    return pending_question
+
+
+def queue_ai_coach_question(question: str) -> None:
+    st.session_state.pending_ai_question = question
+    set_active_nav_key("ai")
+
+
+def queue_current_report_ai_question() -> None:
+    report = st.session_state.get("diary_current_report", "")
+    st.session_state.pending_ai_question = (
+        "Use this Current Situation Report plus the live Portfolio and Personal Finance context "
+        "to give a linked readiness review. Report text: "
+        f"{compact_text(report, 1800)}"
+    )
+    set_active_nav_key("ai")
 
 
 def render_ai_coach() -> None:
@@ -5614,16 +5839,24 @@ def render_ai_coach() -> None:
             "Use this public prototype with minimal, non-sensitive examples."
         )
 
+    pending_question = st.session_state.get("pending_ai_question")
+    if pending_question:
+        st.session_state.pending_ai_question = None
+
     if not st.session_state.ai_coach_messages:
         st.session_state.ai_coach_messages.append(
             {
                 "role": "assistant",
                 "content": (
                     "I am ready to review investment readiness, portfolio risk, scenario stress, and diary memory. "
-                    "Start with a quick question or type your own."
+                    "Use the linked cards below, start with a quick question, or type your own."
                 ),
             }
         )
+
+    linked_question = render_ai_coach_linked_guidance(context, readiness)
+    if linked_question:
+        pending_question = linked_question
 
     st.subheader("Quick Questions")
     quick_questions = [
@@ -5634,7 +5867,6 @@ def render_ai_coach() -> None:
         "Summarize my diary memory.",
         "What privacy or F-1 caution matters?",
     ]
-    pending_question = None
     quick_cols = st.columns(2)
     for idx, question in enumerate(quick_questions):
         with quick_cols[idx % 2]:
@@ -6072,7 +6304,7 @@ def financial_diary_tab() -> None:
         key="diary_current_report",
         help="This report uses current portfolio, cost basis, unrealized P/L, risk, and personal finance context.",
     )
-    report_cols = st.columns(2)
+    report_cols = st.columns(3)
     with report_cols[0]:
         if st.button("Use Report as Diary Note", width="stretch"):
             st.session_state.diary_note = st.session_state.get("diary_current_report", report_text)
@@ -6087,6 +6319,12 @@ def financial_diary_tab() -> None:
             )
             st.session_state.financial_diary.append(snapshot)
             st.success("Current situation report saved to your Financial Diary.")
+    with report_cols[2]:
+        st.button(
+            "Ask AI Coach",
+            width="stretch",
+            on_click=queue_current_report_ai_question,
+        )
 
     mood = st.selectbox(
         "Today's financial feeling",
@@ -6322,6 +6560,14 @@ def portfolio_tab() -> None:
 
     if not st.session_state.portfolio:
         st.info("No stocks in your portfolio yet. Add them from the search results.")
+        st.button(
+            "Ask AI Coach About Portfolio Setup",
+            width="stretch",
+            on_click=queue_ai_coach_question,
+            args=(
+                "My portfolio has no holdings yet. Explain what I should add first so portfolio P/L, cost basis, and investment readiness can work.",
+            ),
+        )
         return
 
     native_breakdown = portfolio_currency_breakdown()
@@ -6426,6 +6672,15 @@ def portfolio_tab() -> None:
             metric_card("Unrealized Return", f"{total_unrealized_return_pct:+.1f}%", pl_color)
     else:
         st.info("Enter each holding's average purchase price to compare your cost basis with current market value.")
+
+    st.button(
+        "Ask AI Coach About Portfolio P/L",
+        width="stretch",
+        on_click=queue_ai_coach_question,
+        args=(
+            "Use my portfolio shares, average purchase prices, unrealized P/L, current market value, and risk signals to explain what I should review next.",
+        ),
+    )
 
     analysis_weights = portfolio_analysis_weights()
     for (
@@ -6710,8 +6965,10 @@ def guide_tab() -> None:
         The AI Coach menu turns LY-STScope from a dashboard into a conversation-first financial reasoning
         prototype. It can run locally as a rule-based coach or, when `OPENAI_API_KEY` is configured and the
         user enables the verified model toggle, call a reasoning model through OpenAI's Responses API.
-        The answer is still constrained to evidence, assumptions, missing inputs, risk flags, next safe step,
-        and caution.
+        The AI Coach also shows linked guidance cards for Portfolio P/L, Personal Finance, Scenario,
+        Diary Report, and Calculation Details, so the user can open the source view or ask a context-specific
+        question directly. The answer is still constrained to evidence, assumptions, missing inputs, risk flags,
+        next safe step, and caution.
         """
     )
 
