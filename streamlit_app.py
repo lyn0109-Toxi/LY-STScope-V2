@@ -3182,6 +3182,22 @@ st.markdown(
     html body .stApp .mobile-orbit-nav {
         display: none;
     }
+    html body .stApp .mobile-orbit-stamp {
+        width: min(354px, 96vw);
+        margin: 8px auto 0;
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(20, 184, 166, 0.28);
+        background: rgba(240, 253, 250, 0.88);
+        color: #0f766e;
+        -webkit-text-fill-color: #0f766e;
+        font-size: 0.72rem;
+        line-height: 1;
+        font-weight: 950;
+        text-align: center;
+        letter-spacing: 0;
+        box-shadow: 0 10px 24px rgba(20, 184, 166, 0.10);
+    }
     html body .stApp .mobile-orbit-shell {
         position: relative;
         width: min(354px, 96vw);
@@ -8027,6 +8043,7 @@ def render_mobile_navigation(active_key: str) -> None:
     st.markdown(
         (
             '<div class="mobile-orbit-nav mobile-only-deck" aria-label="Mobile LY-STScope orbit navigation">'
+            '<div class="mobile-orbit-stamp">Mobile App Mode · Orbit V2</div>'
             '<div class="mobile-orbit-shell">'
             f'{"".join(orbit_links)}'
             f'<a class="mobile-orbit-center{center_active}" href="?view=diary" aria-label="Personal Diary">'
@@ -8159,8 +8176,8 @@ def render_main_app() -> None:
     sync_selected_detail_from_query()
 
     active_view = active_nav_key()
-    render_circle_navigation(active_view)
     render_mobile_navigation(active_view)
+    render_circle_navigation(active_view)
     render_mobile_view_summary(active_view)
 
     if active_view == "life":

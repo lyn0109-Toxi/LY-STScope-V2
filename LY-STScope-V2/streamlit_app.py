@@ -1,6 +1,7 @@
 import math
 import os
 import json
+import base64
 from html import escape
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -11,7 +12,6 @@ import altair as alt
 import pandas as pd
 import requests
 import streamlit as st
-import streamlit.components.v1 as components
 import yfinance as yf
 
 
@@ -587,38 +587,294 @@ st.markdown(
         }
     }
     div[data-testid="stTabs"] div[role="tablist"] {
-        gap: 8px;
-        border-bottom: 1px solid rgba(148, 163, 184, 0.28);
-        padding: 4px 0 12px;
-        margin-bottom: 20px;
+        gap: 16px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.20);
+        padding: 10px 0 22px;
+        margin-bottom: 24px;
         flex-wrap: wrap;
+        align-items: center;
     }
     div[data-testid="stTabs"] button[role="tab"] {
-        background: rgba(15, 23, 42, 0.72);
-        border: 1px solid rgba(148, 163, 184, 0.32);
-        border-radius: 12px;
-        color: #dbe7f3;
-        font-size: 16px;
-        font-weight: 800;
-        padding: 10px 17px;
-        min-height: 46px;
+        width: 112px;
+        height: 112px;
+        min-width: 112px;
+        min-height: 112px;
+        display: grid;
+        place-items: center;
+        padding: 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.34);
+        color: #e2e8f0;
+        background:
+            radial-gradient(circle at 35% 24%, rgba(255,255,255,0.13), transparent 24%),
+            radial-gradient(circle at 50% 58%, rgba(34, 211, 238, 0.10), transparent 56%),
+            rgba(15, 23, 42, 0.78);
+        box-shadow:
+            inset 0 0 28px rgba(34, 211, 238, 0.05),
+            0 14px 30px rgba(2, 6, 23, 0.26);
+        transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease;
     }
     div[data-testid="stTabs"] button[role="tab"]:hover {
         border-color: #22d3ee;
         color: #f8fafc;
-        background: rgba(14, 116, 144, 0.34);
+        background:
+            radial-gradient(circle at 35% 24%, rgba(255,255,255,0.18), transparent 24%),
+            radial-gradient(circle at 50% 58%, rgba(34, 211, 238, 0.22), transparent 56%),
+            rgba(15, 23, 42, 0.88);
+        transform: translateY(-4px);
+        box-shadow:
+            0 0 0 8px rgba(34, 211, 238, 0.06),
+            0 18px 36px rgba(34, 211, 238, 0.12);
     }
     div[data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
-        background: linear-gradient(135deg, #0ea5e9, #0f766e);
+        background:
+            radial-gradient(circle at 34% 25%, rgba(255,255,255,0.32), transparent 23%),
+            linear-gradient(135deg, #22d3ee 0%, #0ea5e9 46%, #14b8a6 100%);
         border-color: #22d3ee;
         color: #ffffff;
-        box-shadow: 0 8px 22px rgba(34,211,238,0.24);
+        box-shadow:
+            0 0 0 9px rgba(34, 211, 238, 0.12),
+            0 0 34px rgba(34, 211, 238, 0.32),
+            0 18px 38px rgba(14, 116, 144, 0.24);
+        transform: translateY(-3px);
     }
     div[data-testid="stTabs"] button[role="tab"] p {
-        font-size: 16px;
-        font-weight: 800;
+        max-width: 86px;
+        font-size: 15px;
+        font-weight: 950;
         color: inherit;
-        line-height: 1.2;
+        line-height: 1.05;
+        text-align: center;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        margin: 0;
+    }
+    div[data-testid="stTabs"] div[data-baseweb="tab-highlight"] {
+        display: none;
+    }
+    .circle-nav-wrap {
+        margin: 24px 0 30px;
+        padding: 24px 22px 28px;
+        border-radius: 30px;
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        background:
+            radial-gradient(circle at 18% 12%, rgba(34, 211, 238, 0.16), transparent 24%),
+            radial-gradient(circle at 82% 18%, rgba(16, 185, 129, 0.12), transparent 22%),
+            rgba(8, 13, 22, 0.48);
+        box-shadow: inset 0 0 42px rgba(34, 211, 238, 0.04), 0 18px 44px rgba(2, 6, 23, 0.22);
+    }
+    .circle-nav {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: clamp(14px, 1.8vw, 22px);
+    }
+    .circle-nav-item {
+        width: 122px;
+        height: 122px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        text-decoration: none !important;
+        color: #eaf7ff !important;
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
+        background:
+            radial-gradient(circle at 34% 22%, rgba(255,255,255,0.24), transparent 22%),
+            radial-gradient(circle at 50% 54%, rgba(34, 211, 238, 0.16), transparent 58%),
+            linear-gradient(145deg, rgba(15, 23, 42, 0.92), rgba(8, 13, 22, 0.92));
+        border: 1px solid rgba(148, 163, 184, 0.30);
+        box-shadow: 0 14px 32px rgba(2, 6, 23, 0.28), inset 0 0 30px rgba(34, 211, 238, 0.05);
+        transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+    }
+    .circle-nav-item::before {
+        content: "";
+        position: absolute;
+        inset: 9px;
+        border-radius: inherit;
+        border: 1px solid rgba(103, 232, 249, 0.18);
+        box-shadow: inset 0 0 24px rgba(255,255,255,0.04);
+        z-index: -1;
+    }
+    .circle-nav-item::after {
+        content: "";
+        position: absolute;
+        inset: -35%;
+        background: conic-gradient(from 90deg, transparent, rgba(103, 232, 249, 0.28), transparent, rgba(20, 184, 166, 0.20), transparent);
+        opacity: 0.28;
+        animation: circleNavSpin 14s linear infinite;
+        z-index: -2;
+    }
+    .circle-nav-item:hover {
+        transform: translateY(-5px) scale(1.02);
+        border-color: rgba(103, 232, 249, 0.70);
+        box-shadow: 0 0 0 8px rgba(34, 211, 238, 0.08), 0 20px 42px rgba(34, 211, 238, 0.14);
+    }
+    .circle-nav-item.active {
+        color: #ffffff !important;
+        background:
+            radial-gradient(circle at 34% 22%, rgba(255,255,255,0.38), transparent 22%),
+            linear-gradient(135deg, #22d3ee 0%, #0ea5e9 48%, #14b8a6 100%);
+        border-color: rgba(103, 232, 249, 0.88);
+        box-shadow: 0 0 0 10px rgba(34, 211, 238, 0.10), 0 0 38px rgba(34, 211, 238, 0.36), 0 22px 46px rgba(14, 116, 144, 0.24);
+    }
+    .circle-nav-content {
+        display: grid;
+        place-items: center;
+        gap: 7px;
+        text-align: center;
+        padding: 10px;
+    }
+    .circle-nav-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        font-size: 0.88rem;
+        font-weight: 950;
+        letter-spacing: 0.03em;
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.20);
+        box-shadow: inset 0 0 16px rgba(255, 255, 255, 0.06);
+    }
+    .circle-nav-label {
+        display: block;
+        color: inherit;
+        font-size: 0.88rem;
+        font-weight: 950;
+        line-height: 1.04;
+        letter-spacing: 0;
+    }
+    .st-key-circle_nav {
+        margin: 24px 0 30px;
+        padding: 24px 22px 28px;
+        border-radius: 30px;
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        background:
+            radial-gradient(circle at 18% 12%, rgba(34, 211, 238, 0.16), transparent 24%),
+            radial-gradient(circle at 82% 18%, rgba(16, 185, 129, 0.12), transparent 22%),
+            rgba(8, 13, 22, 0.48);
+        box-shadow: inset 0 0 42px rgba(34, 211, 238, 0.04), 0 18px 44px rgba(2, 6, 23, 0.22);
+    }
+    .st-key-circle_nav div[data-testid="column"] {
+        display: flex;
+        justify-content: center;
+    }
+    .st-key-circle_nav div[data-testid="stButton"] {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+    .st-key-circle_nav div[data-testid="stButton"] button {
+        width: 108px !important;
+        height: 108px !important;
+        min-width: 108px !important;
+        min-height: 108px !important;
+        padding: 0 !important;
+        border-radius: 999px !important;
+        color: #eaf7ff !important;
+        border: 1px solid rgba(148, 163, 184, 0.30) !important;
+        background:
+            radial-gradient(circle at 34% 22%, rgba(255,255,255,0.24), transparent 22%),
+            radial-gradient(circle at 50% 54%, rgba(34, 211, 238, 0.16), transparent 58%),
+            linear-gradient(145deg, rgba(15, 23, 42, 0.94), rgba(8, 13, 22, 0.94)) !important;
+        box-shadow: 0 14px 30px rgba(2, 6, 23, 0.28), inset 0 0 30px rgba(34, 211, 238, 0.05) !important;
+        transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+    }
+    .st-key-circle_nav div[data-testid="stButton"] button:hover {
+        transform: translateY(-5px) scale(1.02);
+        border-color: rgba(103, 232, 249, 0.72) !important;
+        box-shadow: 0 0 0 8px rgba(34, 211, 238, 0.08), 0 20px 42px rgba(34, 211, 238, 0.14) !important;
+    }
+    .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] {
+        color: #ffffff !important;
+        background:
+            radial-gradient(circle at 34% 22%, rgba(255,255,255,0.38), transparent 22%),
+            linear-gradient(135deg, #22d3ee 0%, #0ea5e9 48%, #14b8a6 100%) !important;
+        border-color: rgba(103, 232, 249, 0.90) !important;
+        box-shadow: 0 0 0 10px rgba(34, 211, 238, 0.10), 0 0 38px rgba(34, 211, 238, 0.36), 0 22px 46px rgba(14, 116, 144, 0.24) !important;
+    }
+    .st-key-circle_nav div[data-testid="stButton"] button p {
+        white-space: pre-line;
+        text-align: center;
+        line-height: 1.05;
+        font-size: 0.86rem;
+        font-weight: 950;
+        margin: 0;
+    }
+    .life-compact-panel {
+        border-radius: 28px;
+        border: 1px solid rgba(103, 232, 249, 0.24);
+        background:
+            radial-gradient(circle at 18% 20%, rgba(34, 211, 238, 0.16), transparent 26%),
+            linear-gradient(135deg, rgba(15, 23, 42, 0.76), rgba(8, 13, 22, 0.86));
+        padding: clamp(24px, 4vw, 42px);
+        margin: 4px 0 22px;
+        box-shadow: 0 18px 44px rgba(2, 6, 23, 0.22);
+    }
+    .life-compact-panel h1 {
+        margin: 0 0 10px;
+        color: #f8fafc;
+        font-size: clamp(2rem, 3vw, 3.4rem);
+        font-weight: 950;
+    }
+    .life-compact-panel p {
+        max-width: 900px;
+        color: #dbeafe;
+        font-size: 1.05rem;
+        line-height: 1.58;
+        margin: 0;
+    }
+    .life-compact-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 24px;
+    }
+    .life-compact-card {
+        min-height: 118px;
+        border-radius: 22px;
+        padding: 18px;
+        background: rgba(15, 23, 42, 0.64);
+        border: 1px solid rgba(148, 163, 184, 0.20);
+    }
+    .life-compact-card b {
+        color: #67e8f9;
+        display: block;
+        margin-bottom: 7px;
+        font-size: 0.96rem;
+    }
+    .life-compact-card span {
+        color: #dbeafe;
+        font-size: 0.86rem;
+        line-height: 1.4;
+    }
+    @keyframes circleNavSpin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    @media (max-width: 760px) {
+        .circle-nav {
+            justify-content: center;
+        }
+        .circle-nav-item {
+            width: 96px;
+            height: 96px;
+        }
+        .circle-nav-icon {
+            width: 34px;
+            height: 34px;
+            font-size: 0.72rem;
+        }
+        .circle-nav-label {
+            font-size: 0.76rem;
+        }
+        .life-compact-grid {
+            grid-template-columns: 1fr;
+        }
     }
     div[data-testid="stVerticalBlockBorderWrapper"] {
         background: rgba(15, 23, 42, 0.48);
@@ -1420,6 +1676,301 @@ st.markdown(
         42% { opacity: 0.90; }
         100% { transform: translateX(540px) scale(1.12); opacity: 0.20; }
     }
+    .homepage-visual {
+        min-height: 620px;
+        aspect-ratio: 1672 / 941;
+        padding: 0;
+        border-color: rgba(37, 99, 235, 0.20);
+        background:
+            linear-gradient(135deg, #f8fbff 0%, #dff4ff 52%, #fff7ed 100%);
+        background-size: cover;
+        background-position: center top;
+        background-repeat: no-repeat;
+        color: #0f172a;
+        box-shadow: 0 32px 90px rgba(15, 23, 42, 0.20);
+    }
+    .homepage-bg-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+        z-index: 0;
+    }
+    .homepage-visual::before {
+        opacity: 0.10;
+        background:
+            linear-gradient(115deg, transparent 0%, transparent 42%, rgba(255,255,255,0.54) 48%, rgba(125,211,252,0.18) 52%, transparent 58%);
+        background-size: 180% 100%, auto;
+        animation: homeLightSweep 9s ease-in-out infinite;
+    }
+    .homepage-visual::after {
+        display: none;
+        inset: auto -12% 0 -12%;
+        height: 30%;
+        opacity: 0.46;
+        background:
+            linear-gradient(90deg, transparent, rgba(59,130,246,0.18), rgba(20,184,166,0.20), rgba(250,204,21,0.20), transparent),
+            radial-gradient(ellipse at 72% 100%, rgba(255, 255, 255, 0.58), transparent 66%);
+        animation: homeGlowRoad 8s ease-in-out infinite;
+    }
+    .home-nav {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 22px;
+        min-height: 88px;
+        padding: 18px 34px;
+        background: rgba(255, 255, 255, 0.93);
+        border-bottom: 1px solid rgba(148, 163, 184, 0.20);
+        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+        backdrop-filter: blur(16px);
+    }
+    .home-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #0f172a;
+        font-size: 1.2rem;
+        font-weight: 950;
+    }
+    .home-brand-mark {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        border-radius: 14px;
+        color: white;
+        font-size: 1.32rem;
+        background: linear-gradient(135deg, #2563eb, #22d3ee 46%, #14b8a6);
+        box-shadow: 0 14px 28px rgba(37, 99, 235, 0.22);
+    }
+    .home-brand small {
+        color: #2563eb;
+        font-size: 0.9rem;
+        margin-left: 4px;
+    }
+    .home-nav-links {
+        display: flex;
+        gap: clamp(16px, 3vw, 46px);
+        color: #1e293b;
+        font-size: 0.92rem;
+        font-weight: 760;
+    }
+    .home-nav-actions {
+        display: none;
+        gap: 10px;
+    }
+    .home-action {
+        border-radius: 14px;
+        padding: 11px 18px;
+        border: 1px solid rgba(37, 99, 235, 0.30);
+        background: rgba(255, 255, 255, 0.72);
+        color: #1d4ed8;
+        font-weight: 900;
+        box-shadow: 0 12px 24px rgba(15, 23, 42, 0.06);
+    }
+    .home-action.primary {
+        background: linear-gradient(135deg, #2563eb, #0ea5e9);
+        color: #ffffff;
+        border-color: rgba(37, 99, 235, 0.0);
+    }
+    .homepage-visual.has-home-image .life-entry-grid {
+        display: none;
+    }
+    .homepage-visual .life-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        padding: 9px 14px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid rgba(14, 165, 233, 0.18);
+        color: #0f3f4a;
+        letter-spacing: 0;
+        text-transform: none;
+        box-shadow: 0 12px 28px rgba(14, 116, 144, 0.08);
+    }
+    .homepage-visual .life-title {
+        margin-top: 18px;
+        max-width: 620px;
+        font-size: clamp(3rem, 5vw, 5.6rem);
+        color: #071631;
+        text-shadow: 0 1px 0 rgba(255,255,255,0.40);
+    }
+    .homepage-visual .life-title span {
+        color: transparent;
+        background: linear-gradient(120deg, #14b8a6, #0ea5e9 52%, #2563eb);
+        -webkit-background-clip: text;
+        background-clip: text;
+        text-shadow: none;
+    }
+    .homepage-visual .life-copy {
+        max-width: 520px;
+        padding: 0;
+        margin-top: 24px;
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+        color: #1e293b;
+        font-size: clamp(1rem, 1.3vw, 1.16rem);
+        line-height: 1.55;
+        font-weight: 680;
+    }
+    .home-cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin: 26px 0 16px;
+    }
+    .home-cta {
+        border-radius: 999px;
+        padding: 14px 22px;
+        font-weight: 950;
+        color: #ffffff;
+        background: linear-gradient(135deg, #2563eb, #0ea5e9);
+        box-shadow: 0 18px 38px rgba(37, 99, 235, 0.24);
+    }
+    .home-cta.secondary {
+        color: #1d4ed8;
+        background: rgba(255, 255, 255, 0.70);
+        border: 1px solid rgba(37, 99, 235, 0.30);
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+    }
+    .home-proof {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #334155;
+        font-size: 0.9rem;
+        font-weight: 720;
+        margin-top: 10px;
+    }
+    .home-proof-dots {
+        display: flex;
+    }
+    .home-proof-dot {
+        width: 30px;
+        height: 30px;
+        margin-left: -7px;
+        border-radius: 999px;
+        border: 2px solid rgba(255,255,255,0.88);
+        background: linear-gradient(135deg, #2563eb, #22d3ee);
+    }
+    .home-proof-dot:first-child {
+        margin-left: 0;
+    }
+    .homepage-visual .life-pill-row {
+        display: none;
+    }
+    .homepage-visual .life-map {
+        min-height: 560px;
+        background:
+            radial-gradient(circle at 50% 46%, rgba(255,255,255,0.76), rgba(219,234,254,0.58) 18%, rgba(255,255,255,0.18) 34%, transparent 50%),
+            linear-gradient(135deg, rgba(255,255,255,0.40), rgba(255,255,255,0.12));
+        border: 1px solid rgba(255,255,255,0.54);
+        backdrop-filter: blur(12px);
+        box-shadow: inset 0 0 42px rgba(255,255,255,0.18), 0 24px 52px rgba(15, 23, 42, 0.12);
+    }
+    .homepage-visual .life-node {
+        color: #0f172a;
+        background: rgba(255,255,255,0.72);
+        border-color: rgba(37, 99, 235, 0.18);
+        box-shadow: 0 14px 30px rgba(37, 99, 235, 0.10);
+    }
+    .homepage-visual .life-core {
+        opacity: 1;
+        color: #0f172a;
+        background:
+            radial-gradient(circle at 50% 50%, rgba(255,255,255,0.92), rgba(224,242,254,0.84) 48%, rgba(255,255,255,0.48));
+        border-color: rgba(59, 130, 246, 0.24);
+        box-shadow: 0 0 80px rgba(14, 165, 233, 0.26);
+    }
+    .home-module-grid {
+        position: relative;
+        z-index: 2;
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 24px;
+    }
+    .homepage-visual.has-home-image .home-module-grid {
+        display: none;
+    }
+    .home-module-card {
+        min-height: 128px;
+        border-radius: 22px;
+        padding: 18px;
+        background: rgba(255,255,255,0.70);
+        border: 1px solid rgba(255,255,255,0.72);
+        box-shadow: 0 18px 38px rgba(15, 23, 42, 0.10);
+        backdrop-filter: blur(10px);
+        color: #0f172a;
+    }
+    .home-module-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        color: white;
+        margin-bottom: 12px;
+        background: linear-gradient(135deg, #2563eb, #22d3ee);
+    }
+    .home-module-card b {
+        display: block;
+        font-size: 0.98rem;
+        margin-bottom: 7px;
+    }
+    .home-module-card span {
+        color: #475569;
+        font-size: 0.84rem;
+        line-height: 1.35;
+    }
+    @keyframes homeLightSweep {
+        0%, 100% { background-position: -120% 0, center; opacity: 0.22; }
+        50% { background-position: 120% 0, center; opacity: 0.46; }
+    }
+    @keyframes homeGlowRoad {
+        0%, 100% { transform: translateX(-5%); opacity: 0.34; }
+        50% { transform: translateX(5%); opacity: 0.56; }
+    }
+    @media (max-width: 1100px) {
+        .home-nav {
+            flex-wrap: wrap;
+        }
+        .home-nav-links {
+            order: 3;
+            width: 100%;
+            justify-content: center;
+        }
+        .homepage-visual.has-home-image .life-entry-grid {
+            grid-template-columns: 1fr;
+        }
+        .home-module-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+    @media (max-width: 680px) {
+        .homepage-visual {
+            padding: 18px;
+            min-height: 620px;
+            aspect-ratio: auto;
+        }
+        .home-nav-links,
+        .home-nav-actions {
+            display: none;
+        }
+        .homepage-visual .life-title {
+            font-size: 2.7rem;
+        }
+        .home-module-grid {
+            grid-template-columns: 1fr;
+        }
+    }
     .app-footer {
         border-top: 1px solid rgba(148, 163, 184, 0.24);
         margin-top: 34px;
@@ -1460,24 +2011,1473 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background:
+            radial-gradient(circle at 18% 8%, rgba(255, 255, 255, 0.98), transparent 24%),
+            radial-gradient(circle at 82% 10%, rgba(254, 240, 138, 0.42), transparent 22%),
+            radial-gradient(circle at 74% 44%, rgba(125, 211, 252, 0.48), transparent 30%),
+            radial-gradient(circle at 20% 72%, rgba(167, 243, 208, 0.38), transparent 28%),
+            linear-gradient(90deg, rgba(14,165,233,0.075) 1px, transparent 1px),
+            linear-gradient(0deg, rgba(20,184,166,0.055) 1px, transparent 1px),
+            linear-gradient(135deg, #f8fcff 0%, #eaf7ff 42%, #fff8e8 100%) !important;
+        background-size: auto, auto, auto, auto, 58px 58px, 58px 58px, auto !important;
+        color: #102033;
+    }
+    .stApp::before {
+        opacity: 0.42;
+        background:
+            linear-gradient(112deg, transparent 0%, transparent 42%, rgba(255,255,255,0.72) 48%, rgba(34,211,238,0.18) 54%, transparent 62%),
+            linear-gradient(72deg, transparent 0%, transparent 60%, rgba(250,204,21,0.20) 64%, rgba(16,185,129,0.13) 69%, transparent 76%);
+        animation: futureLightSweep 16s ease-in-out infinite;
+    }
+    .stApp::after {
+        right: 2vw;
+        top: 13vh;
+        width: min(520px, 36vw);
+        height: 280px;
+        opacity: 0.26;
+        background:
+            radial-gradient(ellipse at 70% 80%, rgba(255,255,255,0.74), transparent 56%),
+            linear-gradient(135deg, transparent 0 12%, rgba(14,165,233,0.34) 12% 13%, transparent 13% 28%, rgba(20,184,166,0.30) 28% 29%, transparent 29% 46%, rgba(250,204,21,0.30) 46% 47%, transparent 47% 100%);
+        animation: futureGraphFloat 9s ease-in-out infinite;
+    }
+    @keyframes futureLightSweep {
+        0%, 100% { transform: translateX(-10%) translateY(0); }
+        50% { transform: translateX(10%) translateY(-8px); }
+    }
+    @keyframes futureGraphFloat {
+        0%, 100% { transform: translateY(0) scale(0.98); }
+        50% { transform: translateY(14px) scale(1.02); }
+    }
+    h1, h2, h3,
+    div[data-testid="stHeadingWithActionElements"] h1 {
+        color: #102033;
+        text-shadow: none;
+    }
+    p, li, label {
+        color: #334155;
+    }
+    .brand-header {
+        border: 1px solid rgba(125, 211, 252, 0.42);
+        background:
+            radial-gradient(circle at 58% 12%, rgba(255, 255, 255, 0.94), transparent 22%),
+            radial-gradient(circle at 50% 28%, rgba(125, 211, 252, 0.46), transparent 30%),
+            radial-gradient(circle at 82% 26%, rgba(254, 240, 138, 0.38), transparent 25%),
+            linear-gradient(135deg, rgba(255,255,255,0.92), rgba(224,242,254,0.84) 54%, rgba(236,253,245,0.82)) !important;
+        box-shadow: 0 28px 78px rgba(14, 116, 144, 0.14);
+    }
+    .brand-header::after {
+        height: 4px;
+        background: linear-gradient(90deg, transparent, rgba(37,99,235,0.76), rgba(34,211,238,0.86), rgba(20,184,166,0.76), transparent);
+        box-shadow: 0 0 26px rgba(34, 211, 238, 0.42);
+    }
+    .brand-icon {
+        background:
+            radial-gradient(circle at 34% 24%, rgba(255,255,255,0.76), transparent 26%),
+            linear-gradient(135deg, rgba(56,189,248,0.92), rgba(45,212,191,0.78)) !important;
+        border-color: rgba(14, 165, 233, 0.34);
+        box-shadow: 0 18px 38px rgba(14, 165, 233, 0.22), inset 0 0 24px rgba(255,255,255,0.25);
+    }
+    .brand-name {
+        color: #071631;
+        text-shadow: 0 12px 32px rgba(14, 116, 144, 0.12);
+    }
+    .brand-name .scope-accent {
+        color: #12b7d8;
+        text-shadow: 0 0 32px rgba(34, 211, 238, 0.34);
+    }
+    .brand-subtitle {
+        color: #48627e;
+    }
+    .brand-badge {
+        color: #075985;
+        background: rgba(255, 255, 255, 0.72);
+        border-color: rgba(14, 165, 233, 0.28);
+        box-shadow: 0 12px 28px rgba(14, 116, 144, 0.10);
+    }
+    .st-key-circle_nav {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(125, 211, 252, 0.40);
+        background:
+            radial-gradient(circle at 15% 18%, rgba(255,255,255,0.94), transparent 26%),
+            radial-gradient(circle at 88% 24%, rgba(254,240,138,0.28), transparent 26%),
+            radial-gradient(circle at 50% 80%, rgba(167,243,208,0.28), transparent 32%),
+            rgba(255, 255, 255, 0.50) !important;
+        box-shadow: 0 22px 58px rgba(14, 116, 144, 0.14), inset 0 0 42px rgba(255,255,255,0.34);
+        backdrop-filter: blur(14px);
+    }
+    .st-key-circle_nav::before {
+        content: "";
+        position: absolute;
+        inset: 14px 5%;
+        border-radius: 999px;
+        pointer-events: none;
+        opacity: 0.54;
+        border: 2px solid rgba(125, 211, 252, 0.24);
+        background:
+            radial-gradient(circle at 18% 50%, rgba(14,165,233,0.18), transparent 12%),
+            radial-gradient(circle at 82% 50%, rgba(250,204,21,0.16), transparent 13%);
+        animation: futurePulse 7s ease-in-out infinite;
+    }
+    @keyframes futurePulse {
+        0%, 100% { transform: scaleX(0.98); opacity: 0.38; }
+        50% { transform: scaleX(1.02); opacity: 0.68; }
+    }
+    .st-key-circle_nav div[data-testid="stButton"] button {
+        color: #102033 !important;
+        border: 1px solid rgba(37, 99, 235, 0.16) !important;
+        background:
+            radial-gradient(circle at 34% 22%, rgba(255,255,255,0.86), transparent 24%),
+            radial-gradient(circle at 50% 56%, rgba(125,211,252,0.24), transparent 58%),
+            linear-gradient(145deg, rgba(255,255,255,0.86), rgba(224,242,254,0.74)) !important;
+        box-shadow: 0 18px 38px rgba(14, 116, 144, 0.13), inset 0 0 26px rgba(255,255,255,0.40) !important;
+    }
+    .st-key-circle_nav div[data-testid="stButton"] button:hover {
+        border-color: rgba(14, 165, 233, 0.56) !important;
+        box-shadow: 0 0 0 8px rgba(125, 211, 252, 0.18), 0 22px 48px rgba(14, 165, 233, 0.18) !important;
+    }
+    .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] {
+        color: #ffffff !important;
+        background:
+            radial-gradient(circle at 34% 22%, rgba(255,255,255,0.48), transparent 23%),
+            linear-gradient(135deg, #60d7ff 0%, #22c7e8 42%, #34d399 100%) !important;
+        border-color: rgba(14, 165, 233, 0.62) !important;
+        box-shadow: 0 0 0 10px rgba(125, 211, 252, 0.22), 0 0 42px rgba(34, 211, 238, 0.38), 0 22px 46px rgba(14, 116, 144, 0.18) !important;
+    }
+    .st-key-circle_nav div[data-testid="stButton"] button p {
+        color: inherit !important;
+    }
+    .life-compact-panel,
+    .hero-panel {
+        border: 1px solid rgba(125, 211, 252, 0.38);
+        background:
+            radial-gradient(circle at 16% 18%, rgba(255,255,255,0.92), transparent 26%),
+            radial-gradient(circle at 88% 18%, rgba(254,240,138,0.26), transparent 24%),
+            linear-gradient(135deg, rgba(255,255,255,0.78), rgba(224,242,254,0.68) 58%, rgba(236,253,245,0.72)) !important;
+        box-shadow: 0 24px 64px rgba(14, 116, 144, 0.12);
+        backdrop-filter: blur(12px);
+    }
+    .life-compact-panel h1,
+    .hero-panel h1,
+    .hero-panel h2,
+    .hero-panel h3 {
+        color: #102033 !important;
+    }
+    .life-compact-panel p,
+    .hero-muted {
+        color: #334155 !important;
+    }
+    .life-compact-card {
+        background: rgba(255, 255, 255, 0.72);
+        border-color: rgba(14, 165, 233, 0.18);
+        box-shadow: 0 14px 30px rgba(14, 116, 144, 0.08);
+    }
+    .life-compact-card b {
+        color: #0e7490;
+    }
+    .life-compact-card span {
+        color: #475569;
+    }
+    .metric-card,
+    div[data-testid="stMetric"],
+    div[data-testid="stDataFrame"] {
+        box-shadow: 0 14px 34px rgba(14, 116, 144, 0.08);
+    }
+    .app-footer {
+        color: #475569;
+        border-top-color: rgba(14, 165, 233, 0.18);
+    }
+    .app-footer b {
+        color: #102033;
+    }
+    section[data-testid="stSidebar"] {
+        background:
+            radial-gradient(circle at 28% 7%, rgba(125, 211, 252, 0.30), transparent 28%),
+            radial-gradient(circle at 72% 38%, rgba(254, 240, 138, 0.18), transparent 26%),
+            linear-gradient(180deg, rgba(248,252,255,0.96), rgba(224,242,254,0.92) 52%, rgba(236,253,245,0.90)) !important;
+        border-right: 1px solid rgba(14, 165, 233, 0.22);
+        box-shadow: 18px 0 40px rgba(14, 116, 144, 0.10);
+    }
+    section[data-testid="stSidebar"] h1,
+    section[data-testid="stSidebar"] h2,
+    section[data-testid="stSidebar"] h3,
+    section[data-testid="stSidebar"] label,
+    section[data-testid="stSidebar"] p {
+        color: #102033 !important;
+    }
+    section[data-testid="stSidebar"] code {
+        color: #047857 !important;
+        background: rgba(255,255,255,0.72) !important;
+    }
+    .stTextInput input,
+    .stNumberInput input,
+    textarea {
+        background: #ffffff !important;
+        color: #102033 !important;
+        border-color: rgba(14, 165, 233, 0.38) !important;
+        box-shadow: 0 10px 24px rgba(14, 116, 144, 0.08) !important;
+    }
+    .stTextInput input::placeholder,
+    textarea::placeholder {
+        color: #64748b !important;
+        opacity: 1 !important;
+    }
+    div[data-testid="stButton"] button:not([kind="primary"]),
+    div[data-testid="stFormSubmitButton"] button,
+    div[data-testid="stDownloadButton"] button {
+        color: #ffffff !important;
+        background:
+            radial-gradient(circle at 30% 20%, rgba(255,255,255,0.16), transparent 24%),
+            linear-gradient(135deg, #1f2937 0%, #111827 58%, #0f172a 100%) !important;
+        border-color: rgba(226, 232, 240, 0.32) !important;
+        box-shadow: 0 14px 30px rgba(15, 23, 42, 0.18), inset 0 0 18px rgba(255,255,255,0.05) !important;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.24);
+    }
+    div[data-testid="stButton"] button:not([kind="primary"]) *,
+    div[data-testid="stFormSubmitButton"] button *,
+    div[data-testid="stDownloadButton"] button * {
+        color: #ffffff !important;
+    }
+    div[data-testid="stButton"] button:not([kind="primary"]):hover,
+    div[data-testid="stFormSubmitButton"] button:hover,
+    div[data-testid="stDownloadButton"] button:hover {
+        color: #ffffff !important;
+        border-color: rgba(125, 211, 252, 0.64) !important;
+        background:
+            radial-gradient(circle at 30% 20%, rgba(255,255,255,0.20), transparent 24%),
+            linear-gradient(135deg, #273449 0%, #172033 56%, #111827 100%) !important;
+        box-shadow: 0 18px 36px rgba(14, 116, 144, 0.16), inset 0 0 22px rgba(125,211,252,0.06) !important;
+    }
+    .st-key-circle_nav div[data-testid="stButton"] button:not([kind="primary"]) {
+        color: #102033 !important;
+        background:
+            radial-gradient(circle at 34% 22%, rgba(255,255,255,0.86), transparent 24%),
+            radial-gradient(circle at 50% 56%, rgba(125,211,252,0.24), transparent 58%),
+            linear-gradient(145deg, rgba(255,255,255,0.86), rgba(224,242,254,0.74)) !important;
+        border-color: rgba(37, 99, 235, 0.16) !important;
+        text-shadow: none;
+    }
+    .st-key-circle_nav div[data-testid="stButton"] button:not([kind="primary"]) * {
+        color: #102033 !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
-def get_finnhub_api_key() -> str:
+st.markdown(
+    """
+    <style>
+    html body .stApp div[data-testid="stButton"] button,
+    html body .stApp div[data-testid="stFormSubmitButton"] button,
+    html body .stApp div[data-testid="stDownloadButton"] button {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+    }
+    html body .stApp div[data-testid="stButton"] button p,
+    html body .stApp div[data-testid="stButton"] button span,
+    html body .stApp div[data-testid="stButton"] button div,
+    html body .stApp div[data-testid="stFormSubmitButton"] button p,
+    html body .stApp div[data-testid="stFormSubmitButton"] button span,
+    html body .stApp div[data-testid="stFormSubmitButton"] button div,
+    html body .stApp div[data-testid="stDownloadButton"] button p,
+    html body .stApp div[data-testid="stDownloadButton"] button span,
+    html body .stApp div[data-testid="stDownloadButton"] button div {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        opacity: 1 !important;
+    }
+    html body .stApp div[data-testid="stButton"] button:disabled,
+    html body .stApp div[data-testid="stFormSubmitButton"] button:disabled,
+    html body .stApp div[data-testid="stDownloadButton"] button:disabled {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        opacity: 0.92 !important;
+    }
+    html body .stApp div[data-testid="stButton"] button:disabled p,
+    html body .stApp div[data-testid="stButton"] button:disabled span,
+    html body .stApp div[data-testid="stButton"] button:disabled div,
+    html body .stApp div[data-testid="stFormSubmitButton"] button:disabled p,
+    html body .stApp div[data-testid="stFormSubmitButton"] button:disabled span,
+    html body .stApp div[data-testid="stFormSubmitButton"] button:disabled div,
+    html body .stApp div[data-testid="stDownloadButton"] button:disabled p,
+    html body .stApp div[data-testid="stDownloadButton"] button:disabled span,
+    html body .stApp div[data-testid="stDownloadButton"] button:disabled div {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        opacity: 1 !important;
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button,
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button p,
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button span,
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button div {
+        color: #102033 !important;
+        -webkit-text-fill-color: #102033 !important;
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"],
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] p,
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] span,
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] div {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+st.markdown(
+    """
+    <style>
+    html body .stApp .nav-flow-strip {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 10px;
+        width: min(1180px, 94%);
+        margin: 4px auto 16px;
+        padding: 10px;
+        border: 1px solid rgba(14, 165, 233, 0.20);
+        border-radius: 18px;
+        background:
+            linear-gradient(90deg, rgba(240, 249, 255, 0.92), rgba(255, 251, 235, 0.72)),
+            rgba(255, 255, 255, 0.82);
+        box-shadow:
+            0 16px 36px rgba(14, 165, 233, 0.10),
+            inset 0 0 0 1px rgba(255,255,255,0.70);
+    }
+    html body .stApp .nav-flow-step {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 48px;
+        padding: 9px 11px;
+        border-radius: 14px;
+        color: #0f172a;
+        background: rgba(255, 255, 255, 0.68);
+        border: 1px solid rgba(148, 163, 184, 0.20);
+    }
+    html body .stApp .nav-flow-step strong {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        flex: 0 0 30px;
+        border-radius: 999px;
+        color: #ffffff;
+        font-size: 0.78rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #0ea5e9, #14b8a6);
+        box-shadow: 0 8px 18px rgba(14, 165, 233, 0.20);
+    }
+    html body .stApp .nav-flow-step span {
+        display: block;
+        color: #0f172a;
+        font-size: 0.92rem;
+        line-height: 1.05;
+        font-weight: 900;
+        letter-spacing: 0;
+    }
+    html body .stApp .nav-flow-step small {
+        display: block;
+        margin-top: 2px;
+        color: #475569;
+        font-size: 0.72rem;
+        line-height: 1;
+        font-weight: 800;
+        letter-spacing: 0;
+    }
+    html body .stApp .nav-flow-step.scenario strong {
+        background: linear-gradient(135deg, #f97316, #ef4444);
+        box-shadow: 0 8px 18px rgba(249, 115, 22, 0.20);
+    }
+    html body .stApp .nav-flow-step.ai strong {
+        background: linear-gradient(135deg, #06b6d4, #8b5cf6);
+        box-shadow: 0 8px 18px rgba(6, 182, 212, 0.20);
+    }
+    html body .stApp .st-key-mobile_nav {
+        display: none !important;
+    }
+    html body .stApp .st-key-mobile_nav div[data-testid="stButton"] button {
+        min-height: 46px !important;
+        border-radius: 14px !important;
+        border: 1px solid rgba(14, 165, 233, 0.24) !important;
+        color: #0f172a !important;
+        -webkit-text-fill-color: #0f172a !important;
+        background:
+            radial-gradient(circle at 18% 18%, rgba(255,255,255,0.96), transparent 30%),
+            linear-gradient(135deg, rgba(240,249,255,0.94), rgba(236,253,245,0.86)) !important;
+        box-shadow: 0 10px 26px rgba(14, 165, 233, 0.10) !important;
+        font-weight: 900 !important;
+    }
+    html body .stApp .st-key-mobile_nav div[data-testid="stButton"] button[kind="primary"] {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        background: linear-gradient(135deg, #0ea5e9, #14b8a6) !important;
+        border-color: rgba(255,255,255,0.54) !important;
+    }
+    html body .stApp .ai-coach-hero {
+        width: min(1120px, 100%);
+        margin: 0 auto 18px;
+        padding: 22px 24px;
+        border-radius: 24px;
+        border: 1px solid rgba(14, 165, 233, 0.24);
+        background:
+            radial-gradient(circle at 14% 18%, rgba(34,211,238,0.20), transparent 28%),
+            radial-gradient(circle at 88% 16%, rgba(139,92,246,0.16), transparent 26%),
+            linear-gradient(135deg, rgba(255,255,255,0.94), rgba(240,249,255,0.82));
+        box-shadow: 0 22px 48px rgba(14, 165, 233, 0.12);
+    }
+    html body .stApp .ai-coach-hero h1 {
+        margin: 0 0 8px;
+        color: #0f172a;
+        font-size: 2rem;
+        font-weight: 950;
+        letter-spacing: 0;
+    }
+    html body .stApp .ai-coach-hero p {
+        margin: 0;
+        max-width: 760px;
+        color: #334155;
+        font-weight: 750;
+        line-height: 1.45;
+    }
+    html body .stApp .ai-coach-strip {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        margin: 16px 0 0;
+    }
+    html body .stApp .ai-coach-signal {
+        padding: 10px 12px;
+        border-radius: 16px;
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        background: rgba(255,255,255,0.72);
+    }
+    html body .stApp .ai-coach-signal b {
+        display: block;
+        color: #0f172a;
+        font-size: 0.9rem;
+        line-height: 1.05;
+    }
+    html body .stApp .ai-coach-signal span {
+        display: block;
+        margin-top: 4px;
+        color: #475569;
+        font-size: 0.78rem;
+        line-height: 1.15;
+        font-weight: 750;
+    }
+    html body .stApp .coach-disclaimer {
+        padding: 12px 14px;
+        border-radius: 16px;
+        color: #334155;
+        background: rgba(255, 251, 235, 0.86);
+        border: 1px solid rgba(245, 158, 11, 0.24);
+        font-weight: 760;
+    }
+    html body .stApp .linked-coach-card {
+        min-height: 170px;
+        margin: 0 0 10px;
+        padding: 15px 16px;
+        border-radius: 18px;
+        border: 1px solid rgba(14, 165, 233, 0.20);
+        background:
+            radial-gradient(circle at 16% 18%, rgba(34,211,238,0.16), transparent 32%),
+            linear-gradient(135deg, rgba(255,255,255,0.94), rgba(241,245,249,0.86));
+        box-shadow: 0 16px 34px rgba(14, 165, 233, 0.10);
+    }
+    html body .stApp .linked-coach-card .eyebrow {
+        color: #0f766e;
+        font-size: 0.72rem;
+        font-weight: 950;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 7px;
+    }
+    html body .stApp .linked-coach-card h3 {
+        color: #0f172a;
+        font-size: 1.02rem;
+        margin: 0 0 6px;
+        letter-spacing: 0;
+    }
+    html body .stApp .linked-coach-card .status {
+        color: #0369a1;
+        font-weight: 900;
+        margin-bottom: 8px;
+        line-height: 1.25;
+    }
+    html body .stApp .linked-coach-card p {
+        color: #334155;
+        font-size: 0.9rem;
+        font-weight: 720;
+        line-height: 1.38;
+        margin: 0;
+    }
+    html body .stApp .st-key-circle_nav {
+        padding: 30px 30px 28px !important;
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_life,
+    html body .stApp .st-key-circle_nav .st-key-nav_search,
+    html body .stApp .st-key-circle_nav .st-key-nav_compare,
+    html body .stApp .st-key-circle_nav .st-key-nav_portfolio,
+    html body .stApp .st-key-circle_nav .st-key-nav_reit,
+    html body .stApp .st-key-circle_nav .st-key-nav_finance,
+    html body .stApp .st-key-circle_nav .st-key-nav_scenario,
+    html body .stApp .st-key-circle_nav .st-key-nav_details,
+    html body .stApp .st-key-circle_nav .st-key-nav_ai,
+    html body .stApp .st-key-circle_nav .st-key-nav_diary,
+    html body .stApp .st-key-circle_nav .st-key-nav_settings,
+    html body .stApp .st-key-circle_nav .st-key-nav_guide {
+        --sig-a: rgba(14, 165, 233, 0.34);
+        --sig-b: rgba(45, 212, 191, 0.28);
+        --sig-c: rgba(255, 255, 255, 0.92);
+        --sig-line: rgba(14, 165, 233, 0.38);
+        --sig-shadow: rgba(14, 165, 233, 0.18);
+        --sig-symbol:
+            radial-gradient(circle at 50% 50%, rgba(255,255,255,0.72), transparent 13%),
+            radial-gradient(circle at 50% 50%, rgba(14,165,233,0.30), transparent 36%);
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_life {
+        --sig-a: rgba(45, 212, 191, 0.48);
+        --sig-b: rgba(125, 211, 252, 0.40);
+        --sig-line: rgba(20, 184, 166, 0.46);
+        --sig-shadow: rgba(45, 212, 191, 0.24);
+        --sig-symbol:
+            radial-gradient(circle at 50% 62%, rgba(255,255,255,0.84), transparent 12%),
+            radial-gradient(circle at 50% 62%, rgba(45,212,191,0.48), transparent 27%),
+            linear-gradient(90deg, transparent 0 43%, rgba(20,184,166,0.54) 43% 57%, transparent 57% 100%),
+            linear-gradient(0deg, transparent 0 43%, rgba(14,165,233,0.36) 43% 57%, transparent 57% 100%);
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_search {
+        --sig-a: rgba(59, 130, 246, 0.44);
+        --sig-b: rgba(14, 165, 233, 0.34);
+        --sig-line: rgba(59, 130, 246, 0.50);
+        --sig-shadow: rgba(59, 130, 246, 0.22);
+        --sig-symbol:
+            radial-gradient(circle at 45% 45%, transparent 0 23%, rgba(37,99,235,0.54) 24% 30%, transparent 31%),
+            linear-gradient(135deg, transparent 0 58%, rgba(37,99,235,0.54) 59% 65%, transparent 66%),
+            linear-gradient(0deg, transparent 0 46%, rgba(14,165,233,0.26) 47% 53%, transparent 54% 100%);
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_compare {
+        --sig-a: rgba(168, 85, 247, 0.36);
+        --sig-b: rgba(96, 165, 250, 0.28);
+        --sig-line: rgba(124, 58, 237, 0.44);
+        --sig-shadow: rgba(124, 58, 237, 0.18);
+        --sig-symbol:
+            linear-gradient(90deg, transparent 0 18%, rgba(124,58,237,0.50) 19% 24%, transparent 25% 75%, rgba(96,165,250,0.52) 76% 81%, transparent 82%),
+            linear-gradient(0deg, transparent 0 38%, rgba(124,58,237,0.40) 39% 44%, transparent 45% 56%, rgba(96,165,250,0.40) 57% 62%, transparent 63%);
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_portfolio {
+        --sig-a: rgba(34, 197, 94, 0.36);
+        --sig-b: rgba(250, 204, 21, 0.34);
+        --sig-line: rgba(34, 197, 94, 0.46);
+        --sig-shadow: rgba(34, 197, 94, 0.18);
+        --sig-symbol:
+            conic-gradient(from 20deg, rgba(34,197,94,0.58) 0 34%, rgba(59,130,246,0.52) 34% 62%, rgba(250,204,21,0.54) 62% 82%, rgba(45,212,191,0.44) 82% 100%),
+            radial-gradient(circle, rgba(255,255,255,0.90) 0 30%, transparent 31%);
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_reit {
+        --sig-a: rgba(251, 191, 36, 0.42);
+        --sig-b: rgba(20, 184, 166, 0.28);
+        --sig-line: rgba(217, 119, 6, 0.42);
+        --sig-shadow: rgba(251, 191, 36, 0.18);
+        --sig-symbol:
+            linear-gradient(90deg, transparent 0 16%, rgba(217,119,6,0.50) 17% 31%, transparent 32% 39%, rgba(20,184,166,0.42) 40% 58%, transparent 59% 66%, rgba(251,191,36,0.54) 67% 83%, transparent 84%),
+            repeating-linear-gradient(0deg, transparent 0 12px, rgba(255,255,255,0.54) 13px 15px);
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_finance {
+        --sig-a: rgba(16, 185, 129, 0.42);
+        --sig-b: rgba(59, 130, 246, 0.28);
+        --sig-line: rgba(5, 150, 105, 0.50);
+        --sig-shadow: rgba(16, 185, 129, 0.20);
+        --sig-symbol:
+            radial-gradient(circle at 26% 62%, rgba(16,185,129,0.56), transparent 8%),
+            radial-gradient(circle at 48% 42%, rgba(59,130,246,0.48), transparent 8%),
+            radial-gradient(circle at 72% 34%, rgba(34,197,94,0.54), transparent 8%),
+            linear-gradient(135deg, transparent 0 45%, rgba(5,150,105,0.50) 46% 52%, transparent 53% 100%);
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_scenario {
+        --sig-a: rgba(245, 158, 11, 0.46);
+        --sig-b: rgba(239, 68, 68, 0.24);
+        --sig-line: rgba(217, 119, 6, 0.48);
+        --sig-shadow: rgba(245, 158, 11, 0.22);
+        --sig-symbol:
+            linear-gradient(115deg, transparent 0 36%, rgba(217,119,6,0.56) 37% 43%, transparent 44%),
+            linear-gradient(65deg, transparent 0 50%, rgba(239,68,68,0.38) 51% 57%, transparent 58%),
+            radial-gradient(circle at 30% 68%, rgba(245,158,11,0.58), transparent 9%),
+            radial-gradient(circle at 70% 30%, rgba(239,68,68,0.46), transparent 9%);
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_details {
+        --sig-a: rgba(14, 165, 233, 0.36);
+        --sig-b: rgba(99, 102, 241, 0.26);
+        --sig-line: rgba(2, 132, 199, 0.44);
+        --sig-shadow: rgba(14, 165, 233, 0.17);
+        --sig-symbol:
+            radial-gradient(circle at 30% 30%, rgba(2,132,199,0.58) 0 5%, transparent 6%),
+            radial-gradient(circle at 70% 30%, rgba(99,102,241,0.48) 0 5%, transparent 6%),
+            radial-gradient(circle at 30% 70%, rgba(45,212,191,0.48) 0 5%, transparent 6%),
+            radial-gradient(circle at 70% 70%, rgba(14,165,233,0.58) 0 5%, transparent 6%),
+            linear-gradient(90deg, transparent 0 48%, rgba(2,132,199,0.35) 49% 51%, transparent 52%),
+            linear-gradient(0deg, transparent 0 48%, rgba(2,132,199,0.35) 49% 51%, transparent 52%);
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_ai {
+        --sig-a: rgba(34, 211, 238, 0.44);
+        --sig-b: rgba(168, 85, 247, 0.28);
+        --sig-line: rgba(8, 145, 178, 0.48);
+        --sig-shadow: rgba(34, 211, 238, 0.24);
+        --sig-symbol:
+            radial-gradient(circle at 50% 50%, rgba(34,211,238,0.58) 0 8%, transparent 9%),
+            radial-gradient(circle at 28% 28%, rgba(168,85,247,0.48) 0 5%, transparent 6%),
+            radial-gradient(circle at 72% 28%, rgba(14,165,233,0.48) 0 5%, transparent 6%),
+            radial-gradient(circle at 28% 72%, rgba(45,212,191,0.48) 0 5%, transparent 6%),
+            radial-gradient(circle at 72% 72%, rgba(99,102,241,0.48) 0 5%, transparent 6%),
+            linear-gradient(90deg, transparent 0 47%, rgba(8,145,178,0.36) 48% 52%, transparent 53%),
+            linear-gradient(0deg, transparent 0 47%, rgba(8,145,178,0.36) 48% 52%, transparent 53%);
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_diary {
+        --sig-a: rgba(244, 114, 182, 0.34);
+        --sig-b: rgba(251, 191, 36, 0.26);
+        --sig-line: rgba(219, 39, 119, 0.40);
+        --sig-shadow: rgba(244, 114, 182, 0.18);
+        --sig-symbol:
+            linear-gradient(135deg, transparent 0 36%, rgba(219,39,119,0.48) 37% 43%, transparent 44%),
+            linear-gradient(90deg, transparent 0 24%, rgba(251,191,36,0.28) 25% 76%, transparent 77%),
+            repeating-linear-gradient(0deg, transparent 0 12px, rgba(219,39,119,0.22) 13px 15px);
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_settings {
+        --sig-a: rgba(100, 116, 139, 0.34);
+        --sig-b: rgba(14, 165, 233, 0.22);
+        --sig-line: rgba(71, 85, 105, 0.46);
+        --sig-shadow: rgba(71, 85, 105, 0.18);
+        --sig-symbol:
+            repeating-conic-gradient(from 0deg, rgba(71,85,105,0.52) 0 10deg, transparent 10deg 24deg),
+            radial-gradient(circle, rgba(255,255,255,0.94) 0 28%, transparent 29% 100%);
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_guide {
+        --sig-a: rgba(250, 204, 21, 0.42);
+        --sig-b: rgba(59, 130, 246, 0.28);
+        --sig-line: rgba(202, 138, 4, 0.42);
+        --sig-shadow: rgba(250, 204, 21, 0.18);
+        --sig-symbol:
+            conic-gradient(from 45deg, transparent 0 12%, rgba(202,138,4,0.54) 12% 18%, transparent 18% 62%, rgba(59,130,246,0.46) 62% 68%, transparent 68%),
+            radial-gradient(circle, rgba(255,255,255,0.88) 0 12%, transparent 13% 100%),
+            linear-gradient(90deg, transparent 0 48%, rgba(202,138,4,0.34) 49% 51%, transparent 52%),
+            linear-gradient(0deg, transparent 0 48%, rgba(202,138,4,0.34) 49% 51%, transparent 52%);
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button {
+        position: relative !important;
+        isolation: isolate;
+        overflow: hidden !important;
+        width: min(136px, 100%) !important;
+        height: auto !important;
+        min-height: 0 !important;
+        aspect-ratio: 1 / 1 !important;
+        max-width: 136px;
+        margin: 0 auto !important;
+        border-radius: 999px !important;
+        border: 1px solid rgba(59, 130, 246, 0.18) !important;
+        color: #0f172a !important;
+        -webkit-text-fill-color: #0f172a !important;
+        background:
+            radial-gradient(circle at 30% 22%, rgba(255,255,255,0.96), transparent 23%),
+            radial-gradient(circle at 72% 78%, var(--sig-a), transparent 42%),
+            conic-gradient(from 130deg, var(--sig-a), rgba(255,255,255,0.92), var(--sig-b), rgba(255,255,255,0.88), var(--sig-a)),
+            linear-gradient(145deg, rgba(255,255,255,0.94), rgba(224,242,254,0.80)) !important;
+        box-shadow:
+            0 20px 42px var(--sig-shadow),
+            inset 0 0 0 1px rgba(255,255,255,0.62),
+            inset 0 0 34px rgba(255,255,255,0.34) !important;
+        transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button::before {
+        content: "";
+        position: absolute;
+        inset: 10px;
+        z-index: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        opacity: 0.84;
+        background:
+            radial-gradient(circle at 30% 24%, rgba(255,255,255,0.78), transparent 16%),
+            var(--sig-symbol);
+        filter: saturate(1.08);
+        animation: signatureBreath 5.5s ease-in-out infinite;
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button::after {
+        content: "";
+        position: absolute;
+        inset: 3px;
+        z-index: 1;
+        border-radius: inherit;
+        pointer-events: none;
+        opacity: 0.78;
+        border: 1px solid var(--sig-line);
+        background:
+            conic-gradient(from 0deg, transparent 0 12%, var(--sig-line) 13% 16%, transparent 17% 52%, rgba(255,255,255,0.64) 53% 56%, transparent 57% 100%);
+        mask: radial-gradient(circle, transparent 0 57%, #000 58% 100%);
+        -webkit-mask: radial-gradient(circle, transparent 0 57%, #000 58% 100%);
+        animation: signatureOrbit 12s linear infinite;
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button p,
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button span,
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button div {
+        position: relative;
+        z-index: 2;
+        color: #0f172a !important;
+        -webkit-text-fill-color: #0f172a !important;
+        font-weight: 900 !important;
+        text-shadow: 0 1px 8px rgba(255,255,255,0.86);
+        line-height: 1.08 !important;
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button:hover {
+        transform: translateY(-4px) scale(1.025);
+        border-color: var(--sig-line) !important;
+        box-shadow:
+            0 0 0 8px rgba(255,255,255,0.42),
+            0 24px 52px var(--sig-shadow),
+            0 0 38px var(--sig-a),
+            inset 0 0 0 1px rgba(255,255,255,0.68) !important;
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        background:
+            radial-gradient(circle at 34% 22%, rgba(255,255,255,0.38), transparent 21%),
+            radial-gradient(circle at 50% 56%, var(--sig-a), transparent 54%),
+            conic-gradient(from 120deg, var(--sig-line), var(--sig-a), var(--sig-b), var(--sig-line)),
+            linear-gradient(135deg, #2563eb, #06b6d4 52%, #10b981) !important;
+        border-color: rgba(255, 255, 255, 0.56) !important;
+        box-shadow:
+            0 0 0 10px rgba(125, 211, 252, 0.23),
+            0 0 48px var(--sig-a),
+            0 24px 52px var(--sig-shadow),
+            inset 0 0 34px rgba(255,255,255,0.18) !important;
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] p,
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] span,
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] div {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.22);
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"]::before {
+        opacity: 0.52;
+        filter: saturate(1.3) brightness(1.12);
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"]::after {
+        opacity: 0.95;
+        border-color: rgba(255,255,255,0.74);
+    }
+    @keyframes signatureBreath {
+        0%, 100% { transform: scale(0.94); opacity: 0.70; }
+        50% { transform: scale(1.04); opacity: 0.95; }
+    }
+    @keyframes signatureOrbit {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    @media (max-width: 920px) {
+        html body .stApp .st-key-circle_nav {
+            padding: 24px 18px !important;
+        }
+        html body .stApp .st-key-circle_nav div[data-testid="stButton"] button {
+            width: min(116px, 100%) !important;
+            max-width: 116px;
+        }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+st.markdown(
+    """
+    <style>
+    html body .stApp .st-key-circle_nav .st-key-nav_life {
+        --nav-core: #14b8a6;
+        --nav-core-2: #38bdf8;
+        --nav-soft: rgba(45, 212, 191, 0.24);
+        --nav-icon: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cpath d=%22M32 7c8 8 12 15 12 24 0 11-7 20-12 26-5-6-12-15-12-26 0-9 4-16 12-24Z%22 fill=%22black%22/%3E%3Cpath d=%22M18 36c8-2 20-2 28 0M32 18v30M23 26c6 3 12 3 18 0%22 fill=%22none%22 stroke=%22black%22 stroke-width=%225%22 stroke-linecap=%22round%22/%3E%3C/svg%3E');
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_search {
+        --nav-core: #2563eb;
+        --nav-core-2: #22d3ee;
+        --nav-soft: rgba(59, 130, 246, 0.22);
+        --nav-icon: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Ccircle cx=%2228%22 cy=%2228%22 r=%2217%22 fill=%22none%22 stroke=%22black%22 stroke-width=%227%22/%3E%3Cpath d=%22M41 41l15 15%22 stroke=%22black%22 stroke-width=%227%22 stroke-linecap=%22round%22/%3E%3Cpath d=%22M18 28h20M28 18v20%22 stroke=%22black%22 stroke-width=%224%22 stroke-linecap=%22round%22 opacity=%22.65%22/%3E%3C/svg%3E');
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_compare {
+        --nav-core: #7c3aed;
+        --nav-core-2: #60a5fa;
+        --nav-soft: rgba(124, 58, 237, 0.20);
+        --nav-icon: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cpath d=%22M32 10v44M16 18h32M16 18l-9 18h18l-9-18ZM48 18l-9 18h18l-9-18ZM20 54h24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%225%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E');
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_portfolio {
+        --nav-core: #22c55e;
+        --nav-core-2: #facc15;
+        --nav-soft: rgba(34, 197, 94, 0.20);
+        --nav-icon: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cpath d=%22M32 8a24 24 0 1 0 24 24H32V8Z%22 fill=%22black%22/%3E%3Cpath d=%22M38 8v18h18A24 24 0 0 0 38 8Z%22 fill=%22black%22 opacity=%22.55%22/%3E%3Cpath d=%22M18 42h20%22 stroke=%22white%22 stroke-width=%224%22 stroke-linecap=%22round%22 opacity=%22.9%22/%3E%3C/svg%3E');
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_reit {
+        --nav-core: #f59e0b;
+        --nav-core-2: #2dd4bf;
+        --nav-soft: rgba(245, 158, 11, 0.22);
+        --nav-icon: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cpath d=%22M10 56h44M16 56V20h17v36M35 56V10h15v46%22 fill=%22none%22 stroke=%22black%22 stroke-width=%226%22 stroke-linejoin=%22round%22/%3E%3Cpath d=%22M22 28h5M22 38h5M41 18h4M41 28h4M41 38h4%22 stroke=%22black%22 stroke-width=%224%22 stroke-linecap=%22round%22/%3E%3C/svg%3E');
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_finance {
+        --nav-core: #10b981;
+        --nav-core-2: #3b82f6;
+        --nav-soft: rgba(16, 185, 129, 0.22);
+        --nav-icon: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cpath d=%22M12 22h40a6 6 0 0 1 6 6v22a6 6 0 0 1-6 6H12a6 6 0 0 1-6-6V18a6 6 0 0 1 6-6h32%22 fill=%22none%22 stroke=%22black%22 stroke-width=%226%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3Ccircle cx=%2248%22 cy=%2239%22 r=%224%22 fill=%22black%22/%3E%3Cpath d=%22M18 39h18%22 stroke=%22black%22 stroke-width=%224%22 stroke-linecap=%22round%22/%3E%3C/svg%3E');
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_scenario {
+        --nav-core: #f97316;
+        --nav-core-2: #ef4444;
+        --nav-soft: rgba(249, 115, 22, 0.22);
+        --nav-icon: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cpath d=%22M10 50h44%22 stroke=%22black%22 stroke-width=%226%22 stroke-linecap=%22round%22/%3E%3Cpath d=%22M13 44l11-13 10 8 13-21 7 5%22 fill=%22none%22 stroke=%22black%22 stroke-width=%226%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3Ccircle cx=%2224%22 cy=%2231%22 r=%225%22 fill=%22black%22/%3E%3Ccircle cx=%2247%22 cy=%2218%22 r=%225%22 fill=%22black%22/%3E%3C/svg%3E');
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_details {
+        --nav-core: #0ea5e9;
+        --nav-core-2: #6366f1;
+        --nav-soft: rgba(14, 165, 233, 0.20);
+        --nav-icon: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect x=%2210%22 y=%2210%22 width=%2244%22 height=%2244%22 rx=%228%22 fill=%22none%22 stroke=%22black%22 stroke-width=%226%22/%3E%3Cpath d=%22M20 24h24M20 34h10M38 34h6M20 44h24%22 stroke=%22black%22 stroke-width=%224%22 stroke-linecap=%22round%22/%3E%3Cpath d=%22M20 24l7 10-7 10%22 fill=%22none%22 stroke=%22black%22 stroke-width=%224%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 opacity=%22.65%22/%3E%3C/svg%3E');
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_ai {
+        --nav-core: #06b6d4;
+        --nav-core-2: #8b5cf6;
+        --nav-soft: rgba(6, 182, 212, 0.22);
+        --nav-icon: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cpath d=%22M21 20l22 24M43 20L21 44M32 14v36M14 32h36%22 stroke=%22black%22 stroke-width=%224%22 stroke-linecap=%22round%22 opacity=%22.72%22/%3E%3Ccircle cx=%2232%22 cy=%2232%22 r=%2210%22 fill=%22black%22/%3E%3Ccircle cx=%2215%22 cy=%2215%22 r=%226%22 fill=%22black%22/%3E%3Ccircle cx=%2249%22 cy=%2215%22 r=%226%22 fill=%22black%22/%3E%3Ccircle cx=%2215%22 cy=%2249%22 r=%226%22 fill=%22black%22/%3E%3Ccircle cx=%2249%22 cy=%2249%22 r=%226%22 fill=%22black%22/%3E%3C/svg%3E');
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_diary {
+        --nav-core: #ec4899;
+        --nav-core-2: #fbbf24;
+        --nav-soft: rgba(236, 72, 153, 0.18);
+        --nav-icon: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cpath d=%22M14 10h30a8 8 0 0 1 8 8v36H18a6 6 0 0 1-6-6V12a2 2 0 0 1 2-2Z%22 fill=%22none%22 stroke=%22black%22 stroke-width=%226%22 stroke-linejoin=%22round%22/%3E%3Cpath d=%22M24 24h16M24 34h14M24 44h9%22 stroke=%22black%22 stroke-width=%224%22 stroke-linecap=%22round%22/%3E%3Cpath d=%22M45 13v38%22 stroke=%22black%22 stroke-width=%224%22 opacity=%22.45%22/%3E%3C/svg%3E');
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_settings {
+        --nav-core: #64748b;
+        --nav-core-2: #38bdf8;
+        --nav-soft: rgba(100, 116, 139, 0.18);
+        --nav-icon: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cpath d=%22M32 8l5 8 9-1 3 9 7 5-5 8 1 9-9 3-5 7-8-5-9 1-3-9-7-5 5-8-1-9 9-3 5-7 8 5Z%22 fill=%22none%22 stroke=%22black%22 stroke-width=%225%22 stroke-linejoin=%22round%22/%3E%3Ccircle cx=%2232%22 cy=%2232%22 r=%229%22 fill=%22none%22 stroke=%22black%22 stroke-width=%225%22/%3E%3C/svg%3E');
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_guide {
+        --nav-core: #facc15;
+        --nav-core-2: #3b82f6;
+        --nav-soft: rgba(250, 204, 21, 0.20);
+        --nav-icon: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Ccircle cx=%2232%22 cy=%2232%22 r=%2224%22 fill=%22none%22 stroke=%22black%22 stroke-width=%225%22/%3E%3Cpath d=%22M41 18l-6 17-17 6 6-17 17-6Z%22 fill=%22black%22/%3E%3Ccircle cx=%2232%22 cy=%2232%22 r=%223%22 fill=%22white%22/%3E%3C/svg%3E');
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button {
+        display: flex !important;
+        align-items: flex-end !important;
+        justify-content: center !important;
+        padding: 74px 12px 22px !important;
+        color: #102033 !important;
+        -webkit-text-fill-color: #102033 !important;
+        background:
+            radial-gradient(circle at 30% 22%, rgba(255,255,255,0.98), transparent 23%),
+            radial-gradient(circle at 52% 30%, color-mix(in srgb, var(--nav-core) 26%, transparent), transparent 26%),
+            radial-gradient(circle at 72% 78%, var(--nav-soft), transparent 42%),
+            conic-gradient(from 130deg, color-mix(in srgb, var(--nav-core) 30%, white), rgba(255,255,255,0.94), color-mix(in srgb, var(--nav-core-2) 26%, white), rgba(255,255,255,0.88), color-mix(in srgb, var(--nav-core) 30%, white)),
+            linear-gradient(145deg, rgba(255,255,255,0.96), rgba(224,242,254,0.82)) !important;
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button::before {
+        content: "";
+        position: absolute;
+        top: 22px;
+        left: 50%;
+        width: 46px;
+        height: 46px;
+        z-index: 2;
+        border-radius: 16px;
+        pointer-events: none;
+        opacity: 1;
+        transform: translateX(-50%);
+        background:
+            linear-gradient(135deg, var(--nav-core), var(--nav-core-2)) !important;
+        box-shadow:
+            0 10px 24px color-mix(in srgb, var(--nav-core) 30%, transparent),
+            0 0 0 10px rgba(255, 255, 255, 0.32);
+        -webkit-mask: var(--nav-icon) center / 100% 100% no-repeat;
+        mask: var(--nav-icon) center / 100% 100% no-repeat;
+        filter: drop-shadow(0 2px 4px rgba(255,255,255,0.62));
+        animation: navIconFloat 5.2s ease-in-out infinite;
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button::after {
+        border-color: color-mix(in srgb, var(--nav-core) 42%, white) !important;
+        background:
+            conic-gradient(from 0deg, transparent 0 12%, color-mix(in srgb, var(--nav-core) 52%, transparent) 13% 17%, transparent 18% 52%, rgba(255,255,255,0.76) 53% 57%, transparent 58% 100%) !important;
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button p,
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button span,
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button div {
+        color: #102033 !important;
+        -webkit-text-fill-color: #102033 !important;
+        font-size: 1rem !important;
+        letter-spacing: 0 !important;
+        line-height: 1.05 !important;
+        text-shadow: 0 1px 9px rgba(255,255,255,0.92);
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        background:
+            radial-gradient(circle at 35% 18%, rgba(255,255,255,0.42), transparent 22%),
+            radial-gradient(circle at 52% 32%, color-mix(in srgb, var(--nav-core-2) 54%, transparent), transparent 28%),
+            conic-gradient(from 120deg, var(--nav-core), var(--nav-core-2), rgba(255,255,255,0.72), var(--nav-core)),
+            linear-gradient(135deg, var(--nav-core), var(--nav-core-2)) !important;
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"]::before {
+        opacity: 1;
+        background: #0f172a !important;
+        box-shadow:
+            0 10px 28px rgba(15,23,42,0.20),
+            0 0 0 11px rgba(255,255,255,0.28);
+        filter: drop-shadow(0 2px 6px rgba(255,255,255,0.36));
+        transform: translateX(-50%) scale(1.03);
+    }
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] p,
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] span,
+    html body .stApp .st-key-circle_nav div[data-testid="stButton"] button[kind="primary"] div {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.24);
+    }
+    @keyframes navIconFloat {
+        0%, 100% { transform: translateX(-50%) translateY(0) scale(1); }
+        50% { transform: translateX(-50%) translateY(-3px) scale(1.04); }
+    }
+    @media (max-width: 920px) {
+        html body .stApp .nav-flow-strip {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            width: min(720px, 94%);
+        }
+        html body .stApp .st-key-circle_nav div[data-testid="stButton"] button {
+            padding: 62px 8px 18px !important;
+        }
+        html body .stApp .st-key-circle_nav div[data-testid="stButton"] button::before {
+            width: 38px;
+            height: 38px;
+            top: 18px;
+        }
+        html body .stApp .st-key-circle_nav div[data-testid="stButton"] button p {
+            font-size: 0.88rem !important;
+        }
+    }
+    @media (max-width: 560px) {
+        html body .stApp .brand-header {
+            padding: 24px 16px 20px;
+            margin-bottom: 10px;
+            border-radius: 22px;
+        }
+        html body .stApp .brand-name {
+            font-size: 2.2rem !important;
+            line-height: 0.98 !important;
+        }
+        html body .stApp .brand-subtitle {
+            font-size: 0.72rem !important;
+            letter-spacing: 0 !important;
+            text-align: center;
+            line-height: 1.35;
+        }
+        html body .stApp .nav-flow-strip {
+            display: none !important;
+        }
+        html body .stApp .st-key-circle_nav {
+            display: none !important;
+        }
+        html body .stApp .st-key-mobile_nav {
+            display: block !important;
+            width: min(360px, 94%);
+            margin: 0 auto 16px;
+            padding: 10px;
+            border-radius: 18px;
+            border: 1px solid rgba(14, 165, 233, 0.18);
+            background: rgba(255,255,255,0.72);
+            box-shadow: 0 14px 34px rgba(14, 165, 233, 0.10);
+        }
+        html body .stApp .ai-coach-hero {
+            padding: 18px 16px;
+            border-radius: 20px;
+        }
+        html body .stApp .ai-coach-hero h1 {
+            font-size: 1.55rem;
+        }
+        html body .stApp .ai-coach-strip {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+st.markdown(
+    """
+    <style>
+    html body .stApp .mobile-only-deck {
+        display: none;
+    }
+    html body .stApp .mobile-card-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin: 12px 0 16px;
+    }
+    html body .stApp .mobile-card,
+    html body .stApp .mobile-holding-card,
+    html body .stApp .mobile-diary-card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 18px;
+        border: 1px solid rgba(14, 165, 233, 0.20);
+        background:
+            radial-gradient(circle at 16% 18%, rgba(34, 211, 238, 0.16), transparent 32%),
+            linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 249, 255, 0.86));
+        box-shadow: 0 14px 32px rgba(14, 165, 233, 0.10);
+    }
+    html body .stApp .mobile-card {
+        padding: 14px;
+        min-height: 98px;
+    }
+    html body .stApp .mobile-card .eyebrow,
+    html body .stApp .mobile-holding-card .eyebrow,
+    html body .stApp .mobile-diary-card .eyebrow {
+        margin: 0 0 7px;
+        color: #0f766e;
+        font-size: 0.68rem;
+        font-weight: 950;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+    html body .stApp .mobile-card .value {
+        color: #0f172a;
+        font-size: 1.22rem;
+        line-height: 1.05;
+        font-weight: 950;
+        overflow-wrap: anywhere;
+    }
+    html body .stApp .mobile-card .label,
+    html body .stApp .mobile-card .hint,
+    html body .stApp .mobile-holding-card .hint,
+    html body .stApp .mobile-diary-card .hint {
+        display: block;
+        margin-top: 6px;
+        color: #475569;
+        font-size: 0.82rem;
+        line-height: 1.28;
+        font-weight: 760;
+    }
+    html body .stApp .mobile-focus-card {
+        margin: 12px 0;
+        padding: 16px;
+        border-radius: 20px;
+        border: 1px solid rgba(14, 165, 233, 0.22);
+        background:
+            radial-gradient(circle at 88% 18%, rgba(139, 92, 246, 0.13), transparent 30%),
+            linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(236, 253, 245, 0.86));
+        box-shadow: 0 16px 36px rgba(14, 165, 233, 0.12);
+    }
+    html body .stApp .mobile-focus-card h3 {
+        margin: 0 0 8px;
+        color: #0f172a;
+        font-size: 1.05rem;
+        line-height: 1.15;
+        font-weight: 950;
+    }
+    html body .stApp .mobile-focus-card p {
+        margin: 0;
+        color: #334155;
+        line-height: 1.38;
+        font-weight: 760;
+    }
+    html body .stApp .mobile-holding-grid,
+    html body .stApp .mobile-diary-feed {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin: 10px 0 16px;
+    }
+    html body .stApp .mobile-holding-card,
+    html body .stApp .mobile-diary-card {
+        padding: 14px;
+    }
+    html body .stApp .mobile-holding-card .title,
+    html body .stApp .mobile-diary-card .title {
+        color: #0f172a;
+        font-size: 1rem;
+        line-height: 1.18;
+        font-weight: 950;
+        overflow-wrap: anywhere;
+    }
+    html body .stApp .mobile-holding-card .meta,
+    html body .stApp .mobile-diary-card .meta {
+        margin-top: 8px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+    html body .stApp .mobile-mini-stat {
+        padding: 8px 9px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.66);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+    }
+    html body .stApp .mobile-mini-stat b {
+        display: block;
+        color: #0f172a;
+        font-size: 0.9rem;
+        line-height: 1.1;
+        overflow-wrap: anywhere;
+    }
+    html body .stApp .mobile-mini-stat span {
+        display: block;
+        margin-top: 3px;
+        color: #64748b;
+        font-size: 0.68rem;
+        line-height: 1;
+        font-weight: 850;
+        text-transform: uppercase;
+    }
+    html body .stApp .mobile-positive {
+        color: #059669 !important;
+    }
+    html body .stApp .mobile-negative {
+        color: #dc2626 !important;
+    }
+    html body .stApp .mobile-link-nav {
+        display: none;
+    }
+    html body .stApp .mobile-link-nav a {
+        flex: 0 0 auto;
+        min-width: 82px;
+        padding: 10px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(14, 165, 233, 0.20);
+        background: rgba(255, 255, 255, 0.82);
+        color: #0f172a;
+        font-size: 0.78rem;
+        line-height: 1;
+        font-weight: 900;
+        text-align: center;
+        text-decoration: none;
+        box-shadow: 0 8px 20px rgba(14, 165, 233, 0.08);
+        white-space: nowrap;
+    }
+    html body .stApp .mobile-link-nav a.active {
+        border-color: rgba(255, 255, 255, 0.72);
+        background: linear-gradient(135deg, #0ea5e9, #14b8a6);
+        color: #ffffff;
+        box-shadow: 0 12px 28px rgba(14, 165, 233, 0.22);
+    }
+    html body .stApp .mobile-view-summary {
+        margin: 10px auto 16px;
+    }
+    html body .stApp .mobile-view-summary .mobile-card-grid {
+        margin-bottom: 0;
+    }
+    html body .stApp .mobile-orbit-nav {
+        display: none;
+    }
+    html body .stApp .mobile-orbit-stamp {
+        width: min(354px, 96vw);
+        margin: 8px auto 0;
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(20, 184, 166, 0.28);
+        background: rgba(240, 253, 250, 0.88);
+        color: #0f766e;
+        -webkit-text-fill-color: #0f766e;
+        font-size: 0.72rem;
+        line-height: 1;
+        font-weight: 950;
+        text-align: center;
+        letter-spacing: 0;
+        box-shadow: 0 10px 24px rgba(20, 184, 166, 0.10);
+    }
+    html body .stApp .mobile-orbit-shell {
+        position: relative;
+        width: min(354px, 96vw);
+        height: 354px;
+        margin: 10px auto 16px;
+        border-radius: 30px;
+        border: 1px solid rgba(14, 165, 233, 0.20);
+        background:
+            radial-gradient(circle at 50% 50%, rgba(255,255,255,0.96), rgba(240,249,255,0.82) 58%, rgba(236,253,245,0.74)),
+            linear-gradient(135deg, rgba(255,255,255,0.94), rgba(240,249,255,0.82));
+        box-shadow: 0 18px 42px rgba(14, 165, 233, 0.12);
+        overflow: hidden;
+    }
+    html body .stApp .mobile-orbit-shell::before {
+        content: "";
+        position: absolute;
+        inset: 26px;
+        border-radius: 50%;
+        border: 1px solid rgba(14, 165, 233, 0.18);
+        background:
+            conic-gradient(from 0deg, rgba(14,165,233,0.0), rgba(14,165,233,0.24), rgba(20,184,166,0.10), rgba(14,165,233,0.0));
+        animation: mobileOrbitSpin 24s linear infinite;
+        opacity: 0.72;
+    }
+    html body .stApp .mobile-orbit-shell::after {
+        content: "";
+        position: absolute;
+        inset: 70px;
+        border-radius: 50%;
+        border: 1px dashed rgba(15, 118, 110, 0.20);
+    }
+    html body .stApp .mobile-orbit-center,
+    html body .stApp .mobile-orbit-item,
+    html body .stApp .mobile-orbit-mini {
+        position: absolute;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        text-decoration: none;
+        color: #0f172a;
+        -webkit-text-fill-color: #0f172a;
+        box-shadow: 0 12px 28px rgba(14, 165, 233, 0.13);
+    }
+    html body .stApp .mobile-orbit-center {
+        left: 50%;
+        top: 50%;
+        width: 116px;
+        height: 116px;
+        transform: translate(-50%, -50%);
+        flex-direction: column;
+        gap: 5px;
+        border-radius: 50%;
+        border: 2px solid rgba(20, 184, 166, 0.36);
+        background: linear-gradient(135deg, rgba(14,165,233,0.95), rgba(20,184,166,0.88));
+        color: #ffffff;
+        -webkit-text-fill-color: #ffffff;
+    }
+    html body .stApp .mobile-orbit-center b {
+        font-size: 1.03rem;
+        line-height: 1;
+        font-weight: 950;
+    }
+    html body .stApp .mobile-orbit-center span {
+        font-size: 0.64rem;
+        line-height: 1;
+        font-weight: 850;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+    html body .stApp .mobile-orbit-item {
+        width: 68px;
+        height: 68px;
+        flex-direction: column;
+        gap: 4px;
+        border-radius: 50%;
+        border: 1px solid rgba(14, 165, 233, 0.24);
+        background:
+            radial-gradient(circle at 28% 22%, rgba(255,255,255,0.98), transparent 34%),
+            linear-gradient(135deg, rgba(255,255,255,0.92), rgba(236,253,245,0.76));
+    }
+    html body .stApp .mobile-orbit-item b {
+        font-size: 0.88rem;
+        line-height: 1;
+        font-weight: 950;
+    }
+    html body .stApp .mobile-orbit-item span {
+        font-size: 0.55rem;
+        line-height: 1;
+        font-weight: 850;
+        letter-spacing: 0;
+    }
+    html body .stApp .mobile-orbit-item.active,
+    html body .stApp .mobile-orbit-center.active,
+    html body .stApp .mobile-orbit-mini.active {
+        border-color: rgba(255,255,255,0.78);
+        background: linear-gradient(135deg, #0ea5e9, #14b8a6);
+        color: #ffffff;
+        -webkit-text-fill-color: #ffffff;
+        box-shadow: 0 16px 32px rgba(14, 165, 233, 0.24);
+    }
+    html body .stApp .mobile-orbit-top { left: calc(50% - 34px); top: 14px; }
+    html body .stApp .mobile-orbit-top-right { right: 48px; top: 48px; }
+    html body .stApp .mobile-orbit-right { right: 14px; top: calc(50% - 34px); }
+    html body .stApp .mobile-orbit-bottom-right { right: 48px; bottom: 48px; }
+    html body .stApp .mobile-orbit-bottom { left: calc(50% - 34px); bottom: 14px; }
+    html body .stApp .mobile-orbit-bottom-left { left: 48px; bottom: 48px; }
+    html body .stApp .mobile-orbit-left { left: 14px; top: calc(50% - 34px); }
+    html body .stApp .mobile-orbit-top-left { left: 48px; top: 48px; }
+    html body .stApp .mobile-orbit-mini-row {
+        position: absolute;
+        z-index: 3;
+        left: 50%;
+        bottom: 86px;
+        display: flex;
+        gap: 8px;
+        transform: translateX(-50%);
+    }
+    html body .stApp .mobile-orbit-mini {
+        position: relative;
+        min-width: 62px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(14, 165, 233, 0.20);
+        background: rgba(255,255,255,0.82);
+        font-size: 0.68rem;
+        font-weight: 900;
+    }
+    @keyframes mobileOrbitSpin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    html body .stApp .st-key-mobile_nav div[data-testid="stButton"] button:not([kind="primary"]),
+    html body .stApp .st-key-mobile_nav div[data-testid="stButton"] button:not([kind="primary"]) p,
+    html body .stApp .st-key-mobile_nav div[data-testid="stButton"] button:not([kind="primary"]) span,
+    html body .stApp .st-key-mobile_nav div[data-testid="stButton"] button:not([kind="primary"]) div {
+        color: #0f172a !important;
+        -webkit-text-fill-color: #0f172a !important;
+        text-shadow: none !important;
+    }
+    html body .stApp .st-key-mobile_nav div[data-testid="stButton"] button[kind="primary"],
+    html body .stApp .st-key-mobile_nav div[data-testid="stButton"] button[kind="primary"] p,
+    html body .stApp .st-key-mobile_nav div[data-testid="stButton"] button[kind="primary"] span,
+    html body .stApp .st-key-mobile_nav div[data-testid="stButton"] button[kind="primary"] div {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        text-shadow: 0 1px 8px rgba(15, 23, 42, 0.22) !important;
+    }
+    html body .stApp div[data-testid="stForm"] {
+        background:
+            radial-gradient(circle at 18% 12%, rgba(125, 211, 252, 0.16), transparent 26%),
+            linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(22, 38, 57, 0.88)) !important;
+        border-color: rgba(14, 165, 233, 0.52) !important;
+    }
+    html body .stApp div[data-testid="stForm"] div[data-testid="stTextInput"] label,
+    html body .stApp div[data-testid="stForm"] div[data-testid="stTextInput"] label *,
+    html body .stApp div[data-testid="stForm"] div[data-testid="stWidgetLabel"],
+    html body .stApp div[data-testid="stForm"] div[data-testid="stWidgetLabel"] *,
+    html body .stApp div[data-testid="stForm"] label,
+    html body .stApp div[data-testid="stForm"] label p,
+    html body .stApp div[data-testid="stForm"] label span {
+        color: #f8fafc !important;
+        -webkit-text-fill-color: #f8fafc !important;
+        opacity: 1 !important;
+        font-weight: 900 !important;
+        text-shadow: 0 1px 7px rgba(0, 0, 0, 0.28) !important;
+    }
+    html body .stApp div[data-testid="stForm"] button[title],
+    html body .stApp div[data-testid="stForm"] button[aria-label*="Help"] {
+        color: #e0f2fe !important;
+        -webkit-text-fill-color: #e0f2fe !important;
+        opacity: 0.95 !important;
+    }
+    html body .stApp div[data-testid="stForm"] div[data-baseweb="input"] {
+        border-color: #22d3ee !important;
+        box-shadow:
+            0 0 0 4px rgba(34, 211, 238, 0.18),
+            0 12px 28px rgba(2, 6, 23, 0.20) !important;
+    }
+    @media (max-width: 680px) {
+        html body .stApp .mobile-only-deck {
+            display: block;
+        }
+        html body .stApp .mobile-link-nav {
+            position: fixed;
+            left: 50%;
+            right: auto;
+            bottom: max(10px, env(safe-area-inset-bottom));
+            z-index: 50;
+            display: flex !important;
+            gap: 8px;
+            overflow-x: auto;
+            width: min(380px, 96%);
+            margin: 0;
+            padding: 9px;
+            transform: translateX(-50%);
+            border-radius: 18px;
+            border: 1px solid rgba(14, 165, 233, 0.18);
+            background: rgba(248, 252, 255, 0.88);
+            box-shadow: 0 14px 30px rgba(14, 165, 233, 0.12);
+            backdrop-filter: blur(16px);
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        html body .stApp .mobile-orbit-nav {
+            display: block;
+        }
+        html body .stApp .mobile-link-nav::-webkit-scrollbar {
+            display: none;
+        }
+        html body .stApp .block-container {
+            padding-bottom: 96px;
+        }
+        html body .stApp .mobile-card-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        html body .stApp .mobile-card {
+            min-height: 86px;
+            padding: 12px;
+        }
+        html body .stApp .mobile-card .value {
+            font-size: 1.02rem;
+        }
+        html body .stApp .mobile-card .label,
+        html body .stApp .mobile-card .hint {
+            font-size: 0.75rem;
+        }
+        html body .stApp .mobile-holding-card .meta,
+        html body .stApp .mobile-diary-card .meta {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+
+def get_secret_or_env(name: str, default: str = "") -> str:
     try:
-        return str(st.secrets["FINNHUB_API_KEY"]).strip()
+        return str(st.secrets.get(name, os.getenv(name, default))).strip()
     except Exception:
-        return os.getenv("FINNHUB_API_KEY", "").strip()
+        return os.getenv(name, default).strip()
 
 
-FINNHUB_API_KEY = get_finnhub_api_key()
-RISK_FREE_RATE = 0.045
-EQUITY_RISK_PREMIUM = 0.045
+def get_secret_bool(name: str, default: bool = False) -> bool:
+    raw_value = get_secret_or_env(name, str(default)).strip().lower()
+    return raw_value in {"1", "true", "yes", "on"}
+
+
+FINNHUB_API_KEY = get_secret_or_env("FINNHUB_API_KEY")
+OPENAI_API_KEY = get_secret_or_env("OPENAI_API_KEY")
+OPENAI_MODEL = get_secret_or_env("OPENAI_MODEL", "gpt-5-mini")
+OPENAI_REASONING_EFFORT = get_secret_or_env("OPENAI_REASONING_EFFORT", "medium")
+OPENAI_AI_DEFAULT_ON = get_secret_bool("OPENAI_AI_DEFAULT_ON", False)
+DEFAULT_RISK_FREE_RATE = 0.045
+DEFAULT_EQUITY_RISK_PREMIUM = 0.045
+RISK_FREE_RATE = DEFAULT_RISK_FREE_RATE
+EQUITY_RISK_PREMIUM = DEFAULT_EQUITY_RISK_PREMIUM
 
 
 GUIDE_PDF_PATH = Path(__file__).with_name("LY-STScope_User_Guide.pdf")
 GUIDE_SCREENSHOT_DIR = Path(__file__).with_name("guide_assets") / "screenshots"
+HOMEPAGE_BG_PATH = Path(__file__).parent / "assets" / "homepage_life_design.png"
 DEVELOPER_NAME = "Young Lee"
 DEVELOPER_EMAIL = "lyn0109@gmail.com"
-LIFE_ENTRY_VERSION = "life-design-2026-05-15"
+LIFE_ENTRY_VERSION = "life-homepage-2026-05-15-v4"
+MAX_DIARY_RESTORE_BYTES = 250_000
+MAX_DIARY_RESTORE_ENTRIES = 50
+
+
+@st.cache_data(show_spinner=False)
+def image_data_uri(path_text: str) -> str:
+    image_path = Path(path_text)
+    if not image_path.exists():
+        return ""
+    encoded = base64.b64encode(image_path.read_bytes()).decode("ascii")
+    return f"data:image/png;base64,{encoded}"
 
 
 KOREAN_STOCK_MAP = {
@@ -1693,10 +3693,23 @@ def init_state() -> None:
     st.session_state.setdefault("portfolio_base_currency", "USD")
     st.session_state.setdefault("manual_usdkrw", 1350.0)
     st.session_state.setdefault("use_live_fx", True)
+    st.session_state.setdefault("risk_free_rate_pct", DEFAULT_RISK_FREE_RATE * 100)
+    st.session_state.setdefault("equity_risk_premium_pct", DEFAULT_EQUITY_RISK_PREMIUM * 100)
+    st.session_state.setdefault("macro_risk_free_rate_pct_text", f"{DEFAULT_RISK_FREE_RATE * 100:.2f}")
+    st.session_state.setdefault("macro_equity_risk_premium_pct_text", f"{DEFAULT_EQUITY_RISK_PREMIUM * 100:.2f}")
+    st.session_state.setdefault(
+        "_macro_assumptions_applied",
+        (DEFAULT_RISK_FREE_RATE * 100, DEFAULT_EQUITY_RISK_PREMIUM * 100),
+    )
     st.session_state.setdefault("last_query", "")
     st.session_state.setdefault("selected_detail", None)
     st.session_state.setdefault("comments", [])
     st.session_state.setdefault("financial_diary", [])
+    st.session_state.setdefault("ai_coach_messages", [])
+    st.session_state.setdefault("pending_ai_question", None)
+    st.session_state.setdefault("last_scenario_packet", None)
+    st.session_state.setdefault("use_verified_ai_model", bool(OPENAI_API_KEY) and OPENAI_AI_DEFAULT_ON)
+    st.session_state.setdefault("include_diary_text_for_ai", False)
     st.session_state.setdefault("life_entry_complete", False)
     st.session_state.setdefault("life_entry_version_seen", "")
 
@@ -1722,6 +3735,16 @@ def fmt_money(value: float | int | None, currency: str = "USD") -> str:
     if currency == "KRW":
         return f"₩{value:,.0f}"
     return f"${value:,.2f}"
+
+
+def fmt_signed_money(value: float | int | None, currency: str = "USD") -> str:
+    if value is None:
+        return "N/A"
+    sign = "+" if float(value) >= 0 else "-"
+    absolute_value = abs(float(value))
+    if currency == "KRW":
+        return f"{sign}₩{absolute_value:,.0f}"
+    return f"{sign}${absolute_value:,.2f}"
 
 
 def stock_money(stock: dict[str, Any], value: float | int | None) -> str:
@@ -1778,6 +3801,18 @@ def effective_usdkrw() -> tuple[float, str, str]:
         if live.get("rate"):
             return float(live["rate"]), str(live.get("source") or "Yahoo Finance KRW=X"), str(live.get("date") or "Latest")
     return manual_rate, "Manual fallback", "User input"
+
+
+def macro_assumptions() -> tuple[float, float]:
+    risk_free_rate = float(
+        st.session_state.get("risk_free_rate_pct", DEFAULT_RISK_FREE_RATE * 100)
+        or DEFAULT_RISK_FREE_RATE * 100
+    )
+    equity_risk_premium = float(
+        st.session_state.get("equity_risk_premium_pct", DEFAULT_EQUITY_RISK_PREMIUM * 100)
+        or DEFAULT_EQUITY_RISK_PREMIUM * 100
+    )
+    return max(risk_free_rate, 0.0) / 100, max(equity_risk_premium, 0.0) / 100
 
 
 def convert_value(value: float, from_currency: str, to_currency: str, usdkrw: float) -> float:
@@ -1956,7 +3991,8 @@ def calculate_valuation(stock: dict[str, Any]) -> dict[str, Any]:
     peer_pe = float(stock.get("peer_average_pe") or 15)
     price = float(stock.get("price") or 0)
 
-    expected_return = RISK_FREE_RATE + beta * EQUITY_RISK_PREMIUM
+    risk_free_rate, equity_risk_premium = macro_assumptions()
+    expected_return = risk_free_rate + beta * equity_risk_premium
     max_implied_pe = 50
     values = []
 
@@ -2001,6 +4037,8 @@ def calculate_valuation(stock: dict[str, Any]) -> dict[str, Any]:
     stock.update(
         {
             "expected_return": expected_return,
+            "risk_free_rate": risk_free_rate,
+            "equity_risk_premium": equity_risk_premium,
             "fair_price": fair_price,
             "valuation_status": status,
             "triangulation": {
@@ -2013,6 +4051,14 @@ def calculate_valuation(stock: dict[str, Any]) -> dict[str, Any]:
         }
     )
     return stock
+
+
+def recalculate_loaded_stocks() -> int:
+    count = 0
+    for symbol, stock in list(st.session_state.get("stocks", {}).items()):
+        st.session_state.stocks[symbol] = calculate_valuation(stock)
+        count += 1
+    return count
 
 
 def load_korean_stock(query: str) -> dict[str, Any]:
@@ -2132,8 +4178,8 @@ def metric_card(label: str, value: str, color: str = "#102033") -> None:
     st.markdown(
         f"""
         <div class="metric-card">
-            <div class="label">{label}</div>
-            <div class="value" style="color:{color};">{value}</div>
+            <div class="label">{escape(str(label))}</div>
+            <div class="value" style="color:{escape(str(color))};">{escape(str(value))}</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -2143,7 +4189,7 @@ def metric_card(label: str, value: str, color: str = "#102033") -> None:
 def guide_image(filename: str, caption: str) -> None:
     image_path = GUIDE_SCREENSHOT_DIR / filename
     if image_path.exists():
-        st.image(str(image_path), caption=caption, use_container_width=True)
+        st.image(str(image_path), caption=caption, width="stretch")
     else:
         st.caption(f"Guide graphic unavailable: {filename}")
 
@@ -2163,7 +4209,7 @@ def toggle_portfolio(symbol: str) -> None:
     if symbol in portfolio:
         del portfolio[symbol]
     else:
-        portfolio[symbol] = {"shares": 1.0}
+        portfolio[symbol] = {"shares": 1.0, "purchase_price": 0.0}
 
 
 def select_detail(symbol: str) -> None:
@@ -2189,7 +4235,10 @@ def render_stock_card(stock: dict[str, Any]) -> None:
     compare_active = symbol in st.session_state.compare
     portfolio_active = symbol in st.session_state.portfolio
     detail_href = f"?detail={quote(symbol)}"
-    logo_text = symbol[:2].upper()
+    safe_symbol = escape(str(symbol))
+    safe_industry = escape(str(stock.get("industry", "N/A")))
+    safe_status = escape(str(status))
+    logo_text = escape(str(symbol[:2].upper()))
     with st.container(border=True):
         st.markdown(
             f"""
@@ -2199,7 +4248,7 @@ def render_stock_card(stock: dict[str, Any]) -> None:
                     <div class="company-logo">{logo_text}</div>
                     <div>
                         <div class="company-title">{escape(str(stock['name']))}</div>
-                        <div class="company-meta"><span class="ticker-pill">{symbol}</span>{stock['industry']}</div>
+                        <div class="company-meta"><span class="ticker-pill">{safe_symbol}</span>{safe_industry}</div>
                     </div>
                 </div>
                 <div class="stock-card-price">
@@ -2207,7 +4256,7 @@ def render_stock_card(stock: dict[str, Any]) -> None:
                         <div class="price">{stock_money(stock, stock['price'])}</div>
                         <div style="color:{'#059669' if stock['change_pct'] >= 0 else '#dc2626'};font-weight:850;margin-top:7px;">{stock['change_pct']:+.2f}% today</div>
                     </div>
-                    <span class="status-chip" style="background:{status_color(status)};">{status}</span>
+                    <span class="status-chip" style="background:{status_color(status)};">{safe_status}</span>
                 </div>
                 <div class="stock-card-stats">
                     <span>Market Cap<b>{fmt_market_cap(stock['market_cap'], stock.get('currency', 'USD'))}</b></span>
@@ -2225,14 +4274,14 @@ def render_stock_card(stock: dict[str, Any]) -> None:
             key=f"compare_{symbol}",
             on_click=add_compare,
             args=(symbol,),
-            use_container_width=True,
+            width="stretch",
         )
         c2.button(
             "In Portfolio" if symbol in st.session_state.portfolio else "Add to Portfolio",
             key=f"portfolio_{symbol}",
             on_click=toggle_portfolio,
             args=(symbol,),
-            use_container_width=True,
+            width="stretch",
         )
 
 
@@ -2259,7 +4308,10 @@ def render_fair_value(stock: dict[str, Any]) -> None:
 def render_tradingview_chart(symbol: str) -> None:
     container_id = f"tradingview_{symbol.replace('.', '_').replace('-', '_')}"
     tv_symbol = f"KRX:{symbol[:6]}" if is_korean_symbol(symbol) else symbol
-    components.html(
+    tv_symbol = "".join(
+        char for char in tv_symbol if char.isascii() and (char.isalnum() or char in ":._-/")
+    ) or "NASDAQ:AAPL"
+    st.html(
         f"""
         <div class="tradingview-widget-container" style="height:520px;width:100%;">
             <div id="{container_id}" style="height:500px;width:100%;"></div>
@@ -2285,7 +4337,8 @@ def render_tradingview_chart(symbol: str) -> None:
             </script>
         </div>
         """,
-        height=540,
+        width="stretch",
+        unsafe_allow_javascript=True,
     )
 
 
@@ -2545,7 +4598,7 @@ def render_stock_detail(stock: dict[str, Any]) -> None:
         "EPS": stock_money(stock, float(stock["eps"] or 0)),
         "Growth Rate": f"{float(stock['growth_rate'] or 0) * 100:.1f}%",
     }
-    st.dataframe([stats], hide_index=True, use_container_width=True)
+    st.dataframe([stats], hide_index=True, width="stretch")
 
     st.markdown("#### Valuation Triangulation")
     st.dataframe(
@@ -2567,7 +4620,7 @@ def render_stock_detail(stock: dict[str, Any]) -> None:
             },
         ],
         hide_index=True,
-        use_container_width=True,
+        width="stretch",
     )
     render_valuation_radar(stock)
     st.write(
@@ -2662,7 +4715,7 @@ def compare_tab() -> None:
         for stock in selected:
             row[f"{stock['name']} ({stock['symbol']})"] = getter(stock)
         rows.append(row)
-    st.dataframe(rows, hide_index=True, use_container_width=True)
+    st.dataframe(rows, hide_index=True, width="stretch")
 
     cols = st.columns(len(selected))
     for col, stock in zip(cols, selected):
@@ -2799,7 +4852,7 @@ def render_sector_pie_chart(sector_values: dict[str, float]) -> None:
         )
         .properties(height=320)
     )
-    st.altair_chart(chart, use_container_width=True)
+    st.altair_chart(chart, width="stretch")
 
 
 def portfolio_return_frame(symbols: list[str]) -> pd.DataFrame:
@@ -2896,7 +4949,7 @@ def render_portfolio_risk_analysis() -> None:
                 "Beta": fmt_number(stock.get("beta")),
             }
         )
-    st.dataframe(rows, hide_index=True, use_container_width=True)
+    st.dataframe(rows, hide_index=True, width="stretch")
 
 
 def render_complementarity_analysis() -> None:
@@ -2954,14 +5007,14 @@ def render_complementarity_analysis() -> None:
             }
         )
 
-    st.dataframe(rows, hide_index=True, use_container_width=True)
+    st.dataframe(rows, hide_index=True, width="stretch")
     st.markdown("#### Correlation Matrix")
     st.caption(
         "Correlation close to +1 means two securities moved together historically. "
         "Correlation near 0 means weak co-movement. Negative correlation means they tended to move in opposite directions. "
         "This is useful for studying diversification, but it does not guarantee future risk reduction."
     )
-    st.dataframe(corr.round(3), use_container_width=True)
+    st.dataframe(corr.round(3), width="stretch")
 
 
 def portfolio_valuation_rows() -> list[dict[str, Any]]:
@@ -3028,12 +5081,39 @@ def portfolio_holdings_snapshot() -> list[dict[str, Any]]:
         if not stock:
             continue
         shares = float(holding.get("shares") or 0)
+        purchase_price = float(holding.get("purchase_price") or 0)
         native_value = float(stock.get("price") or 0) * shares
+        native_cost_basis = purchase_price * shares if purchase_price > 0 and shares > 0 else None
         base_value = convert_value(
             native_value,
             stock.get("currency", "USD"),
             base_currency,
             usdkrw,
+        )
+        base_cost_basis = (
+            convert_value(
+                native_cost_basis,
+                stock.get("currency", "USD"),
+                base_currency,
+                usdkrw,
+            )
+            if native_cost_basis is not None
+            else None
+        )
+        native_unrealized_gain = (
+            native_value - native_cost_basis
+            if native_cost_basis is not None
+            else None
+        )
+        base_unrealized_gain = (
+            base_value - base_cost_basis
+            if base_cost_basis is not None
+            else None
+        )
+        unrealized_return_pct = (
+            native_unrealized_gain / native_cost_basis * 100
+            if native_cost_basis and native_cost_basis > 0 and native_unrealized_gain is not None
+            else None
         )
         holdings.append(
             {
@@ -3042,8 +5122,14 @@ def portfolio_holdings_snapshot() -> list[dict[str, Any]]:
                 "currency": stock.get("currency", "USD"),
                 "shares": shares,
                 "price": float(stock.get("price") or 0),
+                "purchase_price": purchase_price,
+                "native_cost_basis": native_cost_basis,
+                "base_cost_basis": base_cost_basis,
                 "native_market_value": native_value,
                 "base_market_value": base_value,
+                "native_unrealized_gain": native_unrealized_gain,
+                "base_unrealized_gain": base_unrealized_gain,
+                "unrealized_return_pct": unrealized_return_pct,
                 "base_weight": base_value / total_value if total_value > 0 else 0,
                 "analysis_weight": weights.get(symbol, 0.0),
                 "valuation_status": stock.get("valuation_status", "N/A"),
@@ -3052,12 +5138,123 @@ def portfolio_holdings_snapshot() -> list[dict[str, Any]]:
     return holdings
 
 
+def portfolio_gain_loss_summary(holdings: list[dict[str, Any]] | None = None) -> dict[str, Any]:
+    holdings = holdings if holdings is not None else portfolio_holdings_snapshot()
+    costed_holdings = [
+        item
+        for item in holdings
+        if item.get("base_cost_basis") is not None
+        and float(item.get("base_cost_basis") or 0) > 0
+    ]
+    total_cost = sum(float(item.get("base_cost_basis") or 0) for item in costed_holdings)
+    current_value = sum(float(item.get("base_market_value") or 0) for item in costed_holdings)
+    unrealized_gain = current_value - total_cost if total_cost > 0 else None
+    unrealized_return_pct = unrealized_gain / total_cost * 100 if total_cost > 0 and unrealized_gain is not None else None
+    return {
+        "costed_holding_count": len(costed_holdings),
+        "total_holding_count": len(holdings),
+        "total_cost_basis": total_cost if total_cost > 0 else None,
+        "current_value_for_costed_holdings": current_value if total_cost > 0 else None,
+        "unrealized_gain": unrealized_gain,
+        "unrealized_return_pct": unrealized_return_pct,
+    }
+
+
+def mobile_signed_class(value: Any) -> str:
+    numeric = safe_float(value, 4)
+    if numeric is None:
+        return ""
+    return "mobile-positive" if numeric >= 0 else "mobile-negative"
+
+
+def render_mobile_portfolio_deck(
+    current_holdings: list[tuple],
+    total_value: float,
+    weighted_beta: float | None,
+    valuation_score: float | None,
+    total_cost_basis: float,
+    total_unrealized_gain: float | None,
+    total_unrealized_return_pct: float | None,
+) -> None:
+    base_currency = st.session_state.get("portfolio_base_currency", "USD")
+    value_text = fmt_money(total_value, base_currency)
+    beta_text = fmt_number(weighted_beta)
+    valuation_text = "N/A" if valuation_score is None else f"{valuation_score:+.1f}%"
+    cost_text = "Missing" if total_cost_basis <= 0 else fmt_money(total_cost_basis, base_currency)
+    pnl_text = (
+        "Needs cost basis"
+        if total_unrealized_gain is None
+        else fmt_signed_money(total_unrealized_gain, base_currency)
+    )
+    return_text = "N/A" if total_unrealized_return_pct is None else f"{total_unrealized_return_pct:+.1f}%"
+    pnl_class = mobile_signed_class(total_unrealized_gain)
+
+    holding_cards = []
+    current_total = sum(float(item[5]) for item in current_holdings)
+    for item in current_holdings[:6]:
+        (
+            symbol,
+            stock,
+            shares,
+            purchase_price,
+            _native_value,
+            base_value,
+            _native_cost_basis,
+            _base_cost_basis,
+            base_unrealized_gain,
+            unrealized_return_pct,
+        ) = item
+        weight = base_value / current_total * 100 if current_total else 0
+        holding_return = "N/A" if unrealized_return_pct is None else f"{unrealized_return_pct:+.1f}%"
+        holding_pnl = fmt_signed_money(base_unrealized_gain, base_currency)
+        holding_class = mobile_signed_class(base_unrealized_gain)
+        purchase_text = "Missing" if purchase_price <= 0 else stock_money(stock, purchase_price)
+        holding_cards.append(
+            f"""
+            <div class="mobile-holding-card">
+                <div class="eyebrow">Holding</div>
+                <div class="title">{escape(symbol)} · {escape(str(stock.get("name", symbol)))}</div>
+                <span class="hint">{shares:g} shares · cost {escape(purchase_text)}</span>
+                <div class="meta">
+                    <div class="mobile-mini-stat"><b>{escape(fmt_money(base_value, base_currency))}</b><span>Market</span></div>
+                    <div class="mobile-mini-stat"><b class="{holding_class}">{escape(holding_pnl)}</b><span>P/L</span></div>
+                    <div class="mobile-mini-stat"><b>{holding_return}</b><span>Return</span></div>
+                    <div class="mobile-mini-stat"><b>{weight:.1f}%</b><span>Weight</span></div>
+                </div>
+            </div>
+            """
+        )
+
+    st.markdown(
+        f"""
+        <div class="mobile-only-deck">
+            <div class="mobile-focus-card">
+                <h3>Mobile Portfolio Snapshot</h3>
+                <p>Start with value, cost basis, P/L, and risk readiness. The wide table below remains available for desktop-style review.</p>
+            </div>
+            <div class="mobile-card-grid">
+                <div class="mobile-card"><div class="eyebrow">Value</div><div class="value">{escape(value_text)}</div><span class="label">Current market value</span></div>
+                <div class="mobile-card"><div class="eyebrow">Cost</div><div class="value">{escape(cost_text)}</div><span class="label">Entered cost basis</span></div>
+                <div class="mobile-card"><div class="eyebrow">P/L</div><div class="value {pnl_class}">{escape(pnl_text)}</div><span class="label">Unrealized return {escape(return_text)}</span></div>
+                <div class="mobile-card"><div class="eyebrow">Risk</div><div class="value">{escape(beta_text)}</div><span class="label">Weighted beta · valuation {escape(valuation_text)}</span></div>
+            </div>
+            <div class="mobile-holding-grid">
+                {''.join(holding_cards)}
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def build_financial_snapshot(note: str, mood: str, next_action: str) -> dict[str, Any]:
     total_value, weighted_beta, valuation_score, _ = portfolio_metrics()
     usdkrw, fx_source, fx_date = effective_usdkrw()
     risk = portfolio_risk_metrics()
     comp = complementarity_summary()
     personal_result = st.session_state.get("last_personal_finance_result", {})
+    holdings = portfolio_holdings_snapshot()
+    gain_loss = portfolio_gain_loss_summary(holdings)
 
     return {
         "time": datetime.now().strftime("%Y-%m-%d %H:%M"),
@@ -3073,7 +5270,8 @@ def build_financial_snapshot(note: str, mood: str, next_action: str) -> dict[str
             "weighted_beta": weighted_beta,
             "valuation_score": valuation_score,
             "weighting_mode": st.session_state.get("portfolio_weighting_mode", "Share-based"),
-            "holdings": portfolio_holdings_snapshot(),
+            "holdings": holdings,
+            "gain_loss": gain_loss,
         },
         "risk": None
         if not risk
@@ -3092,6 +5290,1245 @@ def build_financial_snapshot(note: str, mood: str, next_action: str) -> dict[str
         },
         "personal_finance": personal_result,
     }
+
+
+def what_if_scenario_tab() -> None:
+    st.markdown(
+        """
+        <div class="hero-panel">
+            <h1 style="margin:0 0 8px;">What-if Scenario Lab</h1>
+            <div class="hero-muted">Stress-test life and portfolio assumptions before a future AI coach explains the trade-offs.</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.info(
+        "This is educational scenario analysis, not a forecast or investment recommendation. "
+        "It helps users see which assumptions can move portfolio value, liquidity, debt pressure, and risk capacity."
+    )
+
+    base_currency = st.session_state.get("portfolio_base_currency", "USD")
+    usdkrw, fx_source, fx_date = effective_usdkrw()
+    current_values = portfolio_market_values()
+    current_total = sum(current_values.values())
+
+    rate_sensitive_keywords = ("reit", "real estate", "property", "mortgage")
+    rate_sensitive_value = 0.0
+    for symbol, value in current_values.items():
+        stock = st.session_state.stocks.get(symbol, {})
+        descriptor = f"{stock.get('name', '')} {stock.get('industry', '')}".lower()
+        if any(keyword in descriptor for keyword in rate_sensitive_keywords):
+            rate_sensitive_value += value
+    detected_rate_allocation = int(round(rate_sensitive_value / current_total * 100)) if current_total > 0 else 20
+
+    st.subheader("Scenario Controls")
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        income_change_pct = st.slider("Monthly income change", -60, 20, -10, 5, format="%d%%")
+        expense_change_pct = st.slider("Living expense change", -20, 60, 10, 5, format="%d%%")
+        cash_shock = st.number_input("One-time cash shock", min_value=0.0, value=0.0, step=500.0)
+    with c2:
+        portfolio_change_pct = st.slider("Portfolio market move", -50, 30, -15, 5, format="%d%%")
+        fx_change_pct = st.slider("USD/KRW rate change", -30, 30, 0, 5, format="%d%%")
+        apply_drawdown_to_pf = st.checkbox("Apply portfolio move to taxable investments", value=True)
+    with c3:
+        rate_change_bps = st.slider("Interest-rate move", -200, 300, 100, 25)
+        rate_sensitive_allocation = st.slider("Rate-sensitive allocation", 0, 100, detected_rate_allocation, 5)
+        rate_price_sensitivity = st.slider("Price impact per +100 bps", -15, 5, -6, 1)
+
+    scenario_usdkrw = usdkrw * (1 + fx_change_pct / 100)
+    projected_rows: list[dict[str, Any]] = []
+    projected_market_total = 0.0
+    for symbol, holding in st.session_state.portfolio.items():
+        stock = st.session_state.stocks.get(symbol)
+        if not stock:
+            continue
+        shares = float(holding.get("shares") or 0)
+        scenario_native_value = float(stock.get("price") or 0) * shares * (1 + portfolio_change_pct / 100)
+        scenario_base_value = convert_value(
+            scenario_native_value,
+            stock.get("currency", "USD"),
+            base_currency,
+            scenario_usdkrw,
+        )
+        projected_market_total += scenario_base_value
+        current_base_value = current_values.get(symbol, 0.0)
+        projected_rows.append(
+            {
+                "Holding": symbol,
+                "Currency": stock.get("currency", "USD"),
+                "Current Value": fmt_money(current_base_value, base_currency),
+                "Scenario Value": fmt_money(scenario_base_value, base_currency),
+                "Change": fmt_money(scenario_base_value - current_base_value, base_currency),
+            }
+        )
+
+    rate_effect = current_total * (rate_sensitive_allocation / 100) * (rate_change_bps / 100) * (rate_price_sensitivity / 100)
+    projected_total = max(0.0, projected_market_total + rate_effect)
+    total_delta = projected_total - current_total
+    total_delta_pct = total_delta / current_total * 100 if current_total > 0 else 0.0
+
+    st.subheader("Portfolio Stress Result")
+    if current_total > 0:
+        p1, p2, p3, p4 = st.columns(4)
+        with p1:
+            metric_card("Current Portfolio", fmt_money(current_total, base_currency))
+        with p2:
+            metric_card("Scenario Portfolio", fmt_money(projected_total, base_currency), "#10b981" if total_delta >= 0 else "#ef4444")
+        with p3:
+            metric_card("Estimated Change", f"{total_delta_pct:+.1f}%", "#10b981" if total_delta >= 0 else "#ef4444")
+        with p4:
+            metric_card("Rate-Sleeve Effect", fmt_money(rate_effect, base_currency), "#f59e0b")
+        st.caption(
+            f"FX baseline: USD/KRW {usdkrw:,.2f} from {fx_source} ({fx_date}). "
+            f"Scenario FX: USD/KRW {scenario_usdkrw:,.2f}."
+        )
+        st.dataframe(projected_rows, hide_index=True, width="stretch")
+    else:
+        st.warning("Add holdings in the Portfolio tab to stress-test portfolio value, FX exposure, and rate-sensitive allocation.")
+
+    st.subheader("Personal Finance Stress Result")
+    personal_profile = st.session_state.get("last_personal_finance_profile")
+    personal_result = st.session_state.get("last_personal_finance_result")
+    stressed_result: dict[str, Any] | None = None
+    if personal_profile:
+        from personal_finance_engine import PersonalFinanceProfile, calculate_personal_finance
+
+        baseline_profile = dict(personal_profile)
+        stressed_profile = {
+            **baseline_profile,
+            "monthly_income": max(0.0, float(baseline_profile["monthly_income"]) * (1 + income_change_pct / 100)),
+            "fixed_expenses": max(0.0, float(baseline_profile["fixed_expenses"]) * (1 + expense_change_pct / 100)),
+            "variable_expenses": max(0.0, float(baseline_profile["variable_expenses"]) * (1 + expense_change_pct / 100)),
+            "cash_savings": max(0.0, float(baseline_profile["cash_savings"]) - cash_shock),
+            "taxable_investments": max(
+                0.0,
+                float(baseline_profile["taxable_investments"])
+                * (1 + portfolio_change_pct / 100 if apply_drawdown_to_pf else 1),
+            ),
+        }
+        stressed_result = calculate_personal_finance(PersonalFinanceProfile(**stressed_profile))
+        if not personal_result:
+            personal_result = calculate_personal_finance(PersonalFinanceProfile(**baseline_profile))
+
+        health_delta = float(stressed_result["financial_health_score"]) - float(personal_result["financial_health_score"])
+        surplus_delta = float(stressed_result["monthly_surplus"]) - float(personal_result["monthly_surplus"])
+        pf1, pf2, pf3, pf4 = st.columns(4)
+        with pf1:
+            metric_card("Health Score", f"{float(stressed_result['financial_health_score']):.1f}/100", "#10b981" if health_delta >= 0 else "#ef4444")
+        with pf2:
+            metric_card("Score Change", f"{health_delta:+.1f}", "#10b981" if health_delta >= 0 else "#ef4444")
+        with pf3:
+            metric_card("Monthly Surplus", fmt_money(float(stressed_result["monthly_surplus"])), "#10b981" if surplus_delta >= 0 else "#ef4444")
+        with pf4:
+            metric_card("Emergency Fund", f"{float(stressed_result['emergency_months']):.1f} months", "#10b981" if float(stressed_result["emergency_months"]) >= 3 else "#ef4444")
+    else:
+        st.warning("Open the Personal Finance tab once to create a baseline before running life-level stress tests.")
+
+    st.subheader("AI-Ready Scenario Interpretation")
+    interpretation: list[str] = []
+    if current_total > 0:
+        if total_delta_pct <= -20:
+            interpretation.append("Portfolio stress is severe: selected assumptions create a decline greater than 20%.")
+        elif total_delta_pct < 0:
+            interpretation.append("Portfolio stress is moderate: selected assumptions reduce portfolio value.")
+        else:
+            interpretation.append("Portfolio scenario is positive under the selected market and FX assumptions.")
+        if abs(fx_change_pct) >= 10:
+            interpretation.append("FX movement is material; separate market return from currency translation effects.")
+        if rate_change_bps > 0 and rate_sensitive_allocation > 0:
+            interpretation.append("Higher rates pressure the rate-sensitive sleeve under the selected assumption.")
+    if stressed_result:
+        if float(stressed_result["emergency_months"]) < 3:
+            interpretation.append("Liquidity warning: emergency fund falls below 3 months of living expenses.")
+        if float(stressed_result["debt_to_income"]) > 0.36:
+            interpretation.append("Debt-pressure warning: debt-to-income rises above the common 36% reference level.")
+        if float(stressed_result["financial_health_score"]) < 45:
+            interpretation.append("Risk-capacity warning: financial health score suggests limited ability to absorb volatility.")
+    if not interpretation:
+        interpretation.append("Add portfolio holdings and Personal Finance inputs to generate richer scenario interpretation.")
+    for item in interpretation:
+        st.write(f"- {item}")
+
+    scenario_packet = {
+        "created_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "purpose": "Educational scenario analysis for AI reasoning readiness; not investment advice.",
+        "inputs": {
+            "income_change_pct": income_change_pct,
+            "expense_change_pct": expense_change_pct,
+            "cash_shock": cash_shock,
+            "portfolio_change_pct": portfolio_change_pct,
+            "fx_change_pct": fx_change_pct,
+            "rate_change_bps": rate_change_bps,
+            "rate_sensitive_allocation_pct": rate_sensitive_allocation,
+            "rate_price_sensitivity_per_100bps_pct": rate_price_sensitivity,
+        },
+        "portfolio": {
+            "base_currency": base_currency,
+            "current_total": current_total,
+            "scenario_total": projected_total,
+            "scenario_delta_pct": total_delta_pct,
+            "current_usdkrw": usdkrw,
+            "scenario_usdkrw": scenario_usdkrw,
+            "rate_effect": rate_effect,
+        },
+        "personal_finance": stressed_result,
+        "interpretation": interpretation,
+    }
+    st.session_state.last_scenario_packet = scenario_packet
+    with st.expander("Structured Scenario Packet for Future AI Coach"):
+        st.json(scenario_packet)
+        st.download_button(
+            "Download Scenario JSON",
+            data=json.dumps(scenario_packet, indent=2, ensure_ascii=False),
+            file_name="ly_stscope_scenario_packet.json",
+            mime="application/json",
+            width="stretch",
+        )
+
+
+def ai_coach_context_snapshot() -> dict[str, Any]:
+    total_value, weighted_beta, valuation_score, _ = portfolio_metrics()
+    risk = portfolio_risk_metrics()
+    comp = complementarity_summary()
+    personal = st.session_state.get("last_personal_finance_result") or {}
+    profile = st.session_state.get("last_personal_finance_profile") or {}
+    diary = st.session_state.get("financial_diary", [])
+    scenario = st.session_state.get("last_scenario_packet")
+    holdings = portfolio_holdings_snapshot()
+
+    missing: list[str] = []
+    if not personal:
+        missing.append("Personal Finance baseline")
+    if not holdings:
+        missing.append("Portfolio holdings")
+    if not risk and len(holdings) < 2:
+        missing.append("At least two holdings for covariance risk")
+    if not scenario:
+        missing.append("Scenario stress packet")
+    if not diary:
+        missing.append("Diary memory snapshot")
+
+    return {
+        "portfolio": {
+            "total_value": total_value,
+            "base_currency": st.session_state.get("portfolio_base_currency", "USD"),
+            "weighted_beta": weighted_beta,
+            "valuation_score": valuation_score,
+            "holdings": holdings,
+            "risk": risk,
+            "complementarity": comp,
+        },
+        "personal": personal,
+        "profile": profile,
+        "scenario": scenario,
+        "diary": diary,
+        "missing": missing,
+    }
+
+
+def ai_coach_readiness(context: dict[str, Any]) -> dict[str, Any]:
+    personal = context["personal"]
+    portfolio = context["portfolio"]
+    holdings = portfolio["holdings"]
+    risk = portfolio["risk"]
+    comp = portfolio["complementarity"]
+    diary = context["diary"]
+    scenario = context["scenario"]
+
+    score = 0.0
+    reasons: list[str] = []
+
+    if personal:
+        health = float(personal.get("financial_health_score") or 0)
+        emergency_months = float(personal.get("emergency_months") or 0)
+        dti = float(personal.get("debt_to_income") or 0)
+        monthly_surplus = float(personal.get("monthly_surplus") or 0)
+        score += max(0.0, min(42.0, health * 0.42))
+        if emergency_months >= 6:
+            score += 10
+            reasons.append("Emergency fund is strong.")
+        elif emergency_months >= 3:
+            score += 7
+            reasons.append("Emergency fund is usable but still worth monitoring.")
+        else:
+            score += 2
+            reasons.append("Emergency fund is below the usual 3-month reference point.")
+        if dti <= 0.25:
+            score += 6
+            reasons.append("Debt pressure looks manageable.")
+        elif dti <= 0.36:
+            score += 4
+            reasons.append("Debt pressure is moderate.")
+        else:
+            score += 1
+            reasons.append("Debt-to-income is above the common 36% reference point.")
+        if monthly_surplus > 0:
+            score += 6
+            reasons.append("Monthly surplus is positive.")
+        else:
+            reasons.append("Monthly surplus is not positive.")
+    else:
+        reasons.append("Personal finance baseline is missing.")
+
+    if holdings:
+        score += 8
+        beta = portfolio["weighted_beta"]
+        valuation_score = portfolio["valuation_score"]
+        if beta is not None:
+            score += 5 if float(beta) <= 1.2 else 2
+            reasons.append(f"Weighted beta is {fmt_number(beta)}.")
+        if valuation_score is not None:
+            score += 5
+            reasons.append(f"Portfolio valuation score is {float(valuation_score):+.1f}%.")
+        if risk:
+            annual_vol = float(risk["annual_vol"])
+            if annual_vol <= 0.18:
+                score += 9
+                reasons.append("Estimated annualized portfolio risk is relatively low.")
+            elif annual_vol <= 0.30:
+                score += 6
+                reasons.append("Estimated annualized portfolio risk is moderate.")
+            else:
+                score += 2
+                reasons.append("Estimated annualized portfolio risk is high.")
+        if comp:
+            comp_score = float(comp["complementarity_score"])
+            score += 5 if comp_score >= 60 else 3 if comp_score >= 35 else 1
+            reasons.append(f"Complementarity score is {comp_score:.1f}.")
+    else:
+        reasons.append("Portfolio holdings are missing.")
+
+    if scenario:
+        score += 5
+        reasons.append("A scenario stress packet is available.")
+    if diary:
+        score += 4
+        reasons.append("Diary memory exists for reflection.")
+
+    score = max(0.0, min(100.0, score))
+    if not personal or not holdings:
+        label = "Data Needed"
+    elif score >= 75:
+        label = "Prepared"
+    elif score >= 55:
+        label = "Developing"
+    elif score >= 35:
+        label = "Caution"
+    else:
+        label = "Fragile"
+
+    return {"score": score, "label": label, "reasons": reasons}
+
+
+def app_view_link(view: str, label: str) -> str:
+    return f"[{label}](?view={quote(view)})"
+
+
+def build_ai_coach_linked_guidance(
+    context: dict[str, Any],
+    readiness: dict[str, Any],
+) -> list[dict[str, str]]:
+    portfolio = context["portfolio"]
+    holdings = portfolio.get("holdings", [])
+    base_currency = portfolio.get("base_currency", "USD")
+    personal = context.get("personal") or {}
+    scenario = context.get("scenario")
+    diary = context.get("diary", [])
+    gain_loss = portfolio_gain_loss_summary(holdings)
+
+    if not holdings:
+        portfolio_status = "Needs holdings"
+        portfolio_advice = "Add stocks first, then enter shares and average purchase price so the coach can compare cost basis with current value."
+    elif gain_loss["unrealized_gain"] is None:
+        portfolio_status = "Needs purchase prices"
+        portfolio_advice = "Enter average purchase price for each holding to unlock personal unrealized P/L and return analysis."
+    else:
+        portfolio_status = (
+            f"{fmt_signed_money(gain_loss['unrealized_gain'], base_currency)} "
+            f"({float(gain_loss['unrealized_return_pct']):+.1f}%)"
+        )
+        if float(gain_loss["unrealized_gain"]) >= 0:
+            portfolio_advice = "Compare gains with concentration, beta, and cash-flow capacity before treating performance as readiness."
+        else:
+            portfolio_advice = "Separate market drawdown from life liquidity; review whether cash flow can absorb the current unrealized loss."
+
+    if personal:
+        health = float(personal.get("financial_health_score") or 0)
+        emergency = float(personal.get("emergency_months") or 0)
+        surplus = float(personal.get("monthly_surplus") or 0)
+        personal_status = f"Health {health:.1f}/100"
+        if emergency < 3:
+            personal_advice = "Emergency reserve is the first readiness checkpoint before adding investment risk."
+        elif surplus <= 0:
+            personal_advice = "Monthly cash flow should be stabilized before using portfolio gains or losses as the main signal."
+        else:
+            personal_advice = "Use surplus, emergency reserve, and DTI together with portfolio P/L for investment readiness."
+    else:
+        personal_status = "Needs baseline"
+        personal_advice = "Complete Personal Finance once so the coach can connect risk capacity with portfolio behavior."
+
+    if scenario:
+        scenario_delta = float(scenario.get("portfolio", {}).get("scenario_delta_pct") or 0)
+        scenario_status = f"Latest scenario {scenario_delta:+.1f}%"
+        scenario_advice = "Ask the coach to compare this stress result with emergency fund, P/L, and current portfolio exposure."
+    else:
+        scenario_status = "Needs scenario"
+        scenario_advice = "Run one what-if scenario so the coach can reason about downside, FX, rate, income, and expense shocks."
+
+    diary_status = f"{len(diary)} saved entr{'y' if len(diary) == 1 else 'ies'}"
+    if diary:
+        diary_advice = "Use diary memory to compare today's decision context with prior notes and next actions."
+    else:
+        diary_advice = "Save the Current Situation Report so the coach has a memory checkpoint for future review."
+
+    details_status = "Formulas ready"
+    details_advice = "Open Calculation Details when you need the formula, assumption, or limit behind a coach answer."
+
+    return [
+        {
+            "title": "Portfolio P/L",
+            "view": "portfolio",
+            "status": portfolio_status,
+            "advice": portfolio_advice,
+            "question": "Use my portfolio cost basis, unrealized P/L, current value, and risk metrics to explain my investment readiness.",
+        },
+        {
+            "title": "Personal Finance",
+            "view": "finance",
+            "status": personal_status,
+            "advice": personal_advice,
+            "question": "Connect my personal finance baseline with my portfolio risk and tell me what readiness issue matters most.",
+        },
+        {
+            "title": "Scenario Stress",
+            "view": "scenario",
+            "status": scenario_status,
+            "advice": scenario_advice,
+            "question": "Use my latest what-if scenario to explain the safest next review step.",
+        },
+        {
+            "title": "Diary Report",
+            "view": "diary",
+            "status": diary_status,
+            "advice": diary_advice,
+            "question": "Use my Current Situation Report and diary memory to summarize what I should review next.",
+        },
+        {
+            "title": "Calculation Details",
+            "view": "details",
+            "status": details_status,
+            "advice": details_advice,
+            "question": "Explain the formulas and assumptions behind my current portfolio P/L, readiness, and risk signals.",
+        },
+    ]
+
+
+def format_ai_coach_direct_links(
+    context: dict[str, Any],
+    readiness: dict[str, Any],
+) -> str:
+    linked_items = build_ai_coach_linked_guidance(context, readiness)
+    rows = [
+        f"- {app_view_link(item['view'], item['title'])}: {item['status']} - {item['advice']}"
+        for item in linked_items
+    ]
+    return "### Direct App Links\n" + "\n".join(rows)
+
+
+def render_mobile_ai_coach_deck(context: dict[str, Any], readiness: dict[str, Any]) -> None:
+    portfolio = context["portfolio"]
+    personal = context.get("personal") or {}
+    missing = context.get("missing", [])
+    holdings = portfolio.get("holdings", [])
+    base_currency = portfolio.get("base_currency", "USD")
+    gain_loss = portfolio_gain_loss_summary(holdings)
+    pnl_text = (
+        "Needs cost basis"
+        if gain_loss.get("unrealized_gain") is None
+        else fmt_signed_money(gain_loss.get("unrealized_gain"), base_currency)
+    )
+    pnl_class = mobile_signed_class(gain_loss.get("unrealized_gain"))
+    health_text = (
+        "Missing"
+        if not personal
+        else f"{float(personal.get('financial_health_score') or 0):.1f}/100"
+    )
+    next_needed = missing[0] if missing else "Ready for focused question"
+    scenario_status = "Ready" if context.get("scenario") else "Run once"
+
+    st.markdown(
+        f"""
+        <div class="mobile-only-deck">
+            <div class="mobile-focus-card">
+                <h3>Mobile AI Coach Brief</h3>
+                <p>Use this as the phone-first control panel: readiness, missing context, portfolio P/L, and the next question to ask.</p>
+            </div>
+            <div class="mobile-card-grid">
+                <div class="mobile-card"><div class="eyebrow">Readiness</div><div class="value">{escape(readiness['label'])}</div><span class="label">{readiness['score']:.0f}/100 rule-based</span></div>
+                <div class="mobile-card"><div class="eyebrow">Next Input</div><div class="value">{escape(next_needed)}</div><span class="label">Fill this first</span></div>
+                <div class="mobile-card"><div class="eyebrow">Portfolio P/L</div><div class="value {pnl_class}">{escape(pnl_text)}</div><span class="label">{len(holdings)} holding(s)</span></div>
+                <div class="mobile-card"><div class="eyebrow">Finance</div><div class="value">{escape(health_text)}</div><span class="label">Scenario {escape(scenario_status)}</span></div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def detect_ai_coach_intent(question: str) -> str:
+    q = question.lower()
+    if any(token in q for token in ("ready", "readiness", "invest", "투자", "준비")):
+        return "readiness"
+    if any(token in q for token in ("risk", "위험", "beta", "volatility", "correlation", "diversification")):
+        return "risk"
+    if any(token in q for token in ("scenario", "what if", "shock", "rate", "fx", "환율", "금리", "시나리오")):
+        return "scenario"
+    if any(token in q for token in ("diary", "memory", "remember", "지난", "기억", "메모리")):
+        return "memory"
+    if any(token in q for token in ("privacy", "legal", "f-1", "visa", "비자", "법", "개인정보")):
+        return "caution"
+    return "overview"
+
+
+def compact_text(value: Any, max_chars: int = 360) -> str:
+    text = str(value or "").strip()
+    if len(text) <= max_chars:
+        return text
+    return text[: max_chars - 3].rstrip() + "..."
+
+
+def clean_restored_json_value(value: Any, max_depth: int = 3) -> Any:
+    if max_depth <= 0:
+        return compact_text(value, 300)
+    if isinstance(value, dict):
+        cleaned: dict[str, Any] = {}
+        for key, item in list(value.items())[:40]:
+            cleaned[compact_text(key, 80)] = clean_restored_json_value(item, max_depth - 1)
+        return cleaned
+    if isinstance(value, list):
+        return [clean_restored_json_value(item, max_depth - 1) for item in value[:100]]
+    if isinstance(value, str):
+        return compact_text(value, 1200)
+    if isinstance(value, (int, float, bool)) or value is None:
+        return value
+    return compact_text(value, 300)
+
+
+def clean_restored_diary_entries(restored: Any) -> list[dict[str, Any]]:
+    if not isinstance(restored, list):
+        raise ValueError("The uploaded diary file must contain a list of entries.")
+    if len(restored) > MAX_DIARY_RESTORE_ENTRIES:
+        raise ValueError(f"Diary restore is limited to {MAX_DIARY_RESTORE_ENTRIES} entries.")
+
+    cleaned_entries: list[dict[str, Any]] = []
+    for entry in restored:
+        if not isinstance(entry, dict):
+            raise ValueError("Each diary entry must be a JSON object.")
+        cleaned_entries.append(
+            {
+                "time": compact_text(entry.get("time", "Restored"), 80),
+                "mood": compact_text(entry.get("mood", "Restored"), 40),
+                "note": compact_text(entry.get("note", ""), 1800),
+                "next_action": compact_text(entry.get("next_action", ""), 600),
+                "base_currency": compact_text(entry.get("base_currency", "USD"), 12),
+                "usdkrw": clean_restored_json_value(entry.get("usdkrw")),
+                "fx_source": compact_text(entry.get("fx_source", ""), 80),
+                "fx_date": compact_text(entry.get("fx_date", ""), 40),
+                "portfolio": clean_restored_json_value(entry.get("portfolio", {})),
+                "risk": clean_restored_json_value(entry.get("risk")),
+                "complementarity": clean_restored_json_value(entry.get("complementarity")),
+                "personal_finance": clean_restored_json_value(entry.get("personal_finance", {})),
+            }
+        )
+    return cleaned_entries
+
+
+def safe_float(value: Any, digits: int = 4) -> float | None:
+    try:
+        numeric = float(value)
+    except (TypeError, ValueError):
+        return None
+    if not math.isfinite(numeric):
+        return None
+    return round(numeric, digits)
+
+
+def build_verified_ai_context(
+    context: dict[str, Any],
+    readiness: dict[str, Any],
+    include_diary_text: bool,
+) -> dict[str, Any]:
+    portfolio = context["portfolio"]
+    risk = portfolio.get("risk")
+    comp = portfolio.get("complementarity")
+    scenario = context.get("scenario")
+    diary_entries = context.get("diary", [])[-3:]
+
+    return {
+        "purpose": (
+            "Educational financial reasoning context for LY-STScope AI Coach. "
+            "Do not treat this as financial, legal, tax, or immigration advice."
+        ),
+        "readiness": {
+            "label": readiness["label"],
+            "score": safe_float(readiness["score"], 1),
+            "rule_reasons": readiness["reasons"][:8],
+        },
+        "personal_finance": context.get("personal") or {},
+        "portfolio": {
+            "base_currency": portfolio.get("base_currency", "USD"),
+            "total_value": safe_float(portfolio.get("total_value"), 2),
+            "weighted_beta": safe_float(portfolio.get("weighted_beta"), 3),
+            "valuation_score_pct": safe_float(portfolio.get("valuation_score"), 2),
+            "holdings": [
+                {
+                    "symbol": item.get("symbol"),
+                    "name": item.get("name"),
+                    "currency": item.get("currency"),
+                    "shares": safe_float(item.get("shares"), 4),
+                    "current_price": safe_float(item.get("price"), 4),
+                    "purchase_price": safe_float(item.get("purchase_price"), 4),
+                    "base_weight_pct": safe_float(float(item.get("base_weight", 0)) * 100, 2),
+                    "analysis_weight_pct": safe_float(float(item.get("analysis_weight", 0)) * 100, 2),
+                    "unrealized_gain_base": safe_float(item.get("base_unrealized_gain"), 2),
+                    "unrealized_return_pct": safe_float(item.get("unrealized_return_pct"), 2),
+                    "valuation_status": item.get("valuation_status"),
+                }
+                for item in portfolio.get("holdings", [])[:10]
+            ],
+            "gain_loss_summary": portfolio_gain_loss_summary(portfolio.get("holdings", [])),
+            "risk_summary": None
+            if not risk
+            else {
+                "annualized_risk_pct": safe_float(float(risk["annual_vol"]) * 100, 2),
+                "expected_annual_return_pct": safe_float(float(risk["annual_return"]) * 100, 2),
+                "diversification_benefit_daily_pct": safe_float(float(risk["diversification_benefit"]) * 100, 4),
+            },
+            "complementarity_summary": None
+            if not comp
+            else {
+                "score": safe_float(comp.get("complementarity_score"), 1),
+                "average_pair_correlation": safe_float(comp.get("average_pair_correlation"), 3),
+                "best_offset_pair": list(comp.get("best_offset_pair", []))[:3],
+                "highest_co_movement_pair": list(comp.get("highest_co_movement_pair", []))[:3],
+            },
+        },
+        "scenario": None
+        if not scenario
+        else {
+            "inputs": scenario.get("inputs", {}),
+            "portfolio": scenario.get("portfolio", {}),
+            "interpretation": scenario.get("interpretation", []),
+        },
+        "diary_memory": [
+            {
+                "time": entry.get("time"),
+                "mood": entry.get("mood"),
+                "next_action": compact_text(entry.get("next_action"), 220),
+                "note": compact_text(entry.get("note"), 320) if include_diary_text else "[hidden unless user opts in]",
+            }
+            for entry in diary_entries
+        ],
+        "missing_inputs": context.get("missing", []),
+        "linked_app_guidance": [
+            {
+                "section": item["title"],
+                "app_view": item["view"],
+                "status": item["status"],
+                "coach_hint": item["advice"],
+                "suggested_question": item["question"],
+            }
+            for item in build_ai_coach_linked_guidance(context, readiness)
+        ],
+    }
+
+
+VERIFIED_AI_SCHEMA = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": [
+        "short_answer",
+        "evidence",
+        "assumptions",
+        "missing_inputs",
+        "risk_flags",
+        "next_safe_step",
+        "caution",
+        "confidence",
+    ],
+    "properties": {
+        "short_answer": {"type": "string"},
+        "evidence": {"type": "array", "items": {"type": "string"}},
+        "assumptions": {"type": "array", "items": {"type": "string"}},
+        "missing_inputs": {"type": "array", "items": {"type": "string"}},
+        "risk_flags": {"type": "array", "items": {"type": "string"}},
+        "next_safe_step": {"type": "string"},
+        "caution": {"type": "string"},
+        "confidence": {"type": "string", "enum": ["low", "medium", "high"]},
+    },
+}
+
+
+VERIFIED_AI_SYSTEM_PROMPT = """
+You are the LY-STScope Verified AI Model Layer.
+Your job is educational financial reasoning, not financial advice.
+
+Rules:
+- Do not give buy, sell, hold, short, long, or target-price instructions.
+- Do not guarantee returns or predict certainty.
+- Do not provide legal, tax, accounting, immigration, or professional advice.
+- If the user asks about F-1, work authorization, monetization, or company formation, give only general caution and tell them to consult the DSO and qualified counsel.
+- Ground every answer in the provided LY-STScope context.
+- Use linked_app_guidance to point the user toward the Portfolio, Personal Finance, Scenario, Diary, or Calculation Details view when relevant.
+- If data is missing, say so clearly.
+- Keep the answer useful on mobile: concise, structured, and direct.
+- Return only JSON matching the requested schema.
+"""
+
+
+def extract_response_text(response_json: dict[str, Any]) -> str:
+    if response_json.get("output_text"):
+        return str(response_json["output_text"]).strip()
+
+    parts: list[str] = []
+    for item in response_json.get("output", []) or []:
+        for content in item.get("content", []) or []:
+            if isinstance(content, dict):
+                if "text" in content:
+                    parts.append(str(content["text"]))
+                elif content.get("type") == "output_text" and "value" in content:
+                    parts.append(str(content["value"]))
+    return "\n".join(parts).strip()
+
+
+def parse_json_object(text: str) -> dict[str, Any]:
+    clean_text = text.strip()
+    if clean_text.startswith("```"):
+        clean_text = clean_text.strip("`")
+        clean_text = clean_text.replace("json\n", "", 1).strip()
+    try:
+        return json.loads(clean_text)
+    except json.JSONDecodeError:
+        start = clean_text.find("{")
+        end = clean_text.rfind("}")
+        if start >= 0 and end > start:
+            return json.loads(clean_text[start : end + 1])
+        raise
+
+
+def validate_verified_ai_payload(payload: dict[str, Any]) -> list[str]:
+    issues: list[str] = []
+    for key in VERIFIED_AI_SCHEMA["required"]:
+        if key not in payload:
+            issues.append(f"Missing required field: {key}")
+
+    combined = " ".join(
+        str(payload.get(key, ""))
+        for key in ("short_answer", "next_safe_step", "caution")
+    ).lower()
+    prohibited_patterns = (
+        "you should buy",
+        "you should sell",
+        "i recommend buying",
+        "i recommend selling",
+        "guaranteed return",
+        "guaranteed profit",
+    )
+    if any(pattern in combined for pattern in prohibited_patterns):
+        issues.append("Model response included disallowed investment-directive language.")
+
+    if "educational" not in str(payload.get("caution", "")).lower():
+        issues.append("Caution field must clearly state educational use.")
+    return issues
+
+
+def format_verified_ai_payload(payload: dict[str, Any], model_name: str) -> str:
+    def list_block(items: Any, fallback: str) -> str:
+        if not items:
+            return f"- {fallback}"
+        return "\n".join(f"- {compact_text(item, 420)}" for item in items)
+
+    return f"""### Short Answer
+{compact_text(payload.get("short_answer"), 900)}
+
+### Evidence From Your Data
+{list_block(payload.get("evidence"), "No app evidence was available.")}
+
+### Assumptions
+{list_block(payload.get("assumptions"), "No assumptions were stated.")}
+
+### Missing Inputs
+{list_block(payload.get("missing_inputs"), "No major missing inputs were flagged.")}
+
+### Risk Flags
+{list_block(payload.get("risk_flags"), "No major risk flags were detected from available context.")}
+
+### Next Safe Step
+{compact_text(payload.get("next_safe_step"), 600)}
+
+### Caution
+{compact_text(payload.get("caution"), 700)}
+
+_Verified AI layer: {model_name} | confidence: {payload.get("confidence", "medium")}._
+"""
+
+
+def call_verified_openai_model(
+    question: str,
+    context: dict[str, Any],
+    readiness: dict[str, Any],
+    include_diary_text: bool,
+) -> str:
+    if not OPENAI_API_KEY:
+        raise RuntimeError("OPENAI_API_KEY is not configured.")
+
+    model_context = build_verified_ai_context(context, readiness, include_diary_text)
+    payload = {
+        "model": OPENAI_MODEL,
+        "input": [
+            {"role": "system", "content": VERIFIED_AI_SYSTEM_PROMPT},
+            {
+                "role": "user",
+                "content": json.dumps(
+                    {
+                        "user_question": question,
+                        "ly_stscope_context": model_context,
+                        "required_output_style": "mobile-friendly structured JSON",
+                    },
+                    ensure_ascii=False,
+                ),
+            },
+        ],
+        "reasoning": {"effort": OPENAI_REASONING_EFFORT},
+        "text": {
+            "format": {
+                "type": "json_schema",
+                "name": "ly_stscope_verified_ai_response",
+                "strict": True,
+                "schema": VERIFIED_AI_SCHEMA,
+            }
+        },
+        "max_output_tokens": 1400,
+    }
+    response = requests.post(
+        "https://api.openai.com/v1/responses",
+        headers={
+            "Authorization": f"Bearer {OPENAI_API_KEY}",
+            "Content-Type": "application/json",
+        },
+        json=payload,
+        timeout=45,
+    )
+    if response.status_code >= 400:
+        raise RuntimeError(f"OpenAI API returned {response.status_code}: {compact_text(response.text, 220)}")
+
+    response_json = response.json()
+    response_text = extract_response_text(response_json)
+    if not response_text:
+        raise RuntimeError("OpenAI API returned an empty response.")
+
+    model_payload = parse_json_object(response_text)
+    validation_issues = validate_verified_ai_payload(model_payload)
+    if validation_issues:
+        raise RuntimeError("Verified AI response failed validation: " + "; ".join(validation_issues))
+
+    return format_verified_ai_payload(model_payload, OPENAI_MODEL)
+
+
+def ai_coach_response(question: str) -> str:
+    context = ai_coach_context_snapshot()
+    readiness = ai_coach_readiness(context)
+    intent = detect_ai_coach_intent(question)
+    portfolio = context["portfolio"]
+    personal = context["personal"]
+    scenario = context["scenario"]
+    diary = context["diary"]
+    missing = context["missing"]
+    base_currency = portfolio["base_currency"]
+
+    evidence: list[str] = []
+    if personal:
+        evidence.extend(
+            [
+                f"Financial health score: {float(personal.get('financial_health_score') or 0):.1f}/100.",
+                f"Emergency fund: {float(personal.get('emergency_months') or 0):.1f} months.",
+                f"Monthly surplus: {fmt_money(float(personal.get('monthly_surplus') or 0))}.",
+                f"Debt-to-income: {float(personal.get('debt_to_income') or 0) * 100:.1f}%.",
+            ]
+        )
+    if portfolio["holdings"]:
+        gain_loss = portfolio_gain_loss_summary(portfolio["holdings"])
+        evidence.append(f"Portfolio value: {fmt_money(portfolio['total_value'], base_currency)}.")
+        evidence.append(f"Holdings tracked: {len(portfolio['holdings'])}.")
+        if gain_loss["unrealized_gain"] is not None:
+            evidence.append(
+                f"Unrealized P/L: {fmt_signed_money(gain_loss['unrealized_gain'], base_currency)} "
+                f"({float(gain_loss['unrealized_return_pct']):+.1f}%)."
+            )
+        if portfolio["weighted_beta"] is not None:
+            evidence.append(f"Weighted beta: {fmt_number(portfolio['weighted_beta'])}.")
+        if portfolio["valuation_score"] is not None:
+            evidence.append(f"Valuation score: {float(portfolio['valuation_score']):+.1f}%.")
+    if portfolio["risk"]:
+        evidence.append(f"Annualized portfolio risk: {float(portfolio['risk']['annual_vol']) * 100:.1f}%.")
+    if scenario:
+        evidence.append(f"Last scenario portfolio move: {float(scenario['inputs']['portfolio_change_pct']):+.0f}%.")
+        evidence.append(f"Last scenario result: {float(scenario['portfolio']['scenario_delta_pct']):+.1f}%.")
+    if diary:
+        latest = diary[-1]
+        evidence.append(f"Latest diary mood: {latest.get('mood', 'N/A')}.")
+        if latest.get("next_action"):
+            evidence.append(f"Latest next action: {latest.get('next_action')}.")
+
+    if intent == "readiness":
+        short = (
+            f"Your current investment readiness is **{readiness['label']}** "
+            f"with a rule-based score of **{readiness['score']:.0f}/100**. "
+            "This is a preparation signal, not a buy/sell recommendation."
+        )
+        next_step = "Complete the missing inputs, then run a downside scenario before making any real decision."
+    elif intent == "risk":
+        short = (
+            "The main risk view should combine life capacity, portfolio volatility, beta, and diversification. "
+            f"Current readiness label: **{readiness['label']}**."
+        )
+        next_step = "Check Portfolio Risk and Scenario together; risk is weaker when life liquidity and portfolio concentration both look strained."
+    elif intent == "scenario":
+        if scenario:
+            short = (
+                "The latest scenario packet is available and can be interpreted now. "
+                f"It shows a **{float(scenario['portfolio']['scenario_delta_pct']):+.1f}%** portfolio-level scenario change."
+            )
+        else:
+            short = "No scenario packet is available yet. Run the Scenario tab once, then ask this again."
+        next_step = "Use Scenario to test income, expenses, market drawdown, FX, and rate pressure together."
+    elif intent == "memory":
+        short = (
+            f"I found **{len(diary)} diary entr{'y' if len(diary) == 1 else 'ies'}** for memory-style reflection."
+            if diary
+            else "There is no diary memory yet. Save a Financial Diary snapshot first."
+        )
+        next_step = "Save a diary entry after each major review so future AI can compare your thinking over time."
+    elif intent == "caution":
+        short = (
+            "Use this prototype as educational analysis only. For F-1 venture activity, monetization, work authorization, "
+            "data licensing, and legal boundaries should be reviewed with the DSO and qualified counsel."
+        )
+        next_step = "Keep sensitive data out of the public prototype and document privacy, data source, and user consent boundaries."
+    else:
+        short = (
+            f"I can summarize your current financial reasoning context. Rule-based readiness is "
+            f"**{readiness['label']} ({readiness['score']:.0f}/100)**."
+        )
+        next_step = "Ask about readiness, risk, scenario, or memory to get a more focused answer."
+
+    evidence_text = "\n".join(f"- {item}" for item in evidence) if evidence else "- Not enough app data has been entered yet."
+    assumptions_text = "\n".join(
+        [
+            "- This response uses only data currently available inside this Streamlit session.",
+            "- This local response is rule-based unless the verified OpenAI model layer is enabled.",
+            "- Scores are educational heuristics and should be treated as prompts for review.",
+        ]
+    )
+    missing_text = "\n".join(f"- {item}" for item in missing) if missing else "- No major missing context detected for this prototype."
+    reason_text = "\n".join(f"- {item}" for item in readiness["reasons"][:6])
+    direct_links_text = format_ai_coach_direct_links(context, readiness)
+
+    return f"""### Short Answer
+{short}
+
+### Evidence From Your Data
+{evidence_text}
+
+### Rule-Based Reasoning
+{reason_text}
+
+### Assumptions
+{assumptions_text}
+
+### Missing Inputs
+{missing_text}
+
+{direct_links_text}
+
+### Next Safe Step
+{next_step}
+
+### Caution
+This is educational scenario reasoning only. It is not financial, investment, legal, tax, or immigration advice.
+"""
+
+
+def verified_or_rule_based_ai_response(question: str, use_verified_model: bool, include_diary_text: bool) -> str:
+    context = ai_coach_context_snapshot()
+    readiness = ai_coach_readiness(context)
+    if use_verified_model and OPENAI_API_KEY:
+        try:
+            verified_answer = call_verified_openai_model(question, context, readiness, include_diary_text)
+            return f"{verified_answer}\n\n{format_ai_coach_direct_links(context, readiness)}"
+        except Exception as exc:
+            fallback = ai_coach_response(question)
+            return (
+                f"{fallback}\n\n"
+                f"### Verified AI Model Status\n"
+                f"- The app fell back to the rule-based coach because the verified model layer could not complete safely.\n"
+                f"- Reason: {compact_text(exc, 260)}"
+            )
+    return ai_coach_response(question)
+
+
+def render_ai_coach_linked_guidance(
+    context: dict[str, Any],
+    readiness: dict[str, Any],
+) -> str | None:
+    st.subheader("Linked Coach Guidance")
+    st.caption(
+        "These cards are generated from Portfolio, Personal Finance, Scenario, Diary, and Calculation Details. "
+        "Open the source view or ask AI Coach with that exact context."
+    )
+    pending_question = None
+    linked_items = build_ai_coach_linked_guidance(context, readiness)
+    for start in range(0, len(linked_items), 2):
+        cols = st.columns(2, gap="medium")
+        for idx, item in enumerate(linked_items[start : start + 2], start=start):
+            with cols[idx - start]:
+                st.markdown(
+                    f"""
+                    <div class="linked-coach-card">
+                        <div class="eyebrow">Linked source</div>
+                        <h3>{escape(item['title'])}</h3>
+                        <div class="status">{escape(item['status'])}</div>
+                        <p>{escape(item['advice'])}</p>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+                open_col, ask_col = st.columns(2)
+                with open_col:
+                    st.button(
+                        "Open",
+                        key=f"linked_open_{item['view']}_{idx}",
+                        width="stretch",
+                        on_click=set_active_nav_key,
+                        args=(item["view"],),
+                    )
+                with ask_col:
+                    if st.button("Ask Coach", key=f"linked_ask_{item['view']}_{idx}", width="stretch"):
+                        pending_question = item["question"]
+    return pending_question
+
+
+def queue_ai_coach_question(question: str) -> None:
+    st.session_state.pending_ai_question = question
+    set_active_nav_key("ai")
+
+
+def queue_current_report_ai_question() -> None:
+    report = st.session_state.get("diary_current_report", "")
+    st.session_state.pending_ai_question = (
+        "Use this Current Situation Report plus the live Portfolio and Personal Finance context "
+        "to give a linked readiness review. Report text: "
+        f"{compact_text(report, 1800)}"
+    )
+    set_active_nav_key("ai")
+
+
+def render_ai_coach() -> None:
+    context = ai_coach_context_snapshot()
+    readiness = ai_coach_readiness(context)
+    portfolio = context["portfolio"]
+    personal = context["personal"]
+    diary = context["diary"]
+    score = readiness["score"]
+    label = readiness["label"]
+    health_text = (
+        f"{float(personal.get('financial_health_score') or 0):.1f}/100"
+        if personal
+        else "Missing"
+    )
+    portfolio_text = (
+        fmt_money(portfolio["total_value"], portfolio["base_currency"])
+        if portfolio["holdings"]
+        else "Missing"
+    )
+
+    st.markdown(
+        f"""
+        <div class="ai-coach-hero">
+            <h1>AI Coach</h1>
+            <p>Ask LY-STScope direct questions about readiness, risk, scenarios, and memory. This beta uses transparent rules first, then can later connect to an LLM API.</p>
+            <div class="ai-coach-strip">
+                <div class="ai-coach-signal"><b>{escape(label)}</b><span>Readiness {score:.0f}/100</span></div>
+                <div class="ai-coach-signal"><b>{escape(health_text)}</b><span>Personal finance</span></div>
+                <div class="ai-coach-signal"><b>{escape(portfolio_text)}</b><span>Portfolio context</span></div>
+                <div class="ai-coach-signal"><b>{len(diary)}</b><span>Diary memories</span></div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        """
+        <div class="coach-disclaimer">
+            Verified AI Coach beta: educational reasoning only. If enabled, a reasoning model answers from structured LY-STScope context and a local validator checks boundaries before display.
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    render_mobile_ai_coach_deck(context, readiness)
+
+    with st.expander("Verified AI Model Settings", expanded=False):
+        if OPENAI_API_KEY:
+            st.success(f"OPENAI_API_KEY is configured. Model: {OPENAI_MODEL}.")
+        else:
+            st.warning(
+                "OPENAI_API_KEY is not configured, so AI Coach will use the local rule-based answer. "
+                "Add OPENAI_API_KEY in Streamlit Secrets to enable verified model responses."
+            )
+        st.toggle(
+            "Use verified OpenAI reasoning model",
+            key="use_verified_ai_model",
+            disabled=not bool(OPENAI_API_KEY),
+            help="When enabled, structured app context is sent to OpenAI's Responses API and then validated locally before display.",
+        )
+        st.checkbox(
+            "Include diary note text in model context",
+            key="include_diary_text_for_ai",
+            disabled=not bool(OPENAI_API_KEY) or not st.session_state.get("use_verified_ai_model", False),
+            help="Leave off to send only diary count, mood, and next-action summaries.",
+        )
+        st.caption(
+            "Privacy note: do not enter bank account numbers, tax IDs, passwords, or confidential records. "
+            "Use this public prototype with minimal, non-sensitive examples."
+        )
+
+    pending_question = st.session_state.get("pending_ai_question")
+    if pending_question:
+        st.session_state.pending_ai_question = None
+
+    if not st.session_state.ai_coach_messages:
+        st.session_state.ai_coach_messages.append(
+            {
+                "role": "assistant",
+                "content": (
+                    "I am ready to review investment readiness, portfolio risk, scenario stress, and diary memory. "
+                    "Use the linked cards below, start with a quick question, or type your own."
+                ),
+            }
+        )
+
+    linked_question = render_ai_coach_linked_guidance(context, readiness)
+    if linked_question:
+        pending_question = linked_question
+
+    st.subheader("Quick Questions")
+    quick_questions = [
+        "Am I investment ready?",
+        "Explain my biggest risk.",
+        "What happens in my latest scenario?",
+        "What should I track next?",
+        "Summarize my diary memory.",
+        "What privacy or F-1 caution matters?",
+    ]
+    quick_cols = st.columns(2)
+    for idx, question in enumerate(quick_questions):
+        with quick_cols[idx % 2]:
+            if st.button(question, key=f"ai_quick_{idx}", width="stretch"):
+                pending_question = question
+
+    typed_question = st.chat_input("Ask LY-STScope AI Coach about readiness, risk, scenario, or memory")
+    if typed_question:
+        pending_question = typed_question
+
+    if pending_question:
+        st.session_state.ai_coach_messages.append({"role": "user", "content": pending_question})
+        st.session_state.ai_coach_messages.append(
+            {
+                "role": "assistant",
+                "content": verified_or_rule_based_ai_response(
+                    pending_question,
+                    st.session_state.get("use_verified_ai_model", False),
+                    st.session_state.get("include_diary_text_for_ai", False),
+                ),
+            }
+        )
+
+    reset_col, save_col = st.columns([1, 1])
+    with reset_col:
+        if st.button("Reset AI Coach Chat", width="stretch"):
+            st.session_state.ai_coach_messages = []
+            st.rerun()
+    with save_col:
+        if st.button("Save AI Summary to Diary", width="stretch"):
+            last_answer = next(
+                (
+                    message["content"]
+                    for message in reversed(st.session_state.ai_coach_messages)
+                    if message["role"] == "assistant"
+                ),
+                "",
+            )
+            if last_answer:
+                st.session_state.financial_diary.append(
+                    build_financial_snapshot(
+                        "AI Coach summary saved from chat.",
+                        "Planning",
+                        last_answer[:600],
+                    )
+                )
+                st.success("AI Coach summary saved to Financial Diary memory for this session.")
+
+    st.subheader("Conversation")
+    for message in st.session_state.ai_coach_messages[-8:]:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+
+
+def ai_reasoning_readiness_tab() -> None:
+    render_ai_coach()
+
+    with st.expander("AI Reasoning Product Thesis", expanded=False):
+        st.write(
+            """
+            AI interfaces are moving toward voice, agents, and continuous assistance. A future user may ask:
+            "Can I absorb this risk?", "What changes if rates rise?", or "What did I decide last time?"
+            LY-STScope prepares the structured context needed to answer those questions responsibly.
+            """
+        )
+
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            metric_card("Core Position", "Reasoning, not stock picking", "#0f766e")
+        with c2:
+            metric_card("User Value", "Understand trade-offs", "#1d4ed8")
+        with c3:
+            metric_card("Launch Stage", "Educational beta", "#92400e")
+
+        st.subheader("AI Coach Foundations")
+        st.dataframe(
+            [
+                {"Layer": "Scenario", "Current foundation": "What-if Scenario Lab", "Future question": "What if income falls, FX moves, or rates rise?"},
+                {"Layer": "Portfolio", "Current foundation": "Valuation score, beta, covariance, correlation", "Future question": "Where is my risk concentrated?"},
+                {"Layer": "Personal finance", "Current foundation": "Surplus, emergency fund, DTI, health score", "Future question": "Can my life absorb this investment risk?"},
+                {"Layer": "Memory", "Current foundation": "Financial Diary JSON", "Future question": "How has my thinking changed over time?"},
+                {"Layer": "Explainability", "Current foundation": "Calculation Details", "Future question": "Which formula and assumption produced this signal?"},
+            ],
+            hide_index=True,
+            width="stretch",
+        )
+
+        st.subheader("Responsible Boundaries")
+        st.markdown(
+            """
+            - Keep outputs educational and scenario-based; avoid buy/sell instructions.
+            - Do not collect sensitive real account data in this public prototype.
+            - Review data licenses before commercial use.
+            - For F-1 venture exploration, treat this as prototype validation and consult the DSO/immigration counsel before monetization.
+            - Make every future AI answer show assumptions, evidence, limitations, and missing data.
+            """
+        )
 
 
 def calculation_details_tab() -> None:
@@ -3118,6 +6555,7 @@ def calculation_details_tab() -> None:
             - **Income Approach:** Gordon Growth Model when dividends are available; otherwise EPS capitalization.
             - **Asset Approach:** Graham Number = square root of `22.5 x EPS x Book Value per Share`.
             - **Market Approach:** `EPS x Peer Average P/E`.
+            - **CAPM Required Return:** `Risk-Free Rate + Beta x Equity Risk Premium`; users can adjust these assumptions in Settings.
             - **Valuation Status:** if current price is more than 5% above fair value, it is marked Overvalued; if more than 5% below, Undervalued.
             """
         )
@@ -3133,11 +6571,14 @@ def calculation_details_tab() -> None:
                     {"Input": "Book Value / Share", "Value": stock_money(stock, float(stock.get("book_value") or 0))},
                     {"Input": "Dividend / Share", "Value": stock_money(stock, float(stock.get("dividend") or 0))},
                     {"Input": "Beta", "Value": fmt_number(stock.get("beta"))},
+                    {"Input": "Risk-Free Rate", "Value": f"{float(stock.get('risk_free_rate') or macro_assumptions()[0]) * 100:.2f}%"},
+                    {"Input": "Equity Risk Premium", "Value": f"{float(stock.get('equity_risk_premium') or macro_assumptions()[1]) * 100:.2f}%"},
+                    {"Input": "CAPM Required Return", "Value": f"{float(stock.get('expected_return') or 0) * 100:.2f}%"},
                     {"Input": "Growth Rate", "Value": f"{float(stock.get('growth_rate') or 0) * 100:.1f}%"},
                     {"Input": "Peer Average P/E", "Value": fmt_number(stock.get("peer_average_pe"))},
                 ],
                 hide_index=True,
-                use_container_width=True,
+                width="stretch",
             )
             st.dataframe(
                 [
@@ -3147,7 +6588,7 @@ def calculation_details_tab() -> None:
                     {"Approach": "Blended", "Model": f"{tri.get('valid_models', 0)} valid model(s)", "Value": stock_money(stock, stock.get("fair_price")) if stock.get("fair_price") else "N/A"},
                 ],
                 hide_index=True,
-                use_container_width=True,
+                width="stretch",
             )
         else:
             st.caption("Search stocks first to inspect live valuation inputs.")
@@ -3164,11 +6605,43 @@ def calculation_details_tab() -> None:
         )
         rows = portfolio_valuation_rows()
         if rows:
-            st.dataframe(rows, hide_index=True, use_container_width=True)
+            st.dataframe(rows, hide_index=True, width="stretch")
         else:
             st.caption("Add holdings to the portfolio to see contribution details.")
 
-    with st.expander("3. Portfolio Risk and Diversification"):
+    with st.expander("3. Personal Cost Basis and Unrealized Profit/Loss"):
+        st.markdown(
+            """
+            Personal portfolio profit/loss compares the user's entered average purchase price with the current market price.
+
+            `Cost Basis = Average Purchase Price x Shares`
+
+            `Unrealized P/L = Current Market Value - Cost Basis`
+
+            `Unrealized Return % = Unrealized P/L / Cost Basis x 100`
+
+            Cost basis is optional. If purchase price is left at 0, the app does not estimate profit/loss for that holding.
+            """
+        )
+        holdings = portfolio_holdings_snapshot()
+        gain_loss = portfolio_gain_loss_summary(holdings)
+        base_currency = st.session_state.get("portfolio_base_currency", "USD")
+        if gain_loss["total_cost_basis"] is not None:
+            st.dataframe(
+                [
+                    {"Metric": "Costed Holdings", "Value": f"{gain_loss['costed_holding_count']} of {gain_loss['total_holding_count']}"},
+                    {"Metric": "Total Cost Basis", "Value": fmt_money(gain_loss["total_cost_basis"], base_currency)},
+                    {"Metric": "Current Value of Costed Holdings", "Value": fmt_money(gain_loss["current_value_for_costed_holdings"], base_currency)},
+                    {"Metric": "Unrealized P/L", "Value": fmt_signed_money(gain_loss["unrealized_gain"], base_currency)},
+                    {"Metric": "Unrealized Return", "Value": f"{float(gain_loss['unrealized_return_pct']):+.1f}%"},
+                ],
+                hide_index=True,
+                width="stretch",
+            )
+        else:
+            st.caption("Enter purchase prices in Portfolio to calculate personal profit/loss.")
+
+    with st.expander("4. Portfolio Risk and Diversification"):
         st.markdown(
             """
             Portfolio risk is calculated from daily return covariance.
@@ -3192,18 +6665,18 @@ def calculation_details_tab() -> None:
                     ]
                 ),
                 hide_index=True,
-                use_container_width=True,
+                width="stretch",
             )
             st.markdown("**Weight Vector**")
-            st.dataframe(risk["weights"].rename("Weight").to_frame().style.format("{:.2%}"), use_container_width=True)
+            st.dataframe(risk["weights"].rename("Weight").to_frame().style.format("{:.2%}"), width="stretch")
             st.markdown("**Covariance Matrix**")
-            st.dataframe(risk["covariance"].round(6), use_container_width=True)
+            st.dataframe(risk["covariance"].round(6), width="stretch")
             st.markdown("**Correlation Matrix**")
-            st.dataframe(risk["correlation"].round(3), use_container_width=True)
+            st.dataframe(risk["correlation"].round(3), width="stretch")
         else:
             st.caption("At least two portfolio holdings with price history are needed.")
 
-    with st.expander("4. Personal Finance Health Score"):
+    with st.expander("5. Personal Finance Health Score"):
         st.markdown(
             """
             Personal Finance connects investment readiness with life-level financial health.
@@ -3228,10 +6701,239 @@ def calculation_details_tab() -> None:
                     {"Metric": "Financial Health Score", "Value": f"{float(result['financial_health_score']):.1f}/100"},
                 ],
                 hide_index=True,
-                use_container_width=True,
+                width="stretch",
             )
         else:
             st.caption("Open the Personal Finance tab first to calculate a personal finance snapshot.")
+
+    with st.expander("6. AI Reasoning and Scenario Layer"):
+        st.markdown(
+            """
+            LY-STScope is being prepared for future AI-assisted financial reasoning. The app should not ask AI
+            to make unsupported investment recommendations. Instead, each future AI response should be grounded
+            in structured app data.
+
+            **Reasoning context should include:**
+
+            - Portfolio holdings, weights, valuation score, beta, covariance, and correlation.
+            - Personal finance readiness: surplus, emergency fund, savings rate, debt-to-income, and health score.
+            - REIT exposure and interest-rate sensitivity.
+            - Diary snapshots, notes, and next actions when the user chooses to restore them.
+            - Macro assumptions such as risk-free rate, equity risk premium, and FX rate.
+
+            The What-if Scenario Lab is the first working version of this layer. It turns user-selected shocks
+            into a structured scenario packet that a future AI coach can explain.
+            """
+        )
+
+
+def build_current_situation_report_text() -> str:
+    now_text = datetime.now().strftime("%Y-%m-%d %H:%M")
+    base_currency = st.session_state.get("portfolio_base_currency", "USD")
+    total_value, weighted_beta, valuation_score, _ = portfolio_metrics()
+    holdings = portfolio_holdings_snapshot()
+    gain_loss = portfolio_gain_loss_summary(holdings)
+    risk = portfolio_risk_metrics()
+    comp = complementarity_summary()
+    personal = st.session_state.get("last_personal_finance_result") or {}
+    context = ai_coach_context_snapshot()
+    readiness = ai_coach_readiness(context)
+
+    lines = [
+        f"LY-STScope Current Situation Report - {now_text}",
+        "",
+        "1. Investment Readiness",
+        f"- Readiness label: {readiness['label']} ({readiness['score']:.0f}/100)",
+    ]
+    for reason in readiness["reasons"][:4]:
+        lines.append(f"- {reason}")
+
+    lines.extend(
+        [
+            "",
+            "2. Portfolio Position",
+            f"- Total market value: {fmt_money(total_value, base_currency)}",
+            f"- Weighted beta: {fmt_number(weighted_beta)}",
+            "- Portfolio valuation score: "
+            + ("N/A" if valuation_score is None else f"{valuation_score:+.1f}%"),
+        ]
+    )
+
+    if gain_loss["total_cost_basis"] is not None:
+        lines.extend(
+            [
+                f"- Cost basis entered for {gain_loss['costed_holding_count']} of {gain_loss['total_holding_count']} holding(s).",
+                f"- Cost basis: {fmt_money(gain_loss['total_cost_basis'], base_currency)}",
+                f"- Current value of costed holdings: {fmt_money(gain_loss['current_value_for_costed_holdings'], base_currency)}",
+                f"- Unrealized P/L: {fmt_signed_money(gain_loss['unrealized_gain'], base_currency)}",
+                f"- Unrealized return: {gain_loss['unrealized_return_pct']:+.1f}%",
+            ]
+        )
+    else:
+        lines.append("- Cost basis is not entered yet, so personal profit/loss is not calculated.")
+
+    if holdings:
+        lines.append("- Holdings summary:")
+        for item in holdings[:6]:
+            return_text = (
+                "N/A"
+                if item.get("unrealized_return_pct") is None
+                else f"{float(item['unrealized_return_pct']):+.1f}%"
+            )
+            pl_text = fmt_signed_money(item.get("base_unrealized_gain"), base_currency)
+            lines.append(
+                f"  - {item['symbol']}: weight {float(item.get('base_weight', 0)) * 100:.1f}%, "
+                f"P/L {pl_text}, return {return_text}, valuation {item.get('valuation_status', 'N/A')}"
+            )
+    else:
+        lines.append("- No portfolio holdings are currently tracked.")
+
+    if risk:
+        lines.extend(
+            [
+                "",
+                "3. Portfolio Risk",
+                f"- Annualized portfolio risk: {float(risk['annual_vol']) * 100:.1f}%",
+                f"- Expected annual return from history: {float(risk['annual_return']) * 100:+.1f}%",
+                f"- Daily diversification benefit: {float(risk['diversification_benefit']) * 100:.3f}%",
+            ]
+        )
+    else:
+        lines.extend(
+            [
+                "",
+                "3. Portfolio Risk",
+                "- At least two holdings with price history are needed for covariance-based risk analysis.",
+            ]
+        )
+
+    if comp:
+        lines.append(f"- Complementarity score: {float(comp['complementarity_score']):.1f}")
+
+    lines.append("")
+    lines.append("4. Personal Finance")
+    if personal:
+        lines.extend(
+            [
+                f"- Financial health score: {float(personal.get('financial_health_score', 0)):.1f}/100",
+                f"- Monthly surplus: {fmt_money(float(personal.get('monthly_surplus', 0)))}",
+                f"- Emergency fund: {float(personal.get('emergency_months', 0)):.1f} months",
+                f"- Debt-to-income: {float(personal.get('debt_to_income', 0)) * 100:.1f}%",
+                f"- Savings rate: {float(personal.get('savings_rate', 0)) * 100:.1f}%",
+            ]
+        )
+    else:
+        lines.append("- Personal Finance baseline has not been calculated yet.")
+
+    missing = context.get("missing", [])
+    lines.extend(["", "5. Missing Inputs"])
+    if missing:
+        lines.extend(f"- {item}" for item in missing)
+    else:
+        lines.append("- No major missing inputs detected for the current prototype.")
+
+    lines.extend(
+        [
+            "",
+            "6. Next Reflection Prompt",
+            "- What changed since the last review?",
+            "- Is my investment risk aligned with my cash flow and emergency reserve?",
+            "- What is one safe next step before changing the portfolio?",
+            "",
+            "Caution: This report is educational and informational only. It is not financial, investment, legal, tax, or immigration advice.",
+        ]
+    )
+    return "\n".join(lines)
+
+
+def render_mobile_diary_deck(report_text: str) -> None:
+    context = ai_coach_context_snapshot()
+    readiness = ai_coach_readiness(context)
+    diary = st.session_state.get("financial_diary", [])
+    latest = diary[-1] if diary else {}
+    portfolio = context["portfolio"]
+    holdings = portfolio.get("holdings", [])
+    gain_loss = portfolio_gain_loss_summary(holdings)
+    base_currency = portfolio.get("base_currency", "USD")
+    pnl_text = (
+        "No cost basis"
+        if gain_loss.get("unrealized_gain") is None
+        else fmt_signed_money(gain_loss.get("unrealized_gain"), base_currency)
+    )
+    pnl_class = mobile_signed_class(gain_loss.get("unrealized_gain"))
+    latest_action = latest.get("next_action") or "Save today's next action"
+    report_lines = len([line for line in report_text.splitlines() if line.strip()])
+
+    st.markdown(
+        f"""
+        <div class="mobile-only-deck">
+            <div class="mobile-focus-card">
+                <h3>Mobile Diary Memory</h3>
+                <p>The diary becomes AI memory only when you save a snapshot. Keep notes short, non-sensitive, and action-oriented.</p>
+            </div>
+            <div class="mobile-card-grid">
+                <div class="mobile-card"><div class="eyebrow">Readiness</div><div class="value">{escape(readiness['label'])}</div><span class="label">{readiness['score']:.0f}/100 now</span></div>
+                <div class="mobile-card"><div class="eyebrow">Entries</div><div class="value">{len(diary)}</div><span class="label">Session memory</span></div>
+                <div class="mobile-card"><div class="eyebrow">P/L Context</div><div class="value {pnl_class}">{escape(pnl_text)}</div><span class="label">Portfolio link</span></div>
+                <div class="mobile-card"><div class="eyebrow">Report</div><div class="value">{report_lines}</div><span class="label">Lines ready</span></div>
+            </div>
+            <div class="mobile-diary-feed">
+                <div class="mobile-diary-card">
+                    <div class="eyebrow">Next Action</div>
+                    <div class="title">{escape(compact_text(latest_action, 180))}</div>
+                    <span class="hint">Use this as the first sentence for AI Coach reflection.</span>
+                </div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def render_mobile_saved_diary_cards(entries: list[dict[str, Any]]) -> None:
+    cards = []
+    for idx, entry in reversed(list(enumerate(entries, start=1))):
+        if len(cards) >= 4:
+            break
+        portfolio = entry.get("portfolio", {})
+        gain_loss = portfolio.get("gain_loss") or {}
+        personal = entry.get("personal_finance") or {}
+        base_currency = entry.get("base_currency", "USD")
+        entry_gain = gain_loss.get("unrealized_gain")
+        pnl_text = fmt_signed_money(entry_gain, base_currency) if entry_gain is not None else "N/A"
+        pnl_class = mobile_signed_class(entry_gain)
+        health_text = (
+            "N/A"
+            if not personal
+            else f"{float(personal.get('financial_health_score', 0)):.1f}/100"
+        )
+        cards.append(
+            f"""
+            <div class="mobile-diary-card">
+                <div class="eyebrow">Entry {idx}</div>
+                <div class="title">{escape(str(entry.get("time", "No time")))} · {escape(str(entry.get("mood", "N/A")))}</div>
+                <span class="hint">{escape(compact_text(entry.get("next_action") or "No next action recorded.", 180))}</span>
+                <div class="meta">
+                    <div class="mobile-mini-stat"><b>{escape(fmt_money(portfolio.get("total_market_value"), base_currency))}</b><span>Portfolio</span></div>
+                    <div class="mobile-mini-stat"><b class="{pnl_class}">{escape(pnl_text)}</b><span>P/L</span></div>
+                    <div class="mobile-mini-stat"><b>{escape(health_text)}</b><span>Health</span></div>
+                    <div class="mobile-mini-stat"><b>{len(portfolio.get("holdings") or [])}</b><span>Holdings</span></div>
+                </div>
+            </div>
+            """
+        )
+
+    if cards:
+        st.markdown(
+            f"""
+            <div class="mobile-only-deck">
+                <div class="mobile-diary-feed">
+                    {''.join(cards)}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
 
 def financial_diary_tab() -> None:
@@ -3247,6 +6949,38 @@ def financial_diary_tab() -> None:
     st.caption(
         "Diary entries are stored in the current Streamlit session unless downloaded. Avoid entering sensitive personal information in a public or shared browser."
     )
+
+    st.subheader("Current Situation Report")
+    report_text = build_current_situation_report_text()
+    render_mobile_diary_deck(report_text)
+    st.text_area(
+        "Auto-generated report from Portfolio and Personal Finance",
+        value=report_text,
+        height=260,
+        key="diary_current_report",
+        help="This report uses current portfolio, cost basis, unrealized P/L, risk, and personal finance context.",
+    )
+    report_cols = st.columns(3)
+    with report_cols[0]:
+        if st.button("Use Report as Diary Note", width="stretch"):
+            st.session_state.diary_note = st.session_state.get("diary_current_report", report_text)
+            st.session_state.diary_next_action = "Review portfolio P/L, personal finance readiness, and one safe next step."
+            st.rerun()
+    with report_cols[1]:
+        if st.button("Save Current Situation Report", width="stretch"):
+            snapshot = build_financial_snapshot(
+                st.session_state.get("diary_current_report", report_text).strip(),
+                "Planning",
+                "Review portfolio P/L, personal finance readiness, and one safe next step.",
+            )
+            st.session_state.financial_diary.append(snapshot)
+            st.success("Current situation report saved to your Financial Diary.")
+    with report_cols[2]:
+        st.button(
+            "Ask AI Coach",
+            width="stretch",
+            on_click=queue_current_report_ai_question,
+        )
 
     mood = st.selectbox(
         "Today's financial feeling",
@@ -3267,7 +7001,7 @@ def financial_diary_tab() -> None:
 
     save_col, download_col = st.columns([1, 2])
     with save_col:
-        if st.button("Save Financial Snapshot", use_container_width=True):
+        if st.button("Save Financial Snapshot", width="stretch"):
             snapshot = build_financial_snapshot(note.strip(), mood, next_action.strip())
             st.session_state.financial_diary.append(snapshot)
             st.success("Snapshot saved to your Financial Diary for this session.")
@@ -3279,19 +7013,23 @@ def financial_diary_tab() -> None:
             data=diary_json,
             file_name=f"ly_stscope_financial_diary_{datetime.now().strftime('%Y%m%d')}.json",
             mime="application/json",
-            use_container_width=True,
+            width="stretch",
             disabled=not bool(st.session_state.financial_diary),
         )
 
     uploaded = st.file_uploader("Restore diary JSON", type=["json"], key="diary_restore")
     if uploaded is not None:
         try:
-            restored = json.loads(uploaded.getvalue().decode("utf-8"))
-            if isinstance(restored, list):
-                st.session_state.financial_diary = restored
-                st.success("Diary restored for this session.")
-            else:
-                st.warning("The uploaded diary file must contain a list of entries.")
+            if getattr(uploaded, "size", 0) and uploaded.size > MAX_DIARY_RESTORE_BYTES:
+                st.warning("Diary restore file is too large for this public prototype.")
+                return
+            raw_bytes = uploaded.getvalue()
+            if len(raw_bytes) > MAX_DIARY_RESTORE_BYTES:
+                st.warning("Diary restore file is too large for this public prototype.")
+                return
+            restored = json.loads(raw_bytes.decode("utf-8"))
+            st.session_state.financial_diary = clean_restored_diary_entries(restored)
+            st.success("Diary restored for this session.")
         except Exception as exc:
             st.warning(f"Could not restore diary file: {exc}")
 
@@ -3303,14 +7041,19 @@ def financial_diary_tab() -> None:
     summary_rows = []
     for idx, entry in enumerate(st.session_state.financial_diary, start=1):
         portfolio = entry.get("portfolio", {})
+        gain_loss = portfolio.get("gain_loss") or {}
         personal = entry.get("personal_finance") or {}
         base_currency = entry.get("base_currency", "USD")
+        entry_gain = gain_loss.get("unrealized_gain")
+        entry_return = gain_loss.get("unrealized_return_pct")
         summary_rows.append(
             {
                 "#": idx,
                 "Time": entry.get("time"),
                 "Mood": entry.get("mood"),
                 "Portfolio Value": fmt_money(portfolio.get("total_market_value"), base_currency),
+                "Unrealized P/L": fmt_signed_money(entry_gain, base_currency) if entry_gain is not None else "N/A",
+                "Return": "N/A" if entry_return is None else f"{float(entry_return):+.1f}%",
                 "Valuation Score": "N/A"
                 if portfolio.get("valuation_score") is None
                 else f"{float(portfolio.get('valuation_score')):+.1f}%",
@@ -3319,7 +7062,8 @@ def financial_diary_tab() -> None:
                 else f"{float(personal.get('financial_health_score', 0)):.1f}/100",
             }
         )
-    st.dataframe(summary_rows, hide_index=True, use_container_width=True)
+    render_mobile_saved_diary_cards(st.session_state.financial_diary)
+    st.dataframe(summary_rows, hide_index=True, width="stretch")
 
     for idx, entry in reversed(list(enumerate(st.session_state.financial_diary, start=1))):
         with st.expander(f"Entry {idx}: {entry.get('time')} - {entry.get('mood')}", expanded=False):
@@ -3327,12 +7071,24 @@ def financial_diary_tab() -> None:
             st.write(f"**Next Action:** {entry.get('next_action') or 'No action recorded'}")
             portfolio = entry.get("portfolio", {})
             base_currency = entry.get("base_currency", "USD")
+            gain_loss = portfolio.get("gain_loss") or {}
             entry_valuation = portfolio.get("valuation_score")
             valuation_text = "N/A" if entry_valuation is None else f"{float(entry_valuation):+.1f}%"
+            gain_text = (
+                "N/A"
+                if gain_loss.get("unrealized_gain") is None
+                else fmt_signed_money(gain_loss.get("unrealized_gain"), base_currency)
+            )
+            return_text = (
+                "N/A"
+                if gain_loss.get("unrealized_return_pct") is None
+                else f"{float(gain_loss.get('unrealized_return_pct')):+.1f}%"
+            )
             st.write(
                 f"**Portfolio:** {fmt_money(portfolio.get('total_market_value'), base_currency)} | "
                 f"Beta {fmt_number(portfolio.get('weighted_beta'))} | "
-                f"Valuation Score {valuation_text}"
+                f"Valuation Score {valuation_text} | "
+                f"P/L {gain_text} ({return_text})"
             )
             holdings = portfolio.get("holdings") or []
             if holdings:
@@ -3342,13 +7098,21 @@ def financial_diary_tab() -> None:
                             "Stock": f"{item['symbol']} - {item['name']}",
                             "Currency": item["currency"],
                             "Shares": item["shares"],
+                            "Avg Purchase Price": "N/A"
+                            if not item.get("purchase_price")
+                            else fmt_money(item.get("purchase_price"), item["currency"]),
+                            "Current Price": fmt_money(item.get("price"), item["currency"]),
+                            "Unrealized P/L": fmt_signed_money(item.get("base_unrealized_gain"), base_currency),
+                            "Return": "N/A"
+                            if item.get("unrealized_return_pct") is None
+                            else f"{float(item['unrealized_return_pct']):+.1f}%",
                             "Base Weight": f"{float(item['base_weight']) * 100:.1f}%",
                             "Valuation": item["valuation_status"],
                         }
                         for item in holdings
                     ],
                     hide_index=True,
-                    use_container_width=True,
+                    width="stretch",
                 )
 
 
@@ -3456,7 +7220,16 @@ def portfolio_tab() -> None:
     )
 
     if not st.session_state.portfolio:
+        render_mobile_portfolio_deck([], total_value, weighted_beta, valuation_score, 0, None, None)
         st.info("No stocks in your portfolio yet. Add them from the search results.")
+        st.button(
+            "Ask AI Coach About Portfolio Setup",
+            width="stretch",
+            on_click=queue_ai_coach_question,
+            args=(
+                "My portfolio has no holdings yet. Explain what I should add first so portfolio P/L, cost basis, and investment readiness can work.",
+            ),
+        )
         return
 
     native_breakdown = portfolio_currency_breakdown()
@@ -3476,27 +7249,124 @@ def portfolio_tab() -> None:
         stock = st.session_state.stocks.get(symbol)
         if not stock:
             continue
-        shares = st.number_input(
-            f"{symbol} shares",
-            min_value=0.0,
-            value=float(holding.get("shares") or 0),
-            step=1.0,
-            key=f"shares_{symbol}",
-        )
+        currency = stock.get("currency", "USD")
+        input_cols = st.columns(2)
+        with input_cols[0]:
+            shares = st.number_input(
+                f"{symbol} shares",
+                min_value=0.0,
+                value=float(holding.get("shares") or 0),
+                step=1.0,
+                key=f"shares_{symbol}",
+            )
+        with input_cols[1]:
+            purchase_step = 100.0 if currency == "KRW" else 1.0
+            purchase_price = st.number_input(
+                f"{symbol} average purchase price ({currency})",
+                min_value=0.0,
+                value=float(holding.get("purchase_price") or 0),
+                step=purchase_step,
+                key=f"purchase_price_{symbol}",
+                help="Enter the average price you paid per share. Leave 0 if you do not want to calculate profit/loss yet.",
+            )
         st.session_state.portfolio[symbol]["shares"] = shares
+        st.session_state.portfolio[symbol]["purchase_price"] = purchase_price
         native_value = float(stock["price"]) * shares
+        native_cost_basis = purchase_price * shares if purchase_price > 0 and shares > 0 else None
         base_value = convert_value(
             native_value,
-            stock.get("currency", "USD"),
+            currency,
             st.session_state.portfolio_base_currency,
             usdkrw,
         )
-        current_holdings.append((symbol, stock, shares, native_value, base_value))
+        base_cost_basis = (
+            convert_value(
+                native_cost_basis,
+                currency,
+                st.session_state.portfolio_base_currency,
+                usdkrw,
+            )
+            if native_cost_basis is not None
+            else None
+        )
+        base_unrealized_gain = (
+            base_value - base_cost_basis if base_cost_basis is not None else None
+        )
+        unrealized_return_pct = (
+            (native_value - native_cost_basis) / native_cost_basis * 100
+            if native_cost_basis and native_cost_basis > 0
+            else None
+        )
+        current_holdings.append(
+            (
+                symbol,
+                stock,
+                shares,
+                purchase_price,
+                native_value,
+                base_value,
+                native_cost_basis,
+                base_cost_basis,
+                base_unrealized_gain,
+                unrealized_return_pct,
+            )
+        )
 
     rows = []
-    current_total_value = sum(item[4] for item in current_holdings)
+    current_total_value = sum(item[5] for item in current_holdings)
+    costed_rows = [item for item in current_holdings if item[7] is not None and float(item[7]) > 0]
+    total_cost_basis = sum(float(item[7]) for item in costed_rows)
+    costed_market_value = sum(float(item[5]) for item in costed_rows)
+    total_unrealized_gain = costed_market_value - total_cost_basis if total_cost_basis > 0 else None
+    total_unrealized_return_pct = (
+        total_unrealized_gain / total_cost_basis * 100
+        if total_cost_basis > 0 and total_unrealized_gain is not None
+        else None
+    )
+    if total_cost_basis > 0:
+        pl_color = "#10b981" if (total_unrealized_gain or 0) >= 0 else "#ef4444"
+        pnl_cols = st.columns(3)
+        with pnl_cols[0]:
+            metric_card("Cost Basis", fmt_money(total_cost_basis, st.session_state.portfolio_base_currency))
+        with pnl_cols[1]:
+            metric_card("Unrealized P/L", fmt_signed_money(total_unrealized_gain, st.session_state.portfolio_base_currency), pl_color)
+        with pnl_cols[2]:
+            metric_card("Unrealized Return", f"{total_unrealized_return_pct:+.1f}%", pl_color)
+    else:
+        st.info("Enter each holding's average purchase price to compare your cost basis with current market value.")
+
+    render_mobile_portfolio_deck(
+        current_holdings,
+        current_total_value,
+        weighted_beta,
+        valuation_score,
+        total_cost_basis,
+        total_unrealized_gain,
+        total_unrealized_return_pct,
+    )
+
+    st.button(
+        "Ask AI Coach About Portfolio P/L",
+        width="stretch",
+        on_click=queue_ai_coach_question,
+        args=(
+            "Use my portfolio shares, average purchase prices, unrealized P/L, current market value, and risk signals to explain what I should review next.",
+        ),
+    )
+
     analysis_weights = portfolio_analysis_weights()
-    for symbol, stock, shares, native_value, base_value in current_holdings:
+    for (
+        symbol,
+        stock,
+        shares,
+        purchase_price,
+        native_value,
+        base_value,
+        native_cost_basis,
+        base_cost_basis,
+        base_unrealized_gain,
+        unrealized_return_pct,
+    ) in current_holdings:
         currency = stock.get("currency", "USD")
         weight = base_value / current_total_value * 100 if current_total_value else 0
         analysis_weight = analysis_weights.get(symbol, 0.0) * 100
@@ -3504,16 +7374,20 @@ def portfolio_tab() -> None:
             {
                 "Stock": f"{symbol} - {stock['name']}",
                 "Currency": currency,
-                "Price": stock_money(stock, stock["price"]),
+                "Current Price": stock_money(stock, stock["price"]),
+                "Avg Purchase Price": "N/A" if purchase_price <= 0 else stock_money(stock, purchase_price),
                 "Shares": shares,
+                "Cost Basis": "N/A" if native_cost_basis is None else fmt_money(native_cost_basis, currency),
                 "Native Market Value": fmt_money(native_value, currency),
                 f"{st.session_state.portfolio_base_currency} Market Value": fmt_money(base_value, st.session_state.portfolio_base_currency),
+                "Unrealized P/L": fmt_signed_money(base_unrealized_gain, st.session_state.portfolio_base_currency),
+                "Return": "N/A" if unrealized_return_pct is None else f"{unrealized_return_pct:+.1f}%",
                 "Base Weight": f"{weight:.1f}%",
                 "Analysis Weight": f"{analysis_weight:.1f}%",
             }
         )
 
-    st.dataframe(rows, hide_index=True, use_container_width=True)
+    st.dataframe(rows, hide_index=True, width="stretch")
     remove_cols = st.columns(min(4, len(st.session_state.portfolio)))
     for idx, symbol in enumerate(list(st.session_state.portfolio.keys())):
         remove_cols[idx % len(remove_cols)].button(
@@ -3551,9 +7425,88 @@ def settings_tab() -> None:
         External users do not need to enter a key, and the token is not stored in their browser.
         """
     )
+    st.subheader("Verified AI Model")
+    if OPENAI_API_KEY:
+        st.success(f"OPENAI_API_KEY is configured. AI Coach can use {OPENAI_MODEL}.")
+    else:
+        st.warning("OPENAI_API_KEY is missing. AI Coach will remain rule-based until the key is added.")
+    st.caption(
+        f"Current AI model setting: {OPENAI_MODEL} with reasoning effort '{OPENAI_REASONING_EFFORT}'. "
+        "Set OPENAI_AI_DEFAULT_ON = true only if you want the verified model toggle enabled by default."
+    )
     st.subheader("Macroeconomic Variables")
-    st.write(f"Risk-Free Rate: **{RISK_FREE_RATE * 100:.2f}%**")
-    st.write(f"Equity Risk Premium: **{EQUITY_RISK_PREMIUM * 100:.2f}%**")
+    st.caption(
+        "The app starts with 4.50% for both values. Users can revise these assumptions, "
+        "and the updated values will be reflected in CAPM required return and valuation calculations."
+    )
+
+    if st.button("Reset macro assumptions to 4.50%", width="stretch"):
+        st.session_state.risk_free_rate_pct = DEFAULT_RISK_FREE_RATE * 100
+        st.session_state.equity_risk_premium_pct = DEFAULT_EQUITY_RISK_PREMIUM * 100
+        st.session_state.macro_risk_free_rate_pct_text = f"{DEFAULT_RISK_FREE_RATE * 100:.2f}"
+        st.session_state.macro_equity_risk_premium_pct_text = f"{DEFAULT_EQUITY_RISK_PREMIUM * 100:.2f}"
+        st.session_state["_macro_assumptions_applied"] = (
+            DEFAULT_RISK_FREE_RATE * 100,
+            DEFAULT_EQUITY_RISK_PREMIUM * 100,
+        )
+        recalculated = recalculate_loaded_stocks()
+        st.success(
+            "Default assumptions restored."
+            + (f" {recalculated} loaded stock(s) were recalculated." if recalculated else "")
+        )
+
+    with st.form("macro_assumptions_form"):
+        macro_cols = st.columns(2)
+        with macro_cols[0]:
+            risk_free_pct_text = st.text_input(
+                "Risk-Free Rate (%)",
+                value=f"{float(st.session_state.get('risk_free_rate_pct', DEFAULT_RISK_FREE_RATE * 100)):.2f}",
+                help="Used as the base rate in CAPM. Enter a percent value such as 4.50.",
+            )
+        with macro_cols[1]:
+            equity_risk_premium_pct_text = st.text_input(
+                "Equity Risk Premium (%)",
+                value=f"{float(st.session_state.get('equity_risk_premium_pct', DEFAULT_EQUITY_RISK_PREMIUM * 100)):.2f}",
+                help="Used as the market risk premium in CAPM. Enter a percent value such as 4.50.",
+            )
+        apply_macro = st.form_submit_button(
+            "Apply macro assumptions to calculations",
+            type="primary",
+            width="stretch",
+        )
+
+    if apply_macro:
+        try:
+            risk_free_pct = float(str(risk_free_pct_text).strip().replace("%", ""))
+            equity_risk_premium_pct = float(str(equity_risk_premium_pct_text).strip().replace("%", ""))
+        except ValueError:
+            st.error("Please enter valid numeric percentages, for example 4.50 or 5.25.")
+            return
+
+        if risk_free_pct < 0 or equity_risk_premium_pct < 0:
+            st.error("Macro assumptions cannot be negative.")
+            return
+        if risk_free_pct > 25 or equity_risk_premium_pct > 25:
+            st.error("Please keep macro assumptions at or below 25.00%.")
+            return
+
+        st.session_state.risk_free_rate_pct = risk_free_pct
+        st.session_state.equity_risk_premium_pct = equity_risk_premium_pct
+        st.session_state.macro_risk_free_rate_pct_text = f"{risk_free_pct:.2f}"
+        st.session_state.macro_equity_risk_premium_pct_text = f"{equity_risk_premium_pct:.2f}"
+        current_macro = (round(risk_free_pct, 4), round(equity_risk_premium_pct, 4))
+        recalculated = recalculate_loaded_stocks()
+        st.session_state["_macro_assumptions_applied"] = current_macro
+        if recalculated:
+            st.success(f"Updated assumptions applied. {recalculated} loaded stock(s) were recalculated.")
+        else:
+            st.info("Updated assumptions saved. New stock searches will use these values.")
+
+    risk_free_rate, equity_risk_premium = macro_assumptions()
+    st.info(
+        f"Current CAPM assumption: Required Return = {risk_free_rate * 100:.2f}% "
+        f"+ Beta x {equity_risk_premium * 100:.2f}%."
+    )
 
 
 def guide_tab() -> None:
@@ -3573,7 +7526,7 @@ def guide_tab() -> None:
             data=GUIDE_PDF_PATH.read_bytes(),
             file_name="LY-STScope_User_Guide.pdf",
             mime="application/pdf",
-            use_container_width=True,
+            width="stretch",
         )
     else:
         st.info("Upload LY-STScope_User_Guide.pdf to the repository to enable PDF download.")
@@ -3612,6 +7565,7 @@ def guide_tab() -> None:
     st.markdown(
         """
         - Sector Allocation is shown as a donut-style pie chart.
+        - Enter average purchase price for each holding to calculate cost basis, unrealized profit/loss, and personal return.
         - Share-based mode uses shares x current price, so high-priced stocks can dominate if share counts are similar.
         - Equal-weighted mode assigns the same analysis weight to each holding, matching a simple classroom portfolio method.
         - Portfolio Risk uses the selected analysis weights plus daily return covariance.
@@ -3661,36 +7615,93 @@ def guide_tab() -> None:
         """
     )
 
-    st.subheader("7. Stock Detail Page")
+    st.subheader("7. What-if Scenario Lab")
+    st.write(
+        """
+        The Scenario menu lets users stress-test assumptions before relying on any AI explanation.
+        Users can adjust income, expenses, cash shocks, portfolio moves, USD/KRW changes, interest-rate moves,
+        and rate-sensitive allocation. The output connects market stress with life-level readiness.
+        """
+    )
+    st.markdown(
+        """
+        - Use scenarios to study trade-offs, not to predict the future.
+        - Compare market risk with emergency funds, debt pressure, and health score.
+        - Download the structured scenario JSON as future AI-coach context.
+        """
+    )
+
+    st.subheader("8. AI Coach and Reasoning Readiness")
+    st.write(
+        """
+        The AI Coach menu turns LY-STScope from a dashboard into a conversation-first financial reasoning
+        prototype. It can run locally as a rule-based coach or, when `OPENAI_API_KEY` is configured and the
+        user enables the verified model toggle, call a reasoning model through OpenAI's Responses API.
+        The AI Coach also shows linked guidance cards for Portfolio P/L, Personal Finance, Scenario,
+        Diary Report, and Calculation Details, so the user can open the source view or ask a context-specific
+        question directly. The answer is still constrained to evidence, assumptions, missing inputs, risk flags,
+        next safe step, and caution.
+        """
+    )
+
+    st.subheader("9. Stock Detail Page")
     guide_image("04-stock-detail.png", "Stock detail screen")
     st.write(
         "Click a stock card to review the TradingView price chart, current price, fair value, CAPM required return, key statistics, and valuation triangulation."
     )
 
-    st.subheader("8. Calculation Details")
+    st.subheader("10. Calculation Details")
     st.write(
         """
         The Calculation Details tab explains the formulas, assumptions, and data inputs behind valuation,
         portfolio valuation score, portfolio risk, diversification, and personal finance health.
-        Use this tab to understand why a result appears, not just what the result says.
+        Use this tab to understand why a result appears, not just what the result says. In a future
+        AI version, this becomes the reasoning audit trail behind AI explanations.
         """
     )
 
-    st.subheader("9. Financial Diary")
+    st.subheader("11. Financial Diary")
     st.write(
         """
         The Financial Diary tab saves a point-in-time snapshot of portfolio structure, risk signals,
-        personal finance results, and the user's own reflection. Diary data is held in the current
-        session unless downloaded as a JSON file.
+        personal finance results, unrealized profit/loss, and the user's own reflection. It can also
+        generate a Current Situation Report from Portfolio and Personal Finance before saving. Diary data
+        is held in the current session unless downloaded as a JSON file. Long term, this becomes
+        user-controlled financial memory for AI-assisted reflection.
         """
     )
 
-    st.subheader("10. API and Macro Settings")
+    st.subheader("12. API and Macro Settings")
     guide_image("05-settings-modal.png", "Settings screen")
     st.write(
         """
         The Finnhub API key is stored in Streamlit Secrets and used only on the server side.
         External users do not need to enter a key, and the token is not stored in their browser.
+        """
+    )
+    st.markdown(
+        """
+        - Risk-Free Rate and Equity Risk Premium begin at 4.50% each, but users can update them in Settings.
+        - Updated macro assumptions are applied to CAPM required return and valuation calculations.
+        - API keys should never be pasted into public code, screenshots, or browser-side scripts.
+        - OPENAI_API_KEY enables the verified AI model layer for AI Coach.
+        - OPENAI_MODEL defaults to gpt-5-mini unless changed in Streamlit Secrets.
+        - OPENAI_AI_DEFAULT_ON can be set to true if the owner wants model mode enabled by default.
+        """
+    )
+
+    st.subheader("13. Data, Privacy, and License")
+    st.warning(
+        "Prototype privacy notice: do not enter sensitive personal financial information such as bank "
+        "account numbers, tax IDs, passwords, or confidential financial records."
+    )
+    st.markdown(
+        """
+        - LY-STScope is an educational prototype, not financial, investment, tax, legal, accounting, or professional advice.
+        - Market data and charts may be provided by Finnhub, TradingView, Yahoo Finance, and yfinance, subject to their own terms.
+        - TradingView attribution should remain visible when chart widgets are used.
+        - Third-party company names, ticker symbols, trademarks, and data remain the property of their respective owners.
+        - For commercial use, review `LICENSE`, `DATA_SOURCES.md`, `PRIVACY_NOTICE.md`, and `THIRD_PARTY_NOTICES.md`.
         """
     )
 
@@ -3710,7 +7721,7 @@ def render_sidebar() -> None:
         st.markdown("## LY-STScope")
         st.caption("Open or close this sidebar with the arrow in the upper-left corner.")
 
-        if st.button("View Life Design Intro", use_container_width=True):
+        if st.button("View Life Design Intro", width="stretch"):
             st.session_state.life_entry_complete = False
             st.session_state.life_entry_version_seen = ""
             st.rerun()
@@ -3760,7 +7771,7 @@ def render_sidebar() -> None:
             height=110,
             key="sidebar_comment_text",
         )
-        if st.button("Save Comment", use_container_width=True):
+        if st.button("Save Comment", width="stretch"):
             clean_comment = comment.strip()
             if clean_comment:
                 st.session_state.comments.append(
@@ -3784,12 +7795,13 @@ def render_footer() -> None:
     st.markdown(
         """
         <div class="app-footer">
-            <b>LY-STScope</b> is provided for educational and informational use only and does not constitute
-            financial, investment, legal, tax, or professional advice. Market data and charts may be provided
-            by third-party services such as Finnhub, TradingView, and Yahoo Finance, subject to their own terms.
+            <b>LY-STScope</b> is provided for educational and informational use only and does not constitute or provide
+            financial, investment, legal, tax, accounting, or professional advice. Do not enter sensitive personal financial information
+            into this prototype. Market data and charts may be provided
+            by third-party services such as Finnhub, TradingView, and Yahoo Finance/yfinance, subject to their own terms.
             All trademarks, company names, and ticker symbols remain the property of their respective owners.
             This interface uses original CSS/HTML design elements and does not claim ownership of third-party data,
-            logos, or trademarks.
+            logos, or trademarks. Data may be delayed, incomplete, or unavailable and should be verified independently.
         </div>
         """,
         unsafe_allow_html=True,
@@ -3808,26 +7820,53 @@ def render_life_entry_screen(standalone: bool = True) -> None:
         if standalone
         else ""
     )
+    homepage_bg = image_data_uri(str(HOMEPAGE_BG_PATH))
+    homepage_class = " has-home-image" if homepage_bg else ""
+    homepage_image = (
+        f'<img class="homepage-bg-img" src="{homepage_bg}" alt="LY-STScope life design homepage preview">'
+        if homepage_bg
+        else ""
+    )
     st.markdown(
         shell_style
-        + """
+        + f"""
         <div class="life-entry-wrap">
-            <div class="life-entry">
+            <div class="life-entry homepage-visual{homepage_class}">
+                {homepage_image}
+                <div class="home-nav">
+                    <div class="home-brand">
+                        <div class="home-brand-mark">LY</div>
+                        <div>LY-STScope <small>Ver.2</small></div>
+                    </div>
+                    <div class="home-nav-links">
+                        <span>Features</span>
+                        <span>Life Map</span>
+                        <span>Analytics</span>
+                        <span>Resources</span>
+                        <span>About</span>
+                    </div>
+                </div>
                 <div class="life-entry-grid">
                     <div>
-                        <div class="life-kicker">Personal Life & Financial Intelligence</div>
-                        <h1 class="life-title">Design your <span>life</span>, not only your portfolio.</h1>
+                        <div class="life-kicker">Your Life. Your Money. Your Future.</div>
+                        <h1 class="life-title">Design Your <span>Financial Life</span></h1>
                         <div class="life-copy">
-                            LY-STScope connects income, spending, savings, investments, real estate exposure,
-                            risk, and life goals into one educational dashboard. It helps users understand where
-                            they stand today and what they may need to protect, improve, and plan next.
+                            LY-STScope Ver.2 brings stock valuation, portfolio diversification, REIT analytics,
+                            personal finance, financial diary reflection, and AI-ready scenario reasoning
+                            into one clear life dashboard.
                         </div>
-                        <div class="life-pill-row">
-                            <div class="life-pill">Income & Spending</div>
-                            <div class="life-pill">Portfolio Risk</div>
-                            <div class="life-pill">Real Estate Lens</div>
-                            <div class="life-pill">Life Goals</div>
-                            <div class="life-pill">Financial Diary</div>
+                        <div class="home-cta-row">
+                            <div class="home-cta">Start Your Life Map</div>
+                            <div class="home-cta secondary">Explore Dashboard</div>
+                        </div>
+                        <div class="home-proof">
+                            <div class="home-proof-dots">
+                                <div class="home-proof-dot"></div>
+                                <div class="home-proof-dot"></div>
+                                <div class="home-proof-dot"></div>
+                                <div class="home-proof-dot"></div>
+                            </div>
+                            <span>Build, review, and improve your financial life with real examples.</span>
                         </div>
                     </div>
                     <div class="life-map" aria-label="Life design map">
@@ -3855,6 +7894,38 @@ def render_life_entry_screen(standalone: bool = True) -> None:
                         <div class="life-node diary">Diary<br>Reflection</div>
                     </div>
                 </div>
+                <div class="home-module-grid">
+                    <div class="home-module-card">
+                        <div class="home-module-icon">SV</div>
+                        <b>Stock Valuation</b>
+                        <span>Fair value, valuation status, and real market context.</span>
+                    </div>
+                    <div class="home-module-card">
+                        <div class="home-module-icon">RE</div>
+                        <b>REIT Analytics</b>
+                        <span>Income, real estate exposure, and rate sensitivity lens.</span>
+                    </div>
+                    <div class="home-module-card">
+                        <div class="home-module-icon">PD</div>
+                        <b>Portfolio Diversification</b>
+                        <span>Risk, covariance, correlation, and complementarity.</span>
+                    </div>
+                    <div class="home-module-card">
+                        <div class="home-module-icon">82</div>
+                        <b>Financial Health</b>
+                        <span>Cash flow, savings, debt, liquidity, and capacity.</span>
+                    </div>
+                    <div class="home-module-card">
+                        <div class="home-module-icon">FD</div>
+                        <b>Financial Diary</b>
+                        <span>Save snapshots, notes, next actions, and reflection.</span>
+                    </div>
+                    <div class="home-module-card">
+                        <div class="home-module-icon">AI</div>
+                        <b>AI Scenario Readiness</b>
+                        <span>Prepare structured context for future reasoning assistants.</span>
+                    </div>
+                </div>
             </div>
         </div>
         """,
@@ -3863,13 +7934,224 @@ def render_life_entry_screen(standalone: bool = True) -> None:
 
     c1, c2, c3 = st.columns([1, 1.1, 1])
     with c2:
-        if st.button("Enter LY-STScope Life Dashboard", type="primary", use_container_width=True):
+        if st.button("Enter LY-STScope Life Dashboard", type="primary", width="stretch"):
             st.session_state.life_entry_complete = True
             st.session_state.life_entry_version_seen = LIFE_ENTRY_VERSION
             st.rerun()
         st.caption(
             "Educational and informational use only. LY-STScope is not financial, investment, legal, or tax advice."
         )
+
+
+NAV_ITEMS = [
+    {"key": "life", "label": "Life", "icon": "LF"},
+    {"key": "finance", "label": "Finance", "icon": "FI"},
+    {"key": "portfolio", "label": "Portfolio", "icon": "PF"},
+    {"key": "diary", "label": "Diary", "icon": "DY"},
+    {"key": "search", "label": "Search", "icon": "SR"},
+    {"key": "compare", "label": "Compare", "icon": "CP"},
+    {"key": "reit", "label": "REIT", "icon": "RE"},
+    {"key": "details", "label": "Details", "icon": "DT"},
+    {"key": "scenario", "label": "Scenario", "icon": "SC"},
+    {"key": "ai", "label": "AI Coach", "icon": "AI"},
+    {"key": "guide", "label": "Guide", "icon": "GD"},
+    {"key": "settings", "label": "Settings", "icon": "SE"},
+]
+
+
+def active_nav_key() -> str:
+    valid_keys = {item["key"] for item in NAV_ITEMS}
+
+    try:
+        view = st.query_params.get("view")
+    except Exception:
+        params = st.experimental_get_query_params()
+        view = params.get("view")
+
+    if isinstance(view, list):
+        view = view[0] if view else "life"
+
+    if view in valid_keys:
+        st.session_state.active_view = view
+        return view
+
+    session_view = st.session_state.get("active_view", "life")
+    return session_view if session_view in valid_keys else "life"
+
+
+def set_active_nav_key(view: str) -> None:
+    valid_keys = {item["key"] for item in NAV_ITEMS}
+    if view not in valid_keys:
+        view = "life"
+    st.session_state.active_view = view
+    try:
+        st.query_params["view"] = view
+    except Exception:
+        st.experimental_set_query_params(view=view)
+
+
+def render_circle_navigation(active_key: str) -> None:
+    st.markdown(
+        """
+        <div class="nav-flow-strip" aria-label="LY-STScope workflow map">
+            <div class="nav-flow-step"><strong>01</strong><span>Life<small>Context</small></span></div>
+            <div class="nav-flow-step"><strong>02</strong><span>Market<small>Analysis</small></span></div>
+            <div class="nav-flow-step scenario"><strong>03</strong><span>Scenario<small>Stress Test</small></span></div>
+            <div class="nav-flow-step ai"><strong>04</strong><span>AI Coach<small>Rule-Based Beta</small></span></div>
+            <div class="nav-flow-step"><strong>05</strong><span>Diary<small>Memory</small></span></div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    with st.container(key="circle_nav"):
+        for start in range(0, len(NAV_ITEMS), 4):
+            cols = st.columns(4, gap="large")
+            for col, item in zip(cols, NAV_ITEMS[start : start + 4]):
+                button_label = item["label"]
+                with col:
+                    st.button(
+                        button_label,
+                        key=f"nav_{item['key']}",
+                        type="primary" if item["key"] == active_key else "secondary",
+                        width="stretch",
+                        on_click=set_active_nav_key,
+                        args=(item["key"],),
+                    )
+
+
+def render_mobile_navigation(active_key: str) -> None:
+    orbit_items = [
+        {"key": "life", "label": "Life", "icon": "LF", "slot": "mobile-orbit-top"},
+        {"key": "ai", "label": "AI", "icon": "AI", "slot": "mobile-orbit-top-right"},
+        {"key": "portfolio", "label": "Port", "icon": "PF", "slot": "mobile-orbit-right"},
+        {"key": "scenario", "label": "Scenario", "icon": "SC", "slot": "mobile-orbit-bottom-right"},
+        {"key": "search", "label": "Search", "icon": "SR", "slot": "mobile-orbit-bottom"},
+        {"key": "details", "label": "Details", "icon": "DT", "slot": "mobile-orbit-bottom-left"},
+        {"key": "finance", "label": "Finance", "icon": "FI", "slot": "mobile-orbit-left"},
+        {"key": "reit", "label": "REIT", "icon": "RE", "slot": "mobile-orbit-top-left"},
+    ]
+    orbit_links = []
+    for item in orbit_items:
+        active_class = " active" if item["key"] == active_key else ""
+        orbit_links.append(
+            f'<a class="mobile-orbit-item {item["slot"]}{active_class}" href="?view={quote(item["key"])}" aria-label="{escape(item["label"])}">'
+            f'<b>{escape(item["icon"])}</b><span>{escape(item["label"])}</span></a>'
+        )
+    center_active = " active" if active_key == "diary" else ""
+    settings_active = " active" if active_key == "settings" else ""
+    guide_active = " active" if active_key == "guide" else ""
+    st.markdown(
+        (
+            '<div class="mobile-orbit-nav mobile-only-deck" aria-label="Mobile LY-STScope orbit navigation">'
+            '<div class="mobile-orbit-stamp">Mobile App Mode · Orbit V2</div>'
+            '<div class="mobile-orbit-shell">'
+            f'{"".join(orbit_links)}'
+            f'<a class="mobile-orbit-center{center_active}" href="?view=diary" aria-label="Personal Diary">'
+            '<b>Diary</b><span>Personal Memory</span></a>'
+            '<div class="mobile-orbit-mini-row">'
+            f'<a class="mobile-orbit-mini{settings_active}" href="?view=settings">Settings</a>'
+            f'<a class="mobile-orbit-mini{guide_active}" href="?view=guide">Guide</a>'
+            '</div></div></div>'
+        ),
+        unsafe_allow_html=True,
+    )
+
+
+def render_mobile_view_summary(active_key: str) -> None:
+    title_map = {
+        "life": "Life Context",
+        "finance": "Finance Readiness",
+        "portfolio": "Portfolio Check",
+        "ai": "AI Coach",
+        "diary": "Diary Memory",
+        "scenario": "Scenario Lab",
+        "search": "Market Search",
+        "compare": "Compare",
+        "reit": "REIT",
+        "details": "Calculation Details",
+        "settings": "Settings",
+        "guide": "Guide",
+    }
+    next_map = {
+        "life": "Start with Finance or Search.",
+        "finance": "Check surplus, reserve, debt, and savings.",
+        "portfolio": "Enter shares and average purchase price.",
+        "ai": "Ask one focused question from your current data.",
+        "diary": "Save one short next action after review.",
+        "scenario": "Run one downside stress test.",
+        "search": "Search a ticker, then add it to Portfolio.",
+        "compare": "Compare up to three selected stocks.",
+        "reit": "Use REIT signals as sector education.",
+        "details": "Review formulas before trusting outputs.",
+        "settings": "Check API and macro assumptions.",
+        "guide": "Use this for professor/demo walkthroughs.",
+    }
+
+    if active_key == "finance":
+        personal = st.session_state.get("last_personal_finance_result") or {}
+        data_text = (
+            f"Health {float(personal.get('financial_health_score', 0)):.0f}/100"
+            if personal
+            else "Inputs ready"
+        )
+    elif active_key == "portfolio":
+        data_text = f"{len(st.session_state.get('portfolio', {}))} holding(s)"
+    elif active_key == "ai":
+        context = ai_coach_context_snapshot()
+        readiness = ai_coach_readiness(context)
+        data_text = f"{readiness['label']} {readiness['score']:.0f}/100"
+    elif active_key == "diary":
+        data_text = f"{len(st.session_state.get('financial_diary', []))} entr{'y' if len(st.session_state.get('financial_diary', [])) == 1 else 'ies'}"
+    elif active_key == "scenario":
+        data_text = "Packet ready" if st.session_state.get("last_scenario_packet") else "No packet yet"
+    elif active_key == "search":
+        data_text = f"{len(st.session_state.get('stocks', {}))} loaded"
+    elif active_key == "compare":
+        data_text = f"{len(st.session_state.get('compare', []))}/3 selected"
+    else:
+        data_text = "Mobile view"
+
+    st.markdown(
+        f"""
+        <div class="mobile-only-deck mobile-view-summary">
+            <div class="mobile-card-grid">
+                <div class="mobile-card"><div class="eyebrow">Now</div><div class="value">{escape(title_map.get(active_key, 'LY-STScope'))}</div><span class="label">Current screen</span></div>
+                <div class="mobile-card"><div class="eyebrow">Data</div><div class="value">{escape(data_text)}</div><span class="label">Context status</span></div>
+            </div>
+            <div class="mobile-focus-card">
+                <h3>Next mobile step</h3>
+                <p>{escape(next_map.get(active_key, 'Review the current screen, then ask AI Coach for a linked summary.'))}</p>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def render_life_compact_panel() -> None:
+    st.markdown(
+        """
+        <div class="life-compact-panel">
+            <h1>Life Design Control Center</h1>
+            <p>
+                LY-STScope connects market analysis with personal financial decisions.
+                Use the circular menu above to move between valuation, portfolio risk,
+                real estate exposure, personal finance, scenario stress testing, AI readiness,
+                calculation transparency, and diary reflection.
+            </p>
+            <div class="life-compact-grid">
+                <div class="life-compact-card"><b>Income</b><span>Understand monthly cash flow before taking investment risk.</span></div>
+                <div class="life-compact-card"><b>Savings</b><span>Check liquidity and emergency capacity.</span></div>
+                <div class="life-compact-card"><b>Investments</b><span>Review stock value, beta, risk, and diversification.</span></div>
+                <div class="life-compact-card"><b>Real Estate</b><span>Study REIT and property-linked exposure.</span></div>
+                <div class="life-compact-card"><b>Scenario</b><span>Stress-test income, FX, rates, and portfolio shocks.</span></div>
+                <div class="life-compact-card"><b>AI Coach</b><span>Ask rule-based questions about readiness, risk, scenario, and memory.</span></div>
+                <div class="life-compact-card"><b>Diary</b><span>Save snapshots and reflect on next actions.</span></div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 def render_main_app() -> None:
@@ -3882,10 +8164,10 @@ def render_main_app() -> None:
                 <div class="brand-icon" aria-hidden="true"></div>
                 <div>
                     <div class="brand-name">LY-ST<span class="scope-accent">Scope</span></div>
-                    <div class="brand-subtitle">V 3 5 . 0&nbsp;&nbsp; M A J E S T I C&nbsp;&nbsp; N A V I G A T I O N</div>
+                    <div class="brand-subtitle">A I&nbsp;&nbsp; F I N A N C I A L&nbsp;&nbsp; R E A S O N I N G</div>
                 </div>
             </div>
-            <div class="brand-badge">Server-side Finnhub data</div>
+            <div class="brand-badge">Scenario Lab + AI Coach beta</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -3893,64 +8175,38 @@ def render_main_app() -> None:
 
     sync_selected_detail_from_query()
 
-    (
-        tab_life,
-        tab_search,
-        tab_compare,
-        tab_portfolio,
-        tab_reit,
-        tab_personal,
-        tab_calculation,
-        tab_diary,
-        tab_settings,
-        tab_guide,
-    ) = st.tabs(
-        [
-            "Life Design",
-            "Search",
-            "Compare",
-            "Portfolio",
-            "REIT Analysis",
-            "Personal Finance",
-            "Calculation Details",
-            "Financial Diary",
-            "Settings",
-            "User Guide",
-        ]
-    )
+    active_view = active_nav_key()
+    render_mobile_navigation(active_view)
+    render_circle_navigation(active_view)
+    render_mobile_view_summary(active_view)
 
-    with tab_life:
-        render_life_entry_screen(standalone=False)
-
-    with tab_search:
+    if active_view == "life":
+        render_life_compact_panel()
+    elif active_view == "search":
         search_tab()
-
-    with tab_compare:
+    elif active_view == "compare":
         compare_tab()
-
-    with tab_portfolio:
+    elif active_view == "portfolio":
         portfolio_tab()
-
-    with tab_reit:
+    elif active_view == "reit":
         from reit_analysis_module import main as render_reit_analysis
 
         render_reit_analysis(include_sidebar=False)
-
-    with tab_personal:
+    elif active_view == "finance":
         from personal_finance_module import render_personal_finance
 
         render_personal_finance()
-
-    with tab_calculation:
+    elif active_view == "scenario":
+        what_if_scenario_tab()
+    elif active_view == "details":
         calculation_details_tab()
-
-    with tab_diary:
+    elif active_view == "ai":
+        ai_reasoning_readiness_tab()
+    elif active_view == "diary":
         financial_diary_tab()
-
-    with tab_settings:
+    elif active_view == "settings":
         settings_tab()
-
-    with tab_guide:
+    elif active_view == "guide":
         guide_tab()
 
     render_footer()
