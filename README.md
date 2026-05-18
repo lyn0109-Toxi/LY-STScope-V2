@@ -46,10 +46,12 @@ Because the founder is considering venture creation while in F-1 student status,
 - Portfolio analysis: REIT allocation, sector concentration, beta, covariance, correlation, and diversification.
 - Educational comparison: stock-style valuation versus REIT-style valuation.
 - Personal Finance test engine: net worth, cash flow, emergency fund, savings rate, debt-to-income, risk capacity, and financial health score.
+- What-if Scenario Lab: stress-test income, expenses, cash shocks, portfolio moves, USD/KRW changes, interest-rate moves, and rate-sensitive allocation.
 - Calculation Details: transparent formulas, data inputs, assumptions, valuation contribution, covariance, correlation, and personal finance score breakdown.
 - Financial Diary: session-based portfolio and personal finance snapshots with user notes, next actions, and JSON download/restore.
 - Life Design entry screen: one-click first screen that frames LY-STScope as a personal life and financial intelligence dashboard before entering the main app.
 - AI Reasoning Readiness: product-readiness layer for future AI coach, scenario reasoning, privacy boundaries, explainability, and venture preparation.
+- Structured Scenario Packet: downloadable JSON context that can later become an input format for an AI financial reasoning coach.
 
 ## Streamlit Cloud
 

@@ -2343,7 +2343,9 @@ st.markdown(
     html body .stApp .st-key-circle_nav .st-key-nav_portfolio,
     html body .stApp .st-key-circle_nav .st-key-nav_reit,
     html body .stApp .st-key-circle_nav .st-key-nav_finance,
+    html body .stApp .st-key-circle_nav .st-key-nav_scenario,
     html body .stApp .st-key-circle_nav .st-key-nav_details,
+    html body .stApp .st-key-circle_nav .st-key-nav_ai,
     html body .stApp .st-key-circle_nav .st-key-nav_diary,
     html body .stApp .st-key-circle_nav .st-key-nav_settings,
     html body .stApp .st-key-circle_nav .st-key-nav_guide {
@@ -2415,6 +2417,17 @@ st.markdown(
             radial-gradient(circle at 72% 34%, rgba(34,197,94,0.54), transparent 8%),
             linear-gradient(135deg, transparent 0 45%, rgba(5,150,105,0.50) 46% 52%, transparent 53% 100%);
     }
+    html body .stApp .st-key-circle_nav .st-key-nav_scenario {
+        --sig-a: rgba(245, 158, 11, 0.46);
+        --sig-b: rgba(239, 68, 68, 0.24);
+        --sig-line: rgba(217, 119, 6, 0.48);
+        --sig-shadow: rgba(245, 158, 11, 0.22);
+        --sig-symbol:
+            linear-gradient(115deg, transparent 0 36%, rgba(217,119,6,0.56) 37% 43%, transparent 44%),
+            linear-gradient(65deg, transparent 0 50%, rgba(239,68,68,0.38) 51% 57%, transparent 58%),
+            radial-gradient(circle at 30% 68%, rgba(245,158,11,0.58), transparent 9%),
+            radial-gradient(circle at 70% 30%, rgba(239,68,68,0.46), transparent 9%);
+    }
     html body .stApp .st-key-circle_nav .st-key-nav_details {
         --sig-a: rgba(14, 165, 233, 0.36);
         --sig-b: rgba(99, 102, 241, 0.26);
@@ -2427,6 +2440,20 @@ st.markdown(
             radial-gradient(circle at 70% 70%, rgba(14,165,233,0.58) 0 5%, transparent 6%),
             linear-gradient(90deg, transparent 0 48%, rgba(2,132,199,0.35) 49% 51%, transparent 52%),
             linear-gradient(0deg, transparent 0 48%, rgba(2,132,199,0.35) 49% 51%, transparent 52%);
+    }
+    html body .stApp .st-key-circle_nav .st-key-nav_ai {
+        --sig-a: rgba(34, 211, 238, 0.44);
+        --sig-b: rgba(168, 85, 247, 0.28);
+        --sig-line: rgba(8, 145, 178, 0.48);
+        --sig-shadow: rgba(34, 211, 238, 0.24);
+        --sig-symbol:
+            radial-gradient(circle at 50% 50%, rgba(34,211,238,0.58) 0 8%, transparent 9%),
+            radial-gradient(circle at 28% 28%, rgba(168,85,247,0.48) 0 5%, transparent 6%),
+            radial-gradient(circle at 72% 28%, rgba(14,165,233,0.48) 0 5%, transparent 6%),
+            radial-gradient(circle at 28% 72%, rgba(45,212,191,0.48) 0 5%, transparent 6%),
+            radial-gradient(circle at 72% 72%, rgba(99,102,241,0.48) 0 5%, transparent 6%),
+            linear-gradient(90deg, transparent 0 47%, rgba(8,145,178,0.36) 48% 52%, transparent 53%),
+            linear-gradient(0deg, transparent 0 47%, rgba(8,145,178,0.36) 48% 52%, transparent 53%);
     }
     html body .stApp .st-key-circle_nav .st-key-nav_diary {
         --sig-a: rgba(244, 114, 182, 0.34);
@@ -4461,6 +4488,257 @@ def build_financial_snapshot(note: str, mood: str, next_action: str) -> dict[str
     }
 
 
+def what_if_scenario_tab() -> None:
+    st.markdown(
+        """
+        <div class="hero-panel">
+            <h1 style="margin:0 0 8px;">What-if Scenario Lab</h1>
+            <div class="hero-muted">Stress-test life and portfolio assumptions before a future AI coach explains the trade-offs.</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.info(
+        "This is educational scenario analysis, not a forecast or investment recommendation. "
+        "It helps users see which assumptions can move portfolio value, liquidity, debt pressure, and risk capacity."
+    )
+
+    base_currency = st.session_state.get("portfolio_base_currency", "USD")
+    usdkrw, fx_source, fx_date = effective_usdkrw()
+    current_values = portfolio_market_values()
+    current_total = sum(current_values.values())
+
+    rate_sensitive_keywords = ("reit", "real estate", "property", "mortgage")
+    rate_sensitive_value = 0.0
+    for symbol, value in current_values.items():
+        stock = st.session_state.stocks.get(symbol, {})
+        descriptor = f"{stock.get('name', '')} {stock.get('industry', '')}".lower()
+        if any(keyword in descriptor for keyword in rate_sensitive_keywords):
+            rate_sensitive_value += value
+    detected_rate_allocation = int(round(rate_sensitive_value / current_total * 100)) if current_total > 0 else 20
+
+    st.subheader("Scenario Controls")
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        income_change_pct = st.slider("Monthly income change", -60, 20, -10, 5, format="%d%%")
+        expense_change_pct = st.slider("Living expense change", -20, 60, 10, 5, format="%d%%")
+        cash_shock = st.number_input("One-time cash shock", min_value=0.0, value=0.0, step=500.0)
+    with c2:
+        portfolio_change_pct = st.slider("Portfolio market move", -50, 30, -15, 5, format="%d%%")
+        fx_change_pct = st.slider("USD/KRW rate change", -30, 30, 0, 5, format="%d%%")
+        apply_drawdown_to_pf = st.checkbox("Apply portfolio move to taxable investments", value=True)
+    with c3:
+        rate_change_bps = st.slider("Interest-rate move", -200, 300, 100, 25)
+        rate_sensitive_allocation = st.slider("Rate-sensitive allocation", 0, 100, detected_rate_allocation, 5)
+        rate_price_sensitivity = st.slider("Price impact per +100 bps", -15, 5, -6, 1)
+
+    scenario_usdkrw = usdkrw * (1 + fx_change_pct / 100)
+    projected_rows: list[dict[str, Any]] = []
+    projected_market_total = 0.0
+    for symbol, holding in st.session_state.portfolio.items():
+        stock = st.session_state.stocks.get(symbol)
+        if not stock:
+            continue
+        shares = float(holding.get("shares") or 0)
+        scenario_native_value = float(stock.get("price") or 0) * shares * (1 + portfolio_change_pct / 100)
+        scenario_base_value = convert_value(
+            scenario_native_value,
+            stock.get("currency", "USD"),
+            base_currency,
+            scenario_usdkrw,
+        )
+        projected_market_total += scenario_base_value
+        current_base_value = current_values.get(symbol, 0.0)
+        projected_rows.append(
+            {
+                "Holding": symbol,
+                "Currency": stock.get("currency", "USD"),
+                "Current Value": fmt_money(current_base_value, base_currency),
+                "Scenario Value": fmt_money(scenario_base_value, base_currency),
+                "Change": fmt_money(scenario_base_value - current_base_value, base_currency),
+            }
+        )
+
+    rate_effect = current_total * (rate_sensitive_allocation / 100) * (rate_change_bps / 100) * (rate_price_sensitivity / 100)
+    projected_total = max(0.0, projected_market_total + rate_effect)
+    total_delta = projected_total - current_total
+    total_delta_pct = total_delta / current_total * 100 if current_total > 0 else 0.0
+
+    st.subheader("Portfolio Stress Result")
+    if current_total > 0:
+        p1, p2, p3, p4 = st.columns(4)
+        with p1:
+            metric_card("Current Portfolio", fmt_money(current_total, base_currency))
+        with p2:
+            metric_card("Scenario Portfolio", fmt_money(projected_total, base_currency), "#10b981" if total_delta >= 0 else "#ef4444")
+        with p3:
+            metric_card("Estimated Change", f"{total_delta_pct:+.1f}%", "#10b981" if total_delta >= 0 else "#ef4444")
+        with p4:
+            metric_card("Rate-Sleeve Effect", fmt_money(rate_effect, base_currency), "#f59e0b")
+        st.caption(
+            f"FX baseline: USD/KRW {usdkrw:,.2f} from {fx_source} ({fx_date}). "
+            f"Scenario FX: USD/KRW {scenario_usdkrw:,.2f}."
+        )
+        st.dataframe(projected_rows, hide_index=True, use_container_width=True)
+    else:
+        st.warning("Add holdings in the Portfolio tab to stress-test portfolio value, FX exposure, and rate-sensitive allocation.")
+
+    st.subheader("Personal Finance Stress Result")
+    personal_profile = st.session_state.get("last_personal_finance_profile")
+    personal_result = st.session_state.get("last_personal_finance_result")
+    stressed_result: dict[str, Any] | None = None
+    if personal_profile:
+        from personal_finance_engine import PersonalFinanceProfile, calculate_personal_finance
+
+        baseline_profile = dict(personal_profile)
+        stressed_profile = {
+            **baseline_profile,
+            "monthly_income": max(0.0, float(baseline_profile["monthly_income"]) * (1 + income_change_pct / 100)),
+            "fixed_expenses": max(0.0, float(baseline_profile["fixed_expenses"]) * (1 + expense_change_pct / 100)),
+            "variable_expenses": max(0.0, float(baseline_profile["variable_expenses"]) * (1 + expense_change_pct / 100)),
+            "cash_savings": max(0.0, float(baseline_profile["cash_savings"]) - cash_shock),
+            "taxable_investments": max(
+                0.0,
+                float(baseline_profile["taxable_investments"])
+                * (1 + portfolio_change_pct / 100 if apply_drawdown_to_pf else 1),
+            ),
+        }
+        stressed_result = calculate_personal_finance(PersonalFinanceProfile(**stressed_profile))
+        if not personal_result:
+            personal_result = calculate_personal_finance(PersonalFinanceProfile(**baseline_profile))
+
+        health_delta = float(stressed_result["financial_health_score"]) - float(personal_result["financial_health_score"])
+        surplus_delta = float(stressed_result["monthly_surplus"]) - float(personal_result["monthly_surplus"])
+        pf1, pf2, pf3, pf4 = st.columns(4)
+        with pf1:
+            metric_card("Health Score", f"{float(stressed_result['financial_health_score']):.1f}/100", "#10b981" if health_delta >= 0 else "#ef4444")
+        with pf2:
+            metric_card("Score Change", f"{health_delta:+.1f}", "#10b981" if health_delta >= 0 else "#ef4444")
+        with pf3:
+            metric_card("Monthly Surplus", fmt_money(float(stressed_result["monthly_surplus"])), "#10b981" if surplus_delta >= 0 else "#ef4444")
+        with pf4:
+            metric_card("Emergency Fund", f"{float(stressed_result['emergency_months']):.1f} months", "#10b981" if float(stressed_result["emergency_months"]) >= 3 else "#ef4444")
+    else:
+        st.warning("Open the Personal Finance tab once to create a baseline before running life-level stress tests.")
+
+    st.subheader("AI-Ready Scenario Interpretation")
+    interpretation: list[str] = []
+    if current_total > 0:
+        if total_delta_pct <= -20:
+            interpretation.append("Portfolio stress is severe: selected assumptions create a decline greater than 20%.")
+        elif total_delta_pct < 0:
+            interpretation.append("Portfolio stress is moderate: selected assumptions reduce portfolio value.")
+        else:
+            interpretation.append("Portfolio scenario is positive under the selected market and FX assumptions.")
+        if abs(fx_change_pct) >= 10:
+            interpretation.append("FX movement is material; separate market return from currency translation effects.")
+        if rate_change_bps > 0 and rate_sensitive_allocation > 0:
+            interpretation.append("Higher rates pressure the rate-sensitive sleeve under the selected assumption.")
+    if stressed_result:
+        if float(stressed_result["emergency_months"]) < 3:
+            interpretation.append("Liquidity warning: emergency fund falls below 3 months of living expenses.")
+        if float(stressed_result["debt_to_income"]) > 0.36:
+            interpretation.append("Debt-pressure warning: debt-to-income rises above the common 36% reference level.")
+        if float(stressed_result["financial_health_score"]) < 45:
+            interpretation.append("Risk-capacity warning: financial health score suggests limited ability to absorb volatility.")
+    if not interpretation:
+        interpretation.append("Add portfolio holdings and Personal Finance inputs to generate richer scenario interpretation.")
+    for item in interpretation:
+        st.write(f"- {item}")
+
+    scenario_packet = {
+        "created_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "purpose": "Educational scenario analysis for AI reasoning readiness; not investment advice.",
+        "inputs": {
+            "income_change_pct": income_change_pct,
+            "expense_change_pct": expense_change_pct,
+            "cash_shock": cash_shock,
+            "portfolio_change_pct": portfolio_change_pct,
+            "fx_change_pct": fx_change_pct,
+            "rate_change_bps": rate_change_bps,
+            "rate_sensitive_allocation_pct": rate_sensitive_allocation,
+            "rate_price_sensitivity_per_100bps_pct": rate_price_sensitivity,
+        },
+        "portfolio": {
+            "base_currency": base_currency,
+            "current_total": current_total,
+            "scenario_total": projected_total,
+            "scenario_delta_pct": total_delta_pct,
+            "current_usdkrw": usdkrw,
+            "scenario_usdkrw": scenario_usdkrw,
+            "rate_effect": rate_effect,
+        },
+        "personal_finance": stressed_result,
+        "interpretation": interpretation,
+    }
+    with st.expander("Structured Scenario Packet for Future AI Coach"):
+        st.json(scenario_packet)
+        st.download_button(
+            "Download Scenario JSON",
+            data=json.dumps(scenario_packet, indent=2, ensure_ascii=False),
+            file_name="ly_stscope_scenario_packet.json",
+            mime="application/json",
+            use_container_width=True,
+        )
+
+
+def ai_reasoning_readiness_tab() -> None:
+    st.markdown(
+        """
+        <div class="hero-panel">
+            <h1 style="margin:0 0 8px;">AI Reasoning Readiness</h1>
+            <div class="hero-muted">Prepare LY-STScope for conversational, scenario-based, explainable financial intelligence.</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.info(
+        "This page makes the new direction visible: LY-STScope is not an AI stock picker. "
+        "It is a preparation-stage financial reasoning prototype for education, validation, and future venture exploration."
+    )
+
+    st.subheader("Product Thesis")
+    st.write(
+        """
+        AI interfaces are moving toward voice, agents, and continuous assistance. A future user may ask:
+        "Can I absorb this risk?", "What changes if rates rise?", or "What did I decide last time?"
+        LY-STScope prepares the structured context needed to answer those questions responsibly.
+        """
+    )
+
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        metric_card("Core Position", "Reasoning, not stock picking", "#0f766e")
+    with c2:
+        metric_card("User Value", "Understand trade-offs", "#1d4ed8")
+    with c3:
+        metric_card("Launch Stage", "Educational beta", "#92400e")
+
+    st.subheader("AI Coach Foundations")
+    st.dataframe(
+        [
+            {"Layer": "Scenario", "Current foundation": "What-if Scenario Lab", "Future question": "What if income falls, FX moves, or rates rise?"},
+            {"Layer": "Portfolio", "Current foundation": "Valuation score, beta, covariance, correlation", "Future question": "Where is my risk concentrated?"},
+            {"Layer": "Personal finance", "Current foundation": "Surplus, emergency fund, DTI, health score", "Future question": "Can my life absorb this investment risk?"},
+            {"Layer": "Memory", "Current foundation": "Financial Diary JSON", "Future question": "How has my thinking changed over time?"},
+            {"Layer": "Explainability", "Current foundation": "Calculation Details", "Future question": "Which formula and assumption produced this signal?"},
+        ],
+        hide_index=True,
+        use_container_width=True,
+    )
+
+    st.subheader("Responsible Boundaries")
+    st.markdown(
+        """
+        - Keep outputs educational and scenario-based; avoid buy/sell instructions.
+        - Do not collect sensitive real account data in this public prototype.
+        - Review data licenses before commercial use.
+        - For F-1 venture exploration, treat this as prototype validation and consult the DSO/immigration counsel before monetization.
+        - Make every future AI answer show assumptions, evidence, limitations, and missing data.
+        """
+    )
+
+
 def calculation_details_tab() -> None:
     st.markdown(
         """
@@ -4603,6 +4881,26 @@ def calculation_details_tab() -> None:
             )
         else:
             st.caption("Open the Personal Finance tab first to calculate a personal finance snapshot.")
+
+    with st.expander("5. AI Reasoning and Scenario Layer"):
+        st.markdown(
+            """
+            LY-STScope is being prepared for future AI-assisted financial reasoning. The app should not ask AI
+            to make unsupported investment recommendations. Instead, each future AI response should be grounded
+            in structured app data.
+
+            **Reasoning context should include:**
+
+            - Portfolio holdings, weights, valuation score, beta, covariance, and correlation.
+            - Personal finance readiness: surplus, emergency fund, savings rate, debt-to-income, and health score.
+            - REIT exposure and interest-rate sensitivity.
+            - Diary snapshots, notes, and next actions when the user chooses to restore them.
+            - Macro assumptions such as risk-free rate, equity risk premium, and FX rate.
+
+            The What-if Scenario Lab is the first working version of this layer. It turns user-selected shocks
+            into a structured scenario packet that a future AI coach can explain.
+            """
+        )
 
 
 def financial_diary_tab() -> None:
@@ -5102,31 +5400,59 @@ def guide_tab() -> None:
         """
     )
 
-    st.subheader("7. Stock Detail Page")
+    st.subheader("7. What-if Scenario Lab")
+    st.write(
+        """
+        The Scenario menu lets users stress-test assumptions before relying on any AI explanation.
+        Users can adjust income, expenses, cash shocks, portfolio moves, USD/KRW changes, interest-rate moves,
+        and rate-sensitive allocation. The output connects market stress with life-level readiness.
+        """
+    )
+    st.markdown(
+        """
+        - Use scenarios to study trade-offs, not to predict the future.
+        - Compare market risk with emergency funds, debt pressure, and health score.
+        - Download the structured scenario JSON as future AI-coach context.
+        """
+    )
+
+    st.subheader("8. AI Reasoning Readiness")
+    st.write(
+        """
+        The AI Ready menu explains how LY-STScope can evolve from a dashboard into a future AI financial
+        reasoning companion. The goal is not automated stock picking. The goal is to support scenario thinking,
+        explain assumptions, connect life context with portfolio risk, and prepare for conversational or
+        voice-based interfaces.
+        """
+    )
+
+    st.subheader("9. Stock Detail Page")
     guide_image("04-stock-detail.png", "Stock detail screen")
     st.write(
         "Click a stock card to review the TradingView price chart, current price, fair value, CAPM required return, key statistics, and valuation triangulation."
     )
 
-    st.subheader("8. Calculation Details")
+    st.subheader("10. Calculation Details")
     st.write(
         """
         The Calculation Details tab explains the formulas, assumptions, and data inputs behind valuation,
         portfolio valuation score, portfolio risk, diversification, and personal finance health.
-        Use this tab to understand why a result appears, not just what the result says.
+        Use this tab to understand why a result appears, not just what the result says. In a future
+        AI version, this becomes the reasoning audit trail behind AI explanations.
         """
     )
 
-    st.subheader("9. Financial Diary")
+    st.subheader("11. Financial Diary")
     st.write(
         """
         The Financial Diary tab saves a point-in-time snapshot of portfolio structure, risk signals,
         personal finance results, and the user's own reflection. Diary data is held in the current
-        session unless downloaded as a JSON file.
+        session unless downloaded as a JSON file. Long term, this becomes user-controlled financial memory
+        for AI-assisted reflection.
         """
     )
 
-    st.subheader("10. API and Macro Settings")
+    st.subheader("12. API and Macro Settings")
     guide_image("05-settings-modal.png", "Settings screen")
     st.write(
         """
@@ -5142,7 +5468,7 @@ def guide_tab() -> None:
         """
     )
 
-    st.subheader("11. Data, Privacy, and License")
+    st.subheader("13. Data, Privacy, and License")
     st.warning(
         "Prototype privacy notice: do not enter sensitive personal financial information such as bank "
         "account numbers, tax IDs, passwords, or confidential financial records."
@@ -5304,7 +5630,8 @@ def render_life_entry_screen(standalone: bool = True) -> None:
                         <h1 class="life-title">Design Your <span>Financial Life</span></h1>
                         <div class="life-copy">
                             LY-STScope Ver.2 brings stock valuation, portfolio diversification, REIT analytics,
-                            personal finance, and financial diary reflection into one clear life dashboard.
+                            personal finance, financial diary reflection, and AI-ready scenario reasoning
+                            into one clear life dashboard.
                         </div>
                         <div class="home-cta-row">
                             <div class="home-cta">Start Your Life Map</div>
@@ -5371,6 +5698,11 @@ def render_life_entry_screen(standalone: bool = True) -> None:
                         <b>Financial Diary</b>
                         <span>Save snapshots, notes, next actions, and reflection.</span>
                     </div>
+                    <div class="home-module-card">
+                        <div class="home-module-icon">AI</div>
+                        <b>AI Scenario Readiness</b>
+                        <span>Prepare structured context for future reasoning assistants.</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -5396,7 +5728,9 @@ NAV_ITEMS = [
     {"key": "portfolio", "label": "Portfolio", "icon": "PF"},
     {"key": "reit", "label": "REIT", "icon": "RE"},
     {"key": "finance", "label": "Finance", "icon": "FI"},
+    {"key": "scenario", "label": "Scenario", "icon": "SC"},
     {"key": "details", "label": "Details", "icon": "DT"},
+    {"key": "ai", "label": "AI Ready", "icon": "AI"},
     {"key": "diary", "label": "Diary", "icon": "DY"},
     {"key": "settings", "label": "Settings", "icon": "SE"},
     {"key": "guide", "label": "Guide", "icon": "GD"},
@@ -5459,13 +5793,16 @@ def render_life_compact_panel() -> None:
             <p>
                 LY-STScope connects market analysis with personal financial decisions.
                 Use the circular menu above to move between valuation, portfolio risk,
-                real estate exposure, personal finance, calculation transparency, and diary reflection.
+                real estate exposure, personal finance, scenario stress testing, AI readiness,
+                calculation transparency, and diary reflection.
             </p>
             <div class="life-compact-grid">
                 <div class="life-compact-card"><b>Income</b><span>Understand monthly cash flow before taking investment risk.</span></div>
                 <div class="life-compact-card"><b>Savings</b><span>Check liquidity and emergency capacity.</span></div>
                 <div class="life-compact-card"><b>Investments</b><span>Review stock value, beta, risk, and diversification.</span></div>
                 <div class="life-compact-card"><b>Real Estate</b><span>Study REIT and property-linked exposure.</span></div>
+                <div class="life-compact-card"><b>Scenario</b><span>Stress-test income, FX, rates, and portfolio shocks.</span></div>
+                <div class="life-compact-card"><b>AI Ready</b><span>Structure evidence for future reasoning assistants.</span></div>
                 <div class="life-compact-card"><b>Diary</b><span>Save snapshots and reflect on next actions.</span></div>
             </div>
         </div>
@@ -5484,10 +5821,10 @@ def render_main_app() -> None:
                 <div class="brand-icon" aria-hidden="true"></div>
                 <div>
                     <div class="brand-name">LY-ST<span class="scope-accent">Scope</span></div>
-                    <div class="brand-subtitle">V 3 5 . 0&nbsp;&nbsp; M A J E S T I C&nbsp;&nbsp; N A V I G A T I O N</div>
+                    <div class="brand-subtitle">A I&nbsp;&nbsp; F I N A N C I A L&nbsp;&nbsp; R E A S O N I N G</div>
                 </div>
             </div>
-            <div class="brand-badge">Server-side Finnhub data</div>
+            <div class="brand-badge">Scenario Lab + AI Ready prototype</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -5514,8 +5851,12 @@ def render_main_app() -> None:
         from personal_finance_module import render_personal_finance
 
         render_personal_finance()
+    elif active_view == "scenario":
+        what_if_scenario_tab()
     elif active_view == "details":
         calculation_details_tab()
+    elif active_view == "ai":
+        ai_reasoning_readiness_tab()
     elif active_view == "diary":
         financial_diary_tab()
     elif active_view == "settings":
