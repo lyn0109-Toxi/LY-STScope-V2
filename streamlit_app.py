@@ -3315,6 +3315,16 @@ def fmt_money(value: float | int | None, currency: str = "USD") -> str:
     return f"${value:,.2f}"
 
 
+def fmt_signed_money(value: float | int | None, currency: str = "USD") -> str:
+    if value is None:
+        return "N/A"
+    sign = "+" if float(value) >= 0 else "-"
+    absolute_value = abs(float(value))
+    if currency == "KRW":
+        return f"{sign}₩{absolute_value:,.0f}"
+    return f"{sign}${absolute_value:,.2f}"
+
+
 def stock_money(stock: dict[str, Any], value: float | int | None) -> str:
     return fmt_money(value, stock.get("currency", "USD"))
 
@@ -3777,7 +3787,7 @@ def toggle_portfolio(symbol: str) -> None:
     if symbol in portfolio:
         del portfolio[symbol]
     else:
-        portfolio[symbol] = {"shares": 1.0}
+        portfolio[symbol] = {"shares": 1.0, "purchase_price": 0.0}
 
 
 def select_detail(symbol: str) -> None:
@@ -4642,12 +4652,39 @@ def portfolio_holdings_snapshot() -> list[dict[str, Any]]:
         if not stock:
             continue
         shares = float(holding.get("shares") or 0)
+        purchase_price = float(holding.get("purchase_price") or 0)
         native_value = float(stock.get("price") or 0) * shares
+        native_cost_basis = purchase_price * shares if purchase_price > 0 and shares > 0 else None
         base_value = convert_value(
             native_value,
             stock.get("currency", "USD"),
             base_currency,
             usdkrw,
+        )
+        base_cost_basis = (
+            convert_value(
+                native_cost_basis,
+                stock.get("currency", "USD"),
+                base_currency,
+                usdkrw,
+            )
+            if native_cost_basis is not None
+            else None
+        )
+        native_unrealized_gain = (
+            native_value - native_cost_basis
+            if native_cost_basis is not None
+            else None
+        )
+        base_unrealized_gain = (
+            base_value - base_cost_basis
+            if base_cost_basis is not None
+            else None
+        )
+        unrealized_return_pct = (
+            native_unrealized_gain / native_cost_basis * 100
+            if native_cost_basis and native_cost_basis > 0 and native_unrealized_gain is not None
+            else None
         )
         holdings.append(
             {
@@ -4656,8 +4693,14 @@ def portfolio_holdings_snapshot() -> list[dict[str, Any]]:
                 "currency": stock.get("currency", "USD"),
                 "shares": shares,
                 "price": float(stock.get("price") or 0),
+                "purchase_price": purchase_price,
+                "native_cost_basis": native_cost_basis,
+                "base_cost_basis": base_cost_basis,
                 "native_market_value": native_value,
                 "base_market_value": base_value,
+                "native_unrealized_gain": native_unrealized_gain,
+                "base_unrealized_gain": base_unrealized_gain,
+                "unrealized_return_pct": unrealized_return_pct,
                 "base_weight": base_value / total_value if total_value > 0 else 0,
                 "analysis_weight": weights.get(symbol, 0.0),
                 "valuation_status": stock.get("valuation_status", "N/A"),
@@ -4666,12 +4709,36 @@ def portfolio_holdings_snapshot() -> list[dict[str, Any]]:
     return holdings
 
 
+def portfolio_gain_loss_summary(holdings: list[dict[str, Any]] | None = None) -> dict[str, Any]:
+    holdings = holdings if holdings is not None else portfolio_holdings_snapshot()
+    costed_holdings = [
+        item
+        for item in holdings
+        if item.get("base_cost_basis") is not None
+        and float(item.get("base_cost_basis") or 0) > 0
+    ]
+    total_cost = sum(float(item.get("base_cost_basis") or 0) for item in costed_holdings)
+    current_value = sum(float(item.get("base_market_value") or 0) for item in costed_holdings)
+    unrealized_gain = current_value - total_cost if total_cost > 0 else None
+    unrealized_return_pct = unrealized_gain / total_cost * 100 if total_cost > 0 and unrealized_gain is not None else None
+    return {
+        "costed_holding_count": len(costed_holdings),
+        "total_holding_count": len(holdings),
+        "total_cost_basis": total_cost if total_cost > 0 else None,
+        "current_value_for_costed_holdings": current_value if total_cost > 0 else None,
+        "unrealized_gain": unrealized_gain,
+        "unrealized_return_pct": unrealized_return_pct,
+    }
+
+
 def build_financial_snapshot(note: str, mood: str, next_action: str) -> dict[str, Any]:
     total_value, weighted_beta, valuation_score, _ = portfolio_metrics()
     usdkrw, fx_source, fx_date = effective_usdkrw()
     risk = portfolio_risk_metrics()
     comp = complementarity_summary()
     personal_result = st.session_state.get("last_personal_finance_result", {})
+    holdings = portfolio_holdings_snapshot()
+    gain_loss = portfolio_gain_loss_summary(holdings)
 
     return {
         "time": datetime.now().strftime("%Y-%m-%d %H:%M"),
@@ -4687,7 +4754,8 @@ def build_financial_snapshot(note: str, mood: str, next_action: str) -> dict[str
             "weighted_beta": weighted_beta,
             "valuation_score": valuation_score,
             "weighting_mode": st.session_state.get("portfolio_weighting_mode", "Share-based"),
-            "holdings": portfolio_holdings_snapshot(),
+            "holdings": holdings,
+            "gain_loss": gain_loss,
         },
         "risk": None
         if not risk
@@ -5102,12 +5170,17 @@ def build_verified_ai_context(
                     "name": item.get("name"),
                     "currency": item.get("currency"),
                     "shares": safe_float(item.get("shares"), 4),
+                    "current_price": safe_float(item.get("price"), 4),
+                    "purchase_price": safe_float(item.get("purchase_price"), 4),
                     "base_weight_pct": safe_float(float(item.get("base_weight", 0)) * 100, 2),
                     "analysis_weight_pct": safe_float(float(item.get("analysis_weight", 0)) * 100, 2),
+                    "unrealized_gain_base": safe_float(item.get("base_unrealized_gain"), 2),
+                    "unrealized_return_pct": safe_float(item.get("unrealized_return_pct"), 2),
                     "valuation_status": item.get("valuation_status"),
                 }
                 for item in portfolio.get("holdings", [])[:10]
             ],
+            "gain_loss_summary": portfolio_gain_loss_summary(portfolio.get("holdings", [])),
             "risk_summary": None
             if not risk
             else {
@@ -5357,8 +5430,14 @@ def ai_coach_response(question: str) -> str:
             ]
         )
     if portfolio["holdings"]:
+        gain_loss = portfolio_gain_loss_summary(portfolio["holdings"])
         evidence.append(f"Portfolio value: {fmt_money(portfolio['total_value'], base_currency)}.")
         evidence.append(f"Holdings tracked: {len(portfolio['holdings'])}.")
+        if gain_loss["unrealized_gain"] is not None:
+            evidence.append(
+                f"Unrealized P/L: {fmt_signed_money(gain_loss['unrealized_gain'], base_currency)} "
+                f"({float(gain_loss['unrealized_return_pct']):+.1f}%)."
+            )
         if portfolio["weighted_beta"] is not None:
             evidence.append(f"Weighted beta: {fmt_number(portfolio['weighted_beta'])}.")
         if portfolio["valuation_score"] is not None:
@@ -5733,7 +5812,39 @@ def calculation_details_tab() -> None:
         else:
             st.caption("Add holdings to the portfolio to see contribution details.")
 
-    with st.expander("3. Portfolio Risk and Diversification"):
+    with st.expander("3. Personal Cost Basis and Unrealized Profit/Loss"):
+        st.markdown(
+            """
+            Personal portfolio profit/loss compares the user's entered average purchase price with the current market price.
+
+            `Cost Basis = Average Purchase Price x Shares`
+
+            `Unrealized P/L = Current Market Value - Cost Basis`
+
+            `Unrealized Return % = Unrealized P/L / Cost Basis x 100`
+
+            Cost basis is optional. If purchase price is left at 0, the app does not estimate profit/loss for that holding.
+            """
+        )
+        holdings = portfolio_holdings_snapshot()
+        gain_loss = portfolio_gain_loss_summary(holdings)
+        base_currency = st.session_state.get("portfolio_base_currency", "USD")
+        if gain_loss["total_cost_basis"] is not None:
+            st.dataframe(
+                [
+                    {"Metric": "Costed Holdings", "Value": f"{gain_loss['costed_holding_count']} of {gain_loss['total_holding_count']}"},
+                    {"Metric": "Total Cost Basis", "Value": fmt_money(gain_loss["total_cost_basis"], base_currency)},
+                    {"Metric": "Current Value of Costed Holdings", "Value": fmt_money(gain_loss["current_value_for_costed_holdings"], base_currency)},
+                    {"Metric": "Unrealized P/L", "Value": fmt_signed_money(gain_loss["unrealized_gain"], base_currency)},
+                    {"Metric": "Unrealized Return", "Value": f"{float(gain_loss['unrealized_return_pct']):+.1f}%"},
+                ],
+                hide_index=True,
+                use_container_width=True,
+            )
+        else:
+            st.caption("Enter purchase prices in Portfolio to calculate personal profit/loss.")
+
+    with st.expander("4. Portfolio Risk and Diversification"):
         st.markdown(
             """
             Portfolio risk is calculated from daily return covariance.
@@ -5768,7 +5879,7 @@ def calculation_details_tab() -> None:
         else:
             st.caption("At least two portfolio holdings with price history are needed.")
 
-    with st.expander("4. Personal Finance Health Score"):
+    with st.expander("5. Personal Finance Health Score"):
         st.markdown(
             """
             Personal Finance connects investment readiness with life-level financial health.
@@ -5798,7 +5909,7 @@ def calculation_details_tab() -> None:
         else:
             st.caption("Open the Personal Finance tab first to calculate a personal finance snapshot.")
 
-    with st.expander("5. AI Reasoning and Scenario Layer"):
+    with st.expander("6. AI Reasoning and Scenario Layer"):
         st.markdown(
             """
             LY-STScope is being prepared for future AI-assisted financial reasoning. The app should not ask AI
@@ -5819,6 +5930,125 @@ def calculation_details_tab() -> None:
         )
 
 
+def build_current_situation_report_text() -> str:
+    now_text = datetime.now().strftime("%Y-%m-%d %H:%M")
+    base_currency = st.session_state.get("portfolio_base_currency", "USD")
+    total_value, weighted_beta, valuation_score, _ = portfolio_metrics()
+    holdings = portfolio_holdings_snapshot()
+    gain_loss = portfolio_gain_loss_summary(holdings)
+    risk = portfolio_risk_metrics()
+    comp = complementarity_summary()
+    personal = st.session_state.get("last_personal_finance_result") or {}
+    context = ai_coach_context_snapshot()
+    readiness = ai_coach_readiness(context)
+
+    lines = [
+        f"LY-STScope Current Situation Report - {now_text}",
+        "",
+        "1. Investment Readiness",
+        f"- Readiness label: {readiness['label']} ({readiness['score']:.0f}/100)",
+    ]
+    for reason in readiness["reasons"][:4]:
+        lines.append(f"- {reason}")
+
+    lines.extend(
+        [
+            "",
+            "2. Portfolio Position",
+            f"- Total market value: {fmt_money(total_value, base_currency)}",
+            f"- Weighted beta: {fmt_number(weighted_beta)}",
+            "- Portfolio valuation score: "
+            + ("N/A" if valuation_score is None else f"{valuation_score:+.1f}%"),
+        ]
+    )
+
+    if gain_loss["total_cost_basis"] is not None:
+        lines.extend(
+            [
+                f"- Cost basis entered for {gain_loss['costed_holding_count']} of {gain_loss['total_holding_count']} holding(s).",
+                f"- Cost basis: {fmt_money(gain_loss['total_cost_basis'], base_currency)}",
+                f"- Current value of costed holdings: {fmt_money(gain_loss['current_value_for_costed_holdings'], base_currency)}",
+                f"- Unrealized P/L: {fmt_signed_money(gain_loss['unrealized_gain'], base_currency)}",
+                f"- Unrealized return: {gain_loss['unrealized_return_pct']:+.1f}%",
+            ]
+        )
+    else:
+        lines.append("- Cost basis is not entered yet, so personal profit/loss is not calculated.")
+
+    if holdings:
+        lines.append("- Holdings summary:")
+        for item in holdings[:6]:
+            return_text = (
+                "N/A"
+                if item.get("unrealized_return_pct") is None
+                else f"{float(item['unrealized_return_pct']):+.1f}%"
+            )
+            pl_text = fmt_signed_money(item.get("base_unrealized_gain"), base_currency)
+            lines.append(
+                f"  - {item['symbol']}: weight {float(item.get('base_weight', 0)) * 100:.1f}%, "
+                f"P/L {pl_text}, return {return_text}, valuation {item.get('valuation_status', 'N/A')}"
+            )
+    else:
+        lines.append("- No portfolio holdings are currently tracked.")
+
+    if risk:
+        lines.extend(
+            [
+                "",
+                "3. Portfolio Risk",
+                f"- Annualized portfolio risk: {float(risk['annual_vol']) * 100:.1f}%",
+                f"- Expected annual return from history: {float(risk['annual_return']) * 100:+.1f}%",
+                f"- Daily diversification benefit: {float(risk['diversification_benefit']) * 100:.3f}%",
+            ]
+        )
+    else:
+        lines.extend(
+            [
+                "",
+                "3. Portfolio Risk",
+                "- At least two holdings with price history are needed for covariance-based risk analysis.",
+            ]
+        )
+
+    if comp:
+        lines.append(f"- Complementarity score: {float(comp['complementarity_score']):.1f}")
+
+    lines.append("")
+    lines.append("4. Personal Finance")
+    if personal:
+        lines.extend(
+            [
+                f"- Financial health score: {float(personal.get('financial_health_score', 0)):.1f}/100",
+                f"- Monthly surplus: {fmt_money(float(personal.get('monthly_surplus', 0)))}",
+                f"- Emergency fund: {float(personal.get('emergency_months', 0)):.1f} months",
+                f"- Debt-to-income: {float(personal.get('debt_to_income', 0)) * 100:.1f}%",
+                f"- Savings rate: {float(personal.get('savings_rate', 0)) * 100:.1f}%",
+            ]
+        )
+    else:
+        lines.append("- Personal Finance baseline has not been calculated yet.")
+
+    missing = context.get("missing", [])
+    lines.extend(["", "5. Missing Inputs"])
+    if missing:
+        lines.extend(f"- {item}" for item in missing)
+    else:
+        lines.append("- No major missing inputs detected for the current prototype.")
+
+    lines.extend(
+        [
+            "",
+            "6. Next Reflection Prompt",
+            "- What changed since the last review?",
+            "- Is my investment risk aligned with my cash flow and emergency reserve?",
+            "- What is one safe next step before changing the portfolio?",
+            "",
+            "Caution: This report is educational and informational only. It is not financial, investment, legal, tax, or immigration advice.",
+        ]
+    )
+    return "\n".join(lines)
+
+
 def financial_diary_tab() -> None:
     st.markdown(
         """
@@ -5832,6 +6062,31 @@ def financial_diary_tab() -> None:
     st.caption(
         "Diary entries are stored in the current Streamlit session unless downloaded. Avoid entering sensitive personal information in a public or shared browser."
     )
+
+    st.subheader("Current Situation Report")
+    report_text = build_current_situation_report_text()
+    st.text_area(
+        "Auto-generated report from Portfolio and Personal Finance",
+        value=report_text,
+        height=260,
+        key="diary_current_report",
+        help="This report uses current portfolio, cost basis, unrealized P/L, risk, and personal finance context.",
+    )
+    report_cols = st.columns(2)
+    with report_cols[0]:
+        if st.button("Use Report as Diary Note", width="stretch"):
+            st.session_state.diary_note = st.session_state.get("diary_current_report", report_text)
+            st.session_state.diary_next_action = "Review portfolio P/L, personal finance readiness, and one safe next step."
+            st.rerun()
+    with report_cols[1]:
+        if st.button("Save Current Situation Report", width="stretch"):
+            snapshot = build_financial_snapshot(
+                st.session_state.get("diary_current_report", report_text).strip(),
+                "Planning",
+                "Review portfolio P/L, personal finance readiness, and one safe next step.",
+            )
+            st.session_state.financial_diary.append(snapshot)
+            st.success("Current situation report saved to your Financial Diary.")
 
     mood = st.selectbox(
         "Today's financial feeling",
@@ -5888,14 +6143,19 @@ def financial_diary_tab() -> None:
     summary_rows = []
     for idx, entry in enumerate(st.session_state.financial_diary, start=1):
         portfolio = entry.get("portfolio", {})
+        gain_loss = portfolio.get("gain_loss") or {}
         personal = entry.get("personal_finance") or {}
         base_currency = entry.get("base_currency", "USD")
+        entry_gain = gain_loss.get("unrealized_gain")
+        entry_return = gain_loss.get("unrealized_return_pct")
         summary_rows.append(
             {
                 "#": idx,
                 "Time": entry.get("time"),
                 "Mood": entry.get("mood"),
                 "Portfolio Value": fmt_money(portfolio.get("total_market_value"), base_currency),
+                "Unrealized P/L": fmt_signed_money(entry_gain, base_currency) if entry_gain is not None else "N/A",
+                "Return": "N/A" if entry_return is None else f"{float(entry_return):+.1f}%",
                 "Valuation Score": "N/A"
                 if portfolio.get("valuation_score") is None
                 else f"{float(portfolio.get('valuation_score')):+.1f}%",
@@ -5912,12 +6172,24 @@ def financial_diary_tab() -> None:
             st.write(f"**Next Action:** {entry.get('next_action') or 'No action recorded'}")
             portfolio = entry.get("portfolio", {})
             base_currency = entry.get("base_currency", "USD")
+            gain_loss = portfolio.get("gain_loss") or {}
             entry_valuation = portfolio.get("valuation_score")
             valuation_text = "N/A" if entry_valuation is None else f"{float(entry_valuation):+.1f}%"
+            gain_text = (
+                "N/A"
+                if gain_loss.get("unrealized_gain") is None
+                else fmt_signed_money(gain_loss.get("unrealized_gain"), base_currency)
+            )
+            return_text = (
+                "N/A"
+                if gain_loss.get("unrealized_return_pct") is None
+                else f"{float(gain_loss.get('unrealized_return_pct')):+.1f}%"
+            )
             st.write(
                 f"**Portfolio:** {fmt_money(portfolio.get('total_market_value'), base_currency)} | "
                 f"Beta {fmt_number(portfolio.get('weighted_beta'))} | "
-                f"Valuation Score {valuation_text}"
+                f"Valuation Score {valuation_text} | "
+                f"P/L {gain_text} ({return_text})"
             )
             holdings = portfolio.get("holdings") or []
             if holdings:
@@ -5927,6 +6199,14 @@ def financial_diary_tab() -> None:
                             "Stock": f"{item['symbol']} - {item['name']}",
                             "Currency": item["currency"],
                             "Shares": item["shares"],
+                            "Avg Purchase Price": "N/A"
+                            if not item.get("purchase_price")
+                            else fmt_money(item.get("purchase_price"), item["currency"]),
+                            "Current Price": fmt_money(item.get("price"), item["currency"]),
+                            "Unrealized P/L": fmt_signed_money(item.get("base_unrealized_gain"), base_currency),
+                            "Return": "N/A"
+                            if item.get("unrealized_return_pct") is None
+                            else f"{float(item['unrealized_return_pct']):+.1f}%",
                             "Base Weight": f"{float(item['base_weight']) * 100:.1f}%",
                             "Valuation": item["valuation_status"],
                         }
@@ -6061,27 +6341,105 @@ def portfolio_tab() -> None:
         stock = st.session_state.stocks.get(symbol)
         if not stock:
             continue
-        shares = st.number_input(
-            f"{symbol} shares",
-            min_value=0.0,
-            value=float(holding.get("shares") or 0),
-            step=1.0,
-            key=f"shares_{symbol}",
-        )
+        currency = stock.get("currency", "USD")
+        input_cols = st.columns(2)
+        with input_cols[0]:
+            shares = st.number_input(
+                f"{symbol} shares",
+                min_value=0.0,
+                value=float(holding.get("shares") or 0),
+                step=1.0,
+                key=f"shares_{symbol}",
+            )
+        with input_cols[1]:
+            purchase_step = 100.0 if currency == "KRW" else 1.0
+            purchase_price = st.number_input(
+                f"{symbol} average purchase price ({currency})",
+                min_value=0.0,
+                value=float(holding.get("purchase_price") or 0),
+                step=purchase_step,
+                key=f"purchase_price_{symbol}",
+                help="Enter the average price you paid per share. Leave 0 if you do not want to calculate profit/loss yet.",
+            )
         st.session_state.portfolio[symbol]["shares"] = shares
+        st.session_state.portfolio[symbol]["purchase_price"] = purchase_price
         native_value = float(stock["price"]) * shares
+        native_cost_basis = purchase_price * shares if purchase_price > 0 and shares > 0 else None
         base_value = convert_value(
             native_value,
-            stock.get("currency", "USD"),
+            currency,
             st.session_state.portfolio_base_currency,
             usdkrw,
         )
-        current_holdings.append((symbol, stock, shares, native_value, base_value))
+        base_cost_basis = (
+            convert_value(
+                native_cost_basis,
+                currency,
+                st.session_state.portfolio_base_currency,
+                usdkrw,
+            )
+            if native_cost_basis is not None
+            else None
+        )
+        base_unrealized_gain = (
+            base_value - base_cost_basis if base_cost_basis is not None else None
+        )
+        unrealized_return_pct = (
+            (native_value - native_cost_basis) / native_cost_basis * 100
+            if native_cost_basis and native_cost_basis > 0
+            else None
+        )
+        current_holdings.append(
+            (
+                symbol,
+                stock,
+                shares,
+                purchase_price,
+                native_value,
+                base_value,
+                native_cost_basis,
+                base_cost_basis,
+                base_unrealized_gain,
+                unrealized_return_pct,
+            )
+        )
 
     rows = []
-    current_total_value = sum(item[4] for item in current_holdings)
+    current_total_value = sum(item[5] for item in current_holdings)
+    costed_rows = [item for item in current_holdings if item[7] is not None and float(item[7]) > 0]
+    total_cost_basis = sum(float(item[7]) for item in costed_rows)
+    costed_market_value = sum(float(item[5]) for item in costed_rows)
+    total_unrealized_gain = costed_market_value - total_cost_basis if total_cost_basis > 0 else None
+    total_unrealized_return_pct = (
+        total_unrealized_gain / total_cost_basis * 100
+        if total_cost_basis > 0 and total_unrealized_gain is not None
+        else None
+    )
+    if total_cost_basis > 0:
+        pl_color = "#10b981" if (total_unrealized_gain or 0) >= 0 else "#ef4444"
+        pnl_cols = st.columns(3)
+        with pnl_cols[0]:
+            metric_card("Cost Basis", fmt_money(total_cost_basis, st.session_state.portfolio_base_currency))
+        with pnl_cols[1]:
+            metric_card("Unrealized P/L", fmt_signed_money(total_unrealized_gain, st.session_state.portfolio_base_currency), pl_color)
+        with pnl_cols[2]:
+            metric_card("Unrealized Return", f"{total_unrealized_return_pct:+.1f}%", pl_color)
+    else:
+        st.info("Enter each holding's average purchase price to compare your cost basis with current market value.")
+
     analysis_weights = portfolio_analysis_weights()
-    for symbol, stock, shares, native_value, base_value in current_holdings:
+    for (
+        symbol,
+        stock,
+        shares,
+        purchase_price,
+        native_value,
+        base_value,
+        native_cost_basis,
+        base_cost_basis,
+        base_unrealized_gain,
+        unrealized_return_pct,
+    ) in current_holdings:
         currency = stock.get("currency", "USD")
         weight = base_value / current_total_value * 100 if current_total_value else 0
         analysis_weight = analysis_weights.get(symbol, 0.0) * 100
@@ -6089,10 +6447,14 @@ def portfolio_tab() -> None:
             {
                 "Stock": f"{symbol} - {stock['name']}",
                 "Currency": currency,
-                "Price": stock_money(stock, stock["price"]),
+                "Current Price": stock_money(stock, stock["price"]),
+                "Avg Purchase Price": "N/A" if purchase_price <= 0 else stock_money(stock, purchase_price),
                 "Shares": shares,
+                "Cost Basis": "N/A" if native_cost_basis is None else fmt_money(native_cost_basis, currency),
                 "Native Market Value": fmt_money(native_value, currency),
                 f"{st.session_state.portfolio_base_currency} Market Value": fmt_money(base_value, st.session_state.portfolio_base_currency),
+                "Unrealized P/L": fmt_signed_money(base_unrealized_gain, st.session_state.portfolio_base_currency),
+                "Return": "N/A" if unrealized_return_pct is None else f"{unrealized_return_pct:+.1f}%",
                 "Base Weight": f"{weight:.1f}%",
                 "Analysis Weight": f"{analysis_weight:.1f}%",
             }
@@ -6276,6 +6638,7 @@ def guide_tab() -> None:
     st.markdown(
         """
         - Sector Allocation is shown as a donut-style pie chart.
+        - Enter average purchase price for each holding to calculate cost basis, unrealized profit/loss, and personal return.
         - Share-based mode uses shares x current price, so high-priced stocks can dominate if share counts are similar.
         - Equal-weighted mode assigns the same analysis weight to each holding, matching a simple classroom portfolio method.
         - Portfolio Risk uses the selected analysis weights plus daily return covariance.
@@ -6372,9 +6735,10 @@ def guide_tab() -> None:
     st.write(
         """
         The Financial Diary tab saves a point-in-time snapshot of portfolio structure, risk signals,
-        personal finance results, and the user's own reflection. Diary data is held in the current
-        session unless downloaded as a JSON file. Long term, this becomes user-controlled financial memory
-        for AI-assisted reflection.
+        personal finance results, unrealized profit/loss, and the user's own reflection. It can also
+        generate a Current Situation Report from Portfolio and Personal Finance before saving. Diary data
+        is held in the current session unless downloaded as a JSON file. Long term, this becomes
+        user-controlled financial memory for AI-assisted reflection.
         """
     )
 
