@@ -12,7 +12,6 @@ import altair as alt
 import pandas as pd
 import requests
 import streamlit as st
-import streamlit.components.v1 as components
 import yfinance as yf
 
 
@@ -3806,7 +3805,7 @@ def metric_card(label: str, value: str, color: str = "#102033") -> None:
 def guide_image(filename: str, caption: str) -> None:
     image_path = GUIDE_SCREENSHOT_DIR / filename
     if image_path.exists():
-        st.image(str(image_path), caption=caption, use_container_width=True)
+        st.image(str(image_path), caption=caption, width="stretch")
     else:
         st.caption(f"Guide graphic unavailable: {filename}")
 
@@ -3888,14 +3887,14 @@ def render_stock_card(stock: dict[str, Any]) -> None:
             key=f"compare_{symbol}",
             on_click=add_compare,
             args=(symbol,),
-            use_container_width=True,
+            width="stretch",
         )
         c2.button(
             "In Portfolio" if symbol in st.session_state.portfolio else "Add to Portfolio",
             key=f"portfolio_{symbol}",
             on_click=toggle_portfolio,
             args=(symbol,),
-            use_container_width=True,
+            width="stretch",
         )
 
 
@@ -3922,7 +3921,10 @@ def render_fair_value(stock: dict[str, Any]) -> None:
 def render_tradingview_chart(symbol: str) -> None:
     container_id = f"tradingview_{symbol.replace('.', '_').replace('-', '_')}"
     tv_symbol = f"KRX:{symbol[:6]}" if is_korean_symbol(symbol) else symbol
-    components.html(
+    tv_symbol = "".join(
+        char for char in tv_symbol if char.isascii() and (char.isalnum() or char in ":._-/")
+    ) or "NASDAQ:AAPL"
+    st.html(
         f"""
         <div class="tradingview-widget-container" style="height:520px;width:100%;">
             <div id="{container_id}" style="height:500px;width:100%;"></div>
@@ -3948,7 +3950,8 @@ def render_tradingview_chart(symbol: str) -> None:
             </script>
         </div>
         """,
-        height=540,
+        width="stretch",
+        unsafe_allow_javascript=True,
     )
 
 
@@ -4208,7 +4211,7 @@ def render_stock_detail(stock: dict[str, Any]) -> None:
         "EPS": stock_money(stock, float(stock["eps"] or 0)),
         "Growth Rate": f"{float(stock['growth_rate'] or 0) * 100:.1f}%",
     }
-    st.dataframe([stats], hide_index=True, use_container_width=True)
+    st.dataframe([stats], hide_index=True, width="stretch")
 
     st.markdown("#### Valuation Triangulation")
     st.dataframe(
@@ -4230,7 +4233,7 @@ def render_stock_detail(stock: dict[str, Any]) -> None:
             },
         ],
         hide_index=True,
-        use_container_width=True,
+        width="stretch",
     )
     render_valuation_radar(stock)
     st.write(
@@ -4325,7 +4328,7 @@ def compare_tab() -> None:
         for stock in selected:
             row[f"{stock['name']} ({stock['symbol']})"] = getter(stock)
         rows.append(row)
-    st.dataframe(rows, hide_index=True, use_container_width=True)
+    st.dataframe(rows, hide_index=True, width="stretch")
 
     cols = st.columns(len(selected))
     for col, stock in zip(cols, selected):
@@ -4462,7 +4465,7 @@ def render_sector_pie_chart(sector_values: dict[str, float]) -> None:
         )
         .properties(height=320)
     )
-    st.altair_chart(chart, use_container_width=True)
+    st.altair_chart(chart, width="stretch")
 
 
 def portfolio_return_frame(symbols: list[str]) -> pd.DataFrame:
@@ -4559,7 +4562,7 @@ def render_portfolio_risk_analysis() -> None:
                 "Beta": fmt_number(stock.get("beta")),
             }
         )
-    st.dataframe(rows, hide_index=True, use_container_width=True)
+    st.dataframe(rows, hide_index=True, width="stretch")
 
 
 def render_complementarity_analysis() -> None:
@@ -4617,14 +4620,14 @@ def render_complementarity_analysis() -> None:
             }
         )
 
-    st.dataframe(rows, hide_index=True, use_container_width=True)
+    st.dataframe(rows, hide_index=True, width="stretch")
     st.markdown("#### Correlation Matrix")
     st.caption(
         "Correlation close to +1 means two securities moved together historically. "
         "Correlation near 0 means weak co-movement. Negative correlation means they tended to move in opposite directions. "
         "This is useful for studying diversification, but it does not guarantee future risk reduction."
     )
-    st.dataframe(corr.round(3), use_container_width=True)
+    st.dataframe(corr.round(3), width="stretch")
 
 
 def portfolio_valuation_rows() -> list[dict[str, Any]]:
@@ -4906,7 +4909,7 @@ def what_if_scenario_tab() -> None:
             f"FX baseline: USD/KRW {usdkrw:,.2f} from {fx_source} ({fx_date}). "
             f"Scenario FX: USD/KRW {scenario_usdkrw:,.2f}."
         )
-        st.dataframe(projected_rows, hide_index=True, use_container_width=True)
+        st.dataframe(projected_rows, hide_index=True, width="stretch")
     else:
         st.warning("Add holdings in the Portfolio tab to stress-test portfolio value, FX exposure, and rate-sensitive allocation.")
 
@@ -5006,7 +5009,7 @@ def what_if_scenario_tab() -> None:
             data=json.dumps(scenario_packet, indent=2, ensure_ascii=False),
             file_name="ly_stscope_scenario_packet.json",
             mime="application/json",
-            use_container_width=True,
+            width="stretch",
         )
 
 
@@ -6013,7 +6016,7 @@ def calculation_details_tab() -> None:
                     {"Input": "Peer Average P/E", "Value": fmt_number(stock.get("peer_average_pe"))},
                 ],
                 hide_index=True,
-                use_container_width=True,
+                width="stretch",
             )
             st.dataframe(
                 [
@@ -6023,7 +6026,7 @@ def calculation_details_tab() -> None:
                     {"Approach": "Blended", "Model": f"{tri.get('valid_models', 0)} valid model(s)", "Value": stock_money(stock, stock.get("fair_price")) if stock.get("fair_price") else "N/A"},
                 ],
                 hide_index=True,
-                use_container_width=True,
+                width="stretch",
             )
         else:
             st.caption("Search stocks first to inspect live valuation inputs.")
@@ -6040,7 +6043,7 @@ def calculation_details_tab() -> None:
         )
         rows = portfolio_valuation_rows()
         if rows:
-            st.dataframe(rows, hide_index=True, use_container_width=True)
+            st.dataframe(rows, hide_index=True, width="stretch")
         else:
             st.caption("Add holdings to the portfolio to see contribution details.")
 
@@ -6071,7 +6074,7 @@ def calculation_details_tab() -> None:
                     {"Metric": "Unrealized Return", "Value": f"{float(gain_loss['unrealized_return_pct']):+.1f}%"},
                 ],
                 hide_index=True,
-                use_container_width=True,
+                width="stretch",
             )
         else:
             st.caption("Enter purchase prices in Portfolio to calculate personal profit/loss.")
@@ -6100,14 +6103,14 @@ def calculation_details_tab() -> None:
                     ]
                 ),
                 hide_index=True,
-                use_container_width=True,
+                width="stretch",
             )
             st.markdown("**Weight Vector**")
-            st.dataframe(risk["weights"].rename("Weight").to_frame().style.format("{:.2%}"), use_container_width=True)
+            st.dataframe(risk["weights"].rename("Weight").to_frame().style.format("{:.2%}"), width="stretch")
             st.markdown("**Covariance Matrix**")
-            st.dataframe(risk["covariance"].round(6), use_container_width=True)
+            st.dataframe(risk["covariance"].round(6), width="stretch")
             st.markdown("**Correlation Matrix**")
-            st.dataframe(risk["correlation"].round(3), use_container_width=True)
+            st.dataframe(risk["correlation"].round(3), width="stretch")
         else:
             st.caption("At least two portfolio holdings with price history are needed.")
 
@@ -6136,7 +6139,7 @@ def calculation_details_tab() -> None:
                     {"Metric": "Financial Health Score", "Value": f"{float(result['financial_health_score']):.1f}/100"},
                 ],
                 hide_index=True,
-                use_container_width=True,
+                width="stretch",
             )
         else:
             st.caption("Open the Personal Finance tab first to calculate a personal finance snapshot.")
@@ -6345,7 +6348,7 @@ def financial_diary_tab() -> None:
 
     save_col, download_col = st.columns([1, 2])
     with save_col:
-        if st.button("Save Financial Snapshot", use_container_width=True):
+        if st.button("Save Financial Snapshot", width="stretch"):
             snapshot = build_financial_snapshot(note.strip(), mood, next_action.strip())
             st.session_state.financial_diary.append(snapshot)
             st.success("Snapshot saved to your Financial Diary for this session.")
@@ -6357,7 +6360,7 @@ def financial_diary_tab() -> None:
             data=diary_json,
             file_name=f"ly_stscope_financial_diary_{datetime.now().strftime('%Y%m%d')}.json",
             mime="application/json",
-            use_container_width=True,
+            width="stretch",
             disabled=not bool(st.session_state.financial_diary),
         )
 
@@ -6402,7 +6405,7 @@ def financial_diary_tab() -> None:
                 else f"{float(personal.get('financial_health_score', 0)):.1f}/100",
             }
         )
-    st.dataframe(summary_rows, hide_index=True, use_container_width=True)
+    st.dataframe(summary_rows, hide_index=True, width="stretch")
 
     for idx, entry in reversed(list(enumerate(st.session_state.financial_diary, start=1))):
         with st.expander(f"Entry {idx}: {entry.get('time')} - {entry.get('mood')}", expanded=False):
@@ -6451,7 +6454,7 @@ def financial_diary_tab() -> None:
                         for item in holdings
                     ],
                     hide_index=True,
-                    use_container_width=True,
+                    width="stretch",
                 )
 
 
@@ -6715,7 +6718,7 @@ def portfolio_tab() -> None:
             }
         )
 
-    st.dataframe(rows, hide_index=True, use_container_width=True)
+    st.dataframe(rows, hide_index=True, width="stretch")
     remove_cols = st.columns(min(4, len(st.session_state.portfolio)))
     for idx, symbol in enumerate(list(st.session_state.portfolio.keys())):
         remove_cols[idx % len(remove_cols)].button(
@@ -6768,7 +6771,7 @@ def settings_tab() -> None:
         "and the updated values will be reflected in CAPM required return and valuation calculations."
     )
 
-    if st.button("Reset macro assumptions to 4.50%", use_container_width=True):
+    if st.button("Reset macro assumptions to 4.50%", width="stretch"):
         st.session_state.risk_free_rate_pct = DEFAULT_RISK_FREE_RATE * 100
         st.session_state.equity_risk_premium_pct = DEFAULT_EQUITY_RISK_PREMIUM * 100
         st.session_state.macro_risk_free_rate_pct_text = f"{DEFAULT_RISK_FREE_RATE * 100:.2f}"
@@ -6800,7 +6803,7 @@ def settings_tab() -> None:
         apply_macro = st.form_submit_button(
             "Apply macro assumptions to calculations",
             type="primary",
-            use_container_width=True,
+            width="stretch",
         )
 
     if apply_macro:
@@ -6854,7 +6857,7 @@ def guide_tab() -> None:
             data=GUIDE_PDF_PATH.read_bytes(),
             file_name="LY-STScope_User_Guide.pdf",
             mime="application/pdf",
-            use_container_width=True,
+            width="stretch",
         )
     else:
         st.info("Upload LY-STScope_User_Guide.pdf to the repository to enable PDF download.")
@@ -7049,7 +7052,7 @@ def render_sidebar() -> None:
         st.markdown("## LY-STScope")
         st.caption("Open or close this sidebar with the arrow in the upper-left corner.")
 
-        if st.button("View Life Design Intro", use_container_width=True):
+        if st.button("View Life Design Intro", width="stretch"):
             st.session_state.life_entry_complete = False
             st.session_state.life_entry_version_seen = ""
             st.rerun()
@@ -7099,7 +7102,7 @@ def render_sidebar() -> None:
             height=110,
             key="sidebar_comment_text",
         )
-        if st.button("Save Comment", use_container_width=True):
+        if st.button("Save Comment", width="stretch"):
             clean_comment = comment.strip()
             if clean_comment:
                 st.session_state.comments.append(
@@ -7262,7 +7265,7 @@ def render_life_entry_screen(standalone: bool = True) -> None:
 
     c1, c2, c3 = st.columns([1, 1.1, 1])
     with c2:
-        if st.button("Enter LY-STScope Life Dashboard", type="primary", use_container_width=True):
+        if st.button("Enter LY-STScope Life Dashboard", type="primary", width="stretch"):
             st.session_state.life_entry_complete = True
             st.session_state.life_entry_version_seen = LIFE_ENTRY_VERSION
             st.rerun()

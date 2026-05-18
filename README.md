@@ -34,6 +34,9 @@ Because the founder is considering venture creation while in F-1 student status,
 - `personal_finance_module.py`: Personal Finance Streamlit UI module.
 - `docs/`: REIT analysis blueprint and data dictionary.
 - `ontology/`: Initial REIT ontology structure.
+- `DATA_SOURCES.md`: Data source, API, limitation, and usage notice.
+- `PROFESSOR_REVIEW_AUDIT.md`: Pre-share audit for data provenance, warnings,
+  known limitations, and professor demo checklist.
 
 ## Planned Analysis Areas
 

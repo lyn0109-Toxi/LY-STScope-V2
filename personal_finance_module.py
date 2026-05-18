@@ -149,7 +149,7 @@ def render_personal_finance() -> None:
         )
         .properties(height=330)
     )
-    st.altair_chart(chart, use_container_width=True)
+    st.altair_chart(chart, width="stretch")
 
     st.subheader("Decision-Support Insights")
     insights = result["insights"]

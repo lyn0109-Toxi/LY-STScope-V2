@@ -329,7 +329,7 @@ def overview_tab(df: pd.DataFrame) -> None:
             "valuation_view": "Educational View",
         }
     )
-    st.dataframe(table, hide_index=True, use_container_width=True)
+    st.dataframe(table, hide_index=True, width="stretch")
     st.markdown("</div>", unsafe_allow_html=True)
 
     st.subheader("Peer Group Map")
@@ -353,7 +353,7 @@ def overview_tab(df: pd.DataFrame) -> None:
         )
         .properties(height=390)
     )
-    st.altair_chart(peer_chart, use_container_width=True)
+    st.altair_chart(peer_chart, width="stretch")
 
 
 def valuation_tab(df: pd.DataFrame) -> None:
@@ -396,7 +396,7 @@ def valuation_tab(df: pd.DataFrame) -> None:
             {"Approach": "Market", "Model": "Price / FFO peer multiple", "Signal": f"{row['price_to_ffo']:.1f}x Price / FFO"},
         ]
     )
-    st.dataframe(triangulation, hide_index=True, use_container_width=True)
+    st.dataframe(triangulation, hide_index=True, width="stretch")
 
     diagnostics = pd.DataFrame(
         [
@@ -408,7 +408,7 @@ def valuation_tab(df: pd.DataFrame) -> None:
         ]
     )
     st.subheader("REIT Diagnostic Scorecard")
-    st.dataframe(diagnostics, hide_index=True, use_container_width=True)
+    st.dataframe(diagnostics, hide_index=True, width="stretch")
 
     radar = pd.DataFrame(
         [
@@ -430,7 +430,7 @@ def valuation_tab(df: pd.DataFrame) -> None:
         )
         .properties(height=320)
     )
-    st.altair_chart(chart, use_container_width=True)
+    st.altair_chart(chart, width="stretch")
 
 
 def macro_tab(df: pd.DataFrame) -> None:
@@ -448,7 +448,7 @@ def macro_tab(df: pd.DataFrame) -> None:
         )
         .properties(height=420)
     )
-    st.altair_chart(chart, use_container_width=True)
+    st.altair_chart(chart, width="stretch")
     st.info(
         "A more negative rate sensitivity means the REIT may be more exposed to rising interest rates. "
         "This is an educational signal, not a forecast."
@@ -466,7 +466,7 @@ def macro_tab(df: pd.DataFrame) -> None:
             "debt_rate_risk_score",
         ]
     ].sort_values("debt_rate_risk_score", ascending=False)
-    st.dataframe(risk_table, hide_index=True, use_container_width=True)
+    st.dataframe(risk_table, hide_index=True, width="stretch")
 
 
 def quality_tab(df: pd.DataFrame) -> None:
@@ -503,7 +503,7 @@ def quality_tab(df: pd.DataFrame) -> None:
         )
         .properties(height=390)
     )
-    st.altair_chart(quality_chart, use_container_width=True)
+    st.altair_chart(quality_chart, width="stretch")
 
     st.subheader("Quality and Growth Table")
     table = df[
@@ -521,7 +521,7 @@ def quality_tab(df: pd.DataFrame) -> None:
             "growth_score",
         ]
     ].sort_values("property_quality_score", ascending=False)
-    st.dataframe(table, hide_index=True, use_container_width=True)
+    st.dataframe(table, hide_index=True, width="stretch")
 
 
 def portfolio_tab(df: pd.DataFrame) -> None:
@@ -592,7 +592,7 @@ def portfolio_tab(df: pd.DataFrame) -> None:
         )
         .properties(height=360)
     )
-    st.altair_chart(pie, use_container_width=True)
+    st.altair_chart(pie, width="stretch")
 
     display = selected_df[
         [
@@ -610,7 +610,7 @@ def portfolio_tab(df: pd.DataFrame) -> None:
         ]
     ].copy()
     display["Weight"] = display["Weight"].map(lambda value: f"{value * 100:.1f}%")
-    st.dataframe(display, hide_index=True, use_container_width=True)
+    st.dataframe(display, hide_index=True, width="stretch")
 
 
 def guide_tab() -> None:
