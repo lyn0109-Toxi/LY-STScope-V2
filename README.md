@@ -50,7 +50,7 @@ Because the founder is considering venture creation while in F-1 student status,
 - Calculation Details: transparent formulas, data inputs, assumptions, valuation contribution, covariance, correlation, and personal finance score breakdown.
 - Financial Diary: session-based portfolio and personal finance snapshots with user notes, next actions, and JSON download/restore.
 - Life Design entry screen: one-click first screen that frames LY-STScope as a personal life and financial intelligence dashboard before entering the main app.
-- AI Reasoning Readiness: product-readiness layer for future AI coach, scenario reasoning, privacy boundaries, explainability, and venture preparation.
+- AI Coach: rule-based by default, with an optional verified OpenAI Responses API layer for structured reasoning answers.
 - Structured Scenario Packet: downloadable JSON context that can later become an input format for an AI financial reasoning coach.
 
 ## Streamlit Cloud
@@ -65,6 +65,12 @@ Recommended secrets:
 
 ```toml
 FINNHUB_API_KEY = "your_finnhub_api_key_here"
+OPENAI_API_KEY = "your_openai_api_key_here"
+OPENAI_MODEL = "gpt-5-mini"
+OPENAI_REASONING_EFFORT = "medium"
+OPENAI_AI_DEFAULT_ON = "false"
 ```
 
 The app can run with sample REIT data even when an API key is not configured.
+
+`OPENAI_API_KEY` is optional. Without it, AI Coach remains a local rule-based prototype. With it, users can enable a verified model mode that sends structured LY-STScope context to OpenAI's Responses API and then passes the answer through local safety validation before display.

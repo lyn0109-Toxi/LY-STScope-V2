@@ -3019,14 +3019,23 @@ st.markdown(
 )
 
 
-def get_finnhub_api_key() -> str:
+def get_secret_or_env(name: str, default: str = "") -> str:
     try:
-        return str(st.secrets["FINNHUB_API_KEY"]).strip()
+        return str(st.secrets.get(name, os.getenv(name, default))).strip()
     except Exception:
-        return os.getenv("FINNHUB_API_KEY", "").strip()
+        return os.getenv(name, default).strip()
 
 
-FINNHUB_API_KEY = get_finnhub_api_key()
+def get_secret_bool(name: str, default: bool = False) -> bool:
+    raw_value = get_secret_or_env(name, str(default)).strip().lower()
+    return raw_value in {"1", "true", "yes", "on"}
+
+
+FINNHUB_API_KEY = get_secret_or_env("FINNHUB_API_KEY")
+OPENAI_API_KEY = get_secret_or_env("OPENAI_API_KEY")
+OPENAI_MODEL = get_secret_or_env("OPENAI_MODEL", "gpt-5-mini")
+OPENAI_REASONING_EFFORT = get_secret_or_env("OPENAI_REASONING_EFFORT", "medium")
+OPENAI_AI_DEFAULT_ON = get_secret_bool("OPENAI_AI_DEFAULT_ON", False)
 DEFAULT_RISK_FREE_RATE = 0.045
 DEFAULT_EQUITY_RISK_PREMIUM = 0.045
 RISK_FREE_RATE = DEFAULT_RISK_FREE_RATE
@@ -3277,6 +3286,8 @@ def init_state() -> None:
     st.session_state.setdefault("financial_diary", [])
     st.session_state.setdefault("ai_coach_messages", [])
     st.session_state.setdefault("last_scenario_packet", None)
+    st.session_state.setdefault("use_verified_ai_model", bool(OPENAI_API_KEY) and OPENAI_AI_DEFAULT_ON)
+    st.session_state.setdefault("include_diary_text_for_ai", False)
     st.session_state.setdefault("life_entry_complete", False)
     st.session_state.setdefault("life_entry_version_seen", "")
 
@@ -5041,6 +5052,289 @@ def detect_ai_coach_intent(question: str) -> str:
     return "overview"
 
 
+def compact_text(value: Any, max_chars: int = 360) -> str:
+    text = str(value or "").strip()
+    if len(text) <= max_chars:
+        return text
+    return text[: max_chars - 3].rstrip() + "..."
+
+
+def safe_float(value: Any, digits: int = 4) -> float | None:
+    try:
+        numeric = float(value)
+    except (TypeError, ValueError):
+        return None
+    if not math.isfinite(numeric):
+        return None
+    return round(numeric, digits)
+
+
+def build_verified_ai_context(
+    context: dict[str, Any],
+    readiness: dict[str, Any],
+    include_diary_text: bool,
+) -> dict[str, Any]:
+    portfolio = context["portfolio"]
+    risk = portfolio.get("risk")
+    comp = portfolio.get("complementarity")
+    scenario = context.get("scenario")
+    diary_entries = context.get("diary", [])[-3:]
+
+    return {
+        "purpose": (
+            "Educational financial reasoning context for LY-STScope AI Coach. "
+            "Do not treat this as financial, legal, tax, or immigration advice."
+        ),
+        "readiness": {
+            "label": readiness["label"],
+            "score": safe_float(readiness["score"], 1),
+            "rule_reasons": readiness["reasons"][:8],
+        },
+        "personal_finance": context.get("personal") or {},
+        "portfolio": {
+            "base_currency": portfolio.get("base_currency", "USD"),
+            "total_value": safe_float(portfolio.get("total_value"), 2),
+            "weighted_beta": safe_float(portfolio.get("weighted_beta"), 3),
+            "valuation_score_pct": safe_float(portfolio.get("valuation_score"), 2),
+            "holdings": [
+                {
+                    "symbol": item.get("symbol"),
+                    "name": item.get("name"),
+                    "currency": item.get("currency"),
+                    "shares": safe_float(item.get("shares"), 4),
+                    "base_weight_pct": safe_float(float(item.get("base_weight", 0)) * 100, 2),
+                    "analysis_weight_pct": safe_float(float(item.get("analysis_weight", 0)) * 100, 2),
+                    "valuation_status": item.get("valuation_status"),
+                }
+                for item in portfolio.get("holdings", [])[:10]
+            ],
+            "risk_summary": None
+            if not risk
+            else {
+                "annualized_risk_pct": safe_float(float(risk["annual_vol"]) * 100, 2),
+                "expected_annual_return_pct": safe_float(float(risk["annual_return"]) * 100, 2),
+                "diversification_benefit_daily_pct": safe_float(float(risk["diversification_benefit"]) * 100, 4),
+            },
+            "complementarity_summary": None
+            if not comp
+            else {
+                "score": safe_float(comp.get("complementarity_score"), 1),
+                "average_pair_correlation": safe_float(comp.get("average_pair_correlation"), 3),
+                "best_offset_pair": list(comp.get("best_offset_pair", []))[:3],
+                "highest_co_movement_pair": list(comp.get("highest_co_movement_pair", []))[:3],
+            },
+        },
+        "scenario": None
+        if not scenario
+        else {
+            "inputs": scenario.get("inputs", {}),
+            "portfolio": scenario.get("portfolio", {}),
+            "interpretation": scenario.get("interpretation", []),
+        },
+        "diary_memory": [
+            {
+                "time": entry.get("time"),
+                "mood": entry.get("mood"),
+                "next_action": compact_text(entry.get("next_action"), 220),
+                "note": compact_text(entry.get("note"), 320) if include_diary_text else "[hidden unless user opts in]",
+            }
+            for entry in diary_entries
+        ],
+        "missing_inputs": context.get("missing", []),
+    }
+
+
+VERIFIED_AI_SCHEMA = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": [
+        "short_answer",
+        "evidence",
+        "assumptions",
+        "missing_inputs",
+        "risk_flags",
+        "next_safe_step",
+        "caution",
+        "confidence",
+    ],
+    "properties": {
+        "short_answer": {"type": "string"},
+        "evidence": {"type": "array", "items": {"type": "string"}},
+        "assumptions": {"type": "array", "items": {"type": "string"}},
+        "missing_inputs": {"type": "array", "items": {"type": "string"}},
+        "risk_flags": {"type": "array", "items": {"type": "string"}},
+        "next_safe_step": {"type": "string"},
+        "caution": {"type": "string"},
+        "confidence": {"type": "string", "enum": ["low", "medium", "high"]},
+    },
+}
+
+
+VERIFIED_AI_SYSTEM_PROMPT = """
+You are the LY-STScope Verified AI Model Layer.
+Your job is educational financial reasoning, not financial advice.
+
+Rules:
+- Do not give buy, sell, hold, short, long, or target-price instructions.
+- Do not guarantee returns or predict certainty.
+- Do not provide legal, tax, accounting, immigration, or professional advice.
+- If the user asks about F-1, work authorization, monetization, or company formation, give only general caution and tell them to consult the DSO and qualified counsel.
+- Ground every answer in the provided LY-STScope context.
+- If data is missing, say so clearly.
+- Keep the answer useful on mobile: concise, structured, and direct.
+- Return only JSON matching the requested schema.
+"""
+
+
+def extract_response_text(response_json: dict[str, Any]) -> str:
+    if response_json.get("output_text"):
+        return str(response_json["output_text"]).strip()
+
+    parts: list[str] = []
+    for item in response_json.get("output", []) or []:
+        for content in item.get("content", []) or []:
+            if isinstance(content, dict):
+                if "text" in content:
+                    parts.append(str(content["text"]))
+                elif content.get("type") == "output_text" and "value" in content:
+                    parts.append(str(content["value"]))
+    return "\n".join(parts).strip()
+
+
+def parse_json_object(text: str) -> dict[str, Any]:
+    clean_text = text.strip()
+    if clean_text.startswith("```"):
+        clean_text = clean_text.strip("`")
+        clean_text = clean_text.replace("json\n", "", 1).strip()
+    try:
+        return json.loads(clean_text)
+    except json.JSONDecodeError:
+        start = clean_text.find("{")
+        end = clean_text.rfind("}")
+        if start >= 0 and end > start:
+            return json.loads(clean_text[start : end + 1])
+        raise
+
+
+def validate_verified_ai_payload(payload: dict[str, Any]) -> list[str]:
+    issues: list[str] = []
+    for key in VERIFIED_AI_SCHEMA["required"]:
+        if key not in payload:
+            issues.append(f"Missing required field: {key}")
+
+    combined = " ".join(
+        str(payload.get(key, ""))
+        for key in ("short_answer", "next_safe_step", "caution")
+    ).lower()
+    prohibited_patterns = (
+        "you should buy",
+        "you should sell",
+        "i recommend buying",
+        "i recommend selling",
+        "guaranteed return",
+        "guaranteed profit",
+    )
+    if any(pattern in combined for pattern in prohibited_patterns):
+        issues.append("Model response included disallowed investment-directive language.")
+
+    if "educational" not in str(payload.get("caution", "")).lower():
+        issues.append("Caution field must clearly state educational use.")
+    return issues
+
+
+def format_verified_ai_payload(payload: dict[str, Any], model_name: str) -> str:
+    def list_block(items: Any, fallback: str) -> str:
+        if not items:
+            return f"- {fallback}"
+        return "\n".join(f"- {compact_text(item, 420)}" for item in items)
+
+    return f"""### Short Answer
+{compact_text(payload.get("short_answer"), 900)}
+
+### Evidence From Your Data
+{list_block(payload.get("evidence"), "No app evidence was available.")}
+
+### Assumptions
+{list_block(payload.get("assumptions"), "No assumptions were stated.")}
+
+### Missing Inputs
+{list_block(payload.get("missing_inputs"), "No major missing inputs were flagged.")}
+
+### Risk Flags
+{list_block(payload.get("risk_flags"), "No major risk flags were detected from available context.")}
+
+### Next Safe Step
+{compact_text(payload.get("next_safe_step"), 600)}
+
+### Caution
+{compact_text(payload.get("caution"), 700)}
+
+_Verified AI layer: {model_name} | confidence: {payload.get("confidence", "medium")}._
+"""
+
+
+def call_verified_openai_model(
+    question: str,
+    context: dict[str, Any],
+    readiness: dict[str, Any],
+    include_diary_text: bool,
+) -> str:
+    if not OPENAI_API_KEY:
+        raise RuntimeError("OPENAI_API_KEY is not configured.")
+
+    model_context = build_verified_ai_context(context, readiness, include_diary_text)
+    payload = {
+        "model": OPENAI_MODEL,
+        "input": [
+            {"role": "system", "content": VERIFIED_AI_SYSTEM_PROMPT},
+            {
+                "role": "user",
+                "content": json.dumps(
+                    {
+                        "user_question": question,
+                        "ly_stscope_context": model_context,
+                        "required_output_style": "mobile-friendly structured JSON",
+                    },
+                    ensure_ascii=False,
+                ),
+            },
+        ],
+        "reasoning": {"effort": OPENAI_REASONING_EFFORT},
+        "text": {
+            "format": {
+                "type": "json_schema",
+                "name": "ly_stscope_verified_ai_response",
+                "strict": True,
+                "schema": VERIFIED_AI_SCHEMA,
+            }
+        },
+        "max_output_tokens": 1400,
+    }
+    response = requests.post(
+        "https://api.openai.com/v1/responses",
+        headers={
+            "Authorization": f"Bearer {OPENAI_API_KEY}",
+            "Content-Type": "application/json",
+        },
+        json=payload,
+        timeout=45,
+    )
+    if response.status_code >= 400:
+        raise RuntimeError(f"OpenAI API returned {response.status_code}: {compact_text(response.text, 220)}")
+
+    response_json = response.json()
+    response_text = extract_response_text(response_json)
+    if not response_text:
+        raise RuntimeError("OpenAI API returned an empty response.")
+
+    model_payload = parse_json_object(response_text)
+    validation_issues = validate_verified_ai_payload(model_payload)
+    if validation_issues:
+        raise RuntimeError("Verified AI response failed validation: " + "; ".join(validation_issues))
+
+    return format_verified_ai_payload(model_payload, OPENAI_MODEL)
+
+
 def ai_coach_response(question: str) -> str:
     context = ai_coach_context_snapshot()
     readiness = ai_coach_readiness(context)
@@ -5156,6 +5450,23 @@ This is educational scenario reasoning only. It is not financial, investment, le
 """
 
 
+def verified_or_rule_based_ai_response(question: str, use_verified_model: bool, include_diary_text: bool) -> str:
+    context = ai_coach_context_snapshot()
+    readiness = ai_coach_readiness(context)
+    if use_verified_model and OPENAI_API_KEY:
+        try:
+            return call_verified_openai_model(question, context, readiness, include_diary_text)
+        except Exception as exc:
+            fallback = ai_coach_response(question)
+            return (
+                f"{fallback}\n\n"
+                f"### Verified AI Model Status\n"
+                f"- The app fell back to the rule-based coach because the verified model layer could not complete safely.\n"
+                f"- Reason: {compact_text(exc, 260)}"
+            )
+    return ai_coach_response(question)
+
+
 def render_ai_coach() -> None:
     context = ai_coach_context_snapshot()
     readiness = ai_coach_readiness(context)
@@ -5193,11 +5504,36 @@ def render_ai_coach() -> None:
     st.markdown(
         """
         <div class="coach-disclaimer">
-            Rule-based AI Coach beta: educational reasoning only. The response shows evidence, assumptions, missing inputs, and limits before any future LLM connection.
+            Verified AI Coach beta: educational reasoning only. If enabled, a reasoning model answers from structured LY-STScope context and a local validator checks boundaries before display.
         </div>
         """,
         unsafe_allow_html=True,
     )
+
+    with st.expander("Verified AI Model Settings", expanded=False):
+        if OPENAI_API_KEY:
+            st.success(f"OPENAI_API_KEY is configured. Model: {OPENAI_MODEL}.")
+        else:
+            st.warning(
+                "OPENAI_API_KEY is not configured, so AI Coach will use the local rule-based answer. "
+                "Add OPENAI_API_KEY in Streamlit Secrets to enable verified model responses."
+            )
+        st.toggle(
+            "Use verified OpenAI reasoning model",
+            key="use_verified_ai_model",
+            disabled=not bool(OPENAI_API_KEY),
+            help="When enabled, structured app context is sent to OpenAI's Responses API and then validated locally before display.",
+        )
+        st.checkbox(
+            "Include diary note text in model context",
+            key="include_diary_text_for_ai",
+            disabled=not bool(OPENAI_API_KEY) or not st.session_state.get("use_verified_ai_model", False),
+            help="Leave off to send only diary count, mood, and next-action summaries.",
+        )
+        st.caption(
+            "Privacy note: do not enter bank account numbers, tax IDs, passwords, or confidential records. "
+            "Use this public prototype with minimal, non-sensitive examples."
+        )
 
     if not st.session_state.ai_coach_messages:
         st.session_state.ai_coach_messages.append(
@@ -5233,7 +5569,14 @@ def render_ai_coach() -> None:
     if pending_question:
         st.session_state.ai_coach_messages.append({"role": "user", "content": pending_question})
         st.session_state.ai_coach_messages.append(
-            {"role": "assistant", "content": ai_coach_response(pending_question)}
+            {
+                "role": "assistant",
+                "content": verified_or_rule_based_ai_response(
+                    pending_question,
+                    st.session_state.get("use_verified_ai_model", False),
+                    st.session_state.get("include_diary_text_for_ai", False),
+                ),
+            }
         )
 
     reset_col, save_col = st.columns([1, 1])
@@ -5793,6 +6136,15 @@ def settings_tab() -> None:
         External users do not need to enter a key, and the token is not stored in their browser.
         """
     )
+    st.subheader("Verified AI Model")
+    if OPENAI_API_KEY:
+        st.success(f"OPENAI_API_KEY is configured. AI Coach can use {OPENAI_MODEL}.")
+    else:
+        st.warning("OPENAI_API_KEY is missing. AI Coach will remain rule-based until the key is added.")
+    st.caption(
+        f"Current AI model setting: {OPENAI_MODEL} with reasoning effort '{OPENAI_REASONING_EFFORT}'. "
+        "Set OPENAI_AI_DEFAULT_ON = true only if you want the verified model toggle enabled by default."
+    )
     st.subheader("Macroeconomic Variables")
     st.caption(
         "The app starts with 4.50% for both values. Users can revise these assumptions, "
@@ -5993,9 +6345,10 @@ def guide_tab() -> None:
     st.write(
         """
         The AI Coach menu turns LY-STScope from a dashboard into a conversation-first financial reasoning
-        prototype. The current version is rule-based: it reads Personal Finance, Portfolio, Scenario, and
-        Financial Diary context, then returns a structured answer with evidence, assumptions, missing inputs,
-        next safe step, and caution. Later, this structure can connect to an LLM API.
+        prototype. It can run locally as a rule-based coach or, when `OPENAI_API_KEY` is configured and the
+        user enables the verified model toggle, call a reasoning model through OpenAI's Responses API.
+        The answer is still constrained to evidence, assumptions, missing inputs, risk flags, next safe step,
+        and caution.
         """
     )
 
@@ -6038,6 +6391,9 @@ def guide_tab() -> None:
         - Risk-Free Rate and Equity Risk Premium begin at 4.50% each, but users can update them in Settings.
         - Updated macro assumptions are applied to CAPM required return and valuation calculations.
         - API keys should never be pasted into public code, screenshots, or browser-side scripts.
+        - OPENAI_API_KEY enables the verified AI model layer for AI Coach.
+        - OPENAI_MODEL defaults to gpt-5-mini unless changed in Streamlit Secrets.
+        - OPENAI_AI_DEFAULT_ON can be set to true if the owner wants model mode enabled by default.
         """
     )
 
