@@ -2430,38 +2430,43 @@ st.markdown(
         aspect-ratio: 1 / 1;
         margin: 0 auto;
         border-radius: 50%;
-        border: 1px solid rgba(14, 165, 233, 0.22);
-        background:
-            radial-gradient(circle at 50% 50%, rgba(255,255,255,0.96), rgba(240,249,255,0.88) 45%, rgba(236,253,245,0.76) 72%, rgba(255,251,235,0.56)),
-            linear-gradient(135deg, rgba(255,255,255,0.94), rgba(240,249,255,0.80));
-        box-shadow:
-            0 22px 52px rgba(14, 165, 233, 0.12),
-            inset 0 0 0 1px rgba(255,255,255,0.72);
-        overflow: hidden;
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+        overflow: visible;
     }
     html body .stApp .desktop-orbit-shell::before {
         content: "";
         position: absolute;
-        inset: 40px;
+        z-index: 0;
+        inset: 55px;
         border-radius: 50%;
-        border: 1px solid rgba(14, 165, 233, 0.18);
-        background:
-            conic-gradient(from 210deg, rgba(14,165,233,0.0), rgba(14,165,233,0.20), rgba(20,184,166,0.10), rgba(250,204,21,0.12), rgba(14,165,233,0.0));
-        opacity: 0.70;
-        animation: desktopOrbitSpin 34s linear infinite;
+        border: 1.5px dashed rgba(14, 165, 233, 0.30);
+        background: transparent;
+        opacity: 0.82;
     }
     html body .stApp .desktop-orbit-shell::after {
         content: "";
         position: absolute;
-        inset: 142px;
+        z-index: 1;
+        left: calc(50% - 5.5px);
+        top: 49.5px;
+        width: 11px;
+        height: 11px;
         border-radius: 50%;
-        border: 1px dashed rgba(15, 118, 110, 0.20);
-        background: rgba(255,255,255,0.22);
+        background:
+            radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(125,211,252,0.94) 42%, rgba(20,184,166,0.12) 70%, transparent 100%);
+        box-shadow:
+            0 0 12px rgba(14,165,233,0.58),
+            0 0 24px rgba(20,184,166,0.34);
+        pointer-events: none;
+        transform-origin: 5.5px 200.5px;
+        animation: desktopOrbitSpin 12s linear infinite;
     }
     html body .stApp .desktop-orbit-center,
     html body .stApp .desktop-orbit-item {
         position: absolute;
-        z-index: 2;
+        z-index: 3;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -2478,8 +2483,8 @@ st.markdown(
     html body .stApp .desktop-orbit-center {
         left: 50%;
         top: 50%;
-        width: 106px;
-        height: 106px;
+        width: 110px;
+        height: 110px;
         transform: translate(-50%, -50%);
         border: 2px solid rgba(20, 184, 166, 0.40);
         background:
@@ -2506,8 +2511,8 @@ st.markdown(
     html body .stApp .desktop-orbit-item {
         left: var(--x);
         top: var(--y);
-        width: 70px;
-        height: 70px;
+        width: 74px;
+        height: 74px;
         transform: translate(-50%, -50%);
         border: 1px solid rgba(var(--accent-rgb), 0.34);
         background:
@@ -2520,15 +2525,15 @@ st.markdown(
     html body .stApp .desktop-orbit-item b {
         color: var(--accent);
         -webkit-text-fill-color: var(--accent);
-        font-size: 0.90rem;
+        font-size: 0.94rem;
         line-height: 1;
         font-weight: 950;
     }
     html body .stApp .desktop-orbit-item span {
-        max-width: 60px;
+        max-width: 62px;
         color: #0f172a;
         -webkit-text-fill-color: #0f172a;
-        font-size: 0.55rem;
+        font-size: 0.56rem;
         line-height: 1.05;
         font-weight: 900;
     }
@@ -3099,16 +3104,23 @@ st.markdown(
         html body .stApp .desktop-orbit-shell {
             width: min(430px, 90vw);
         }
+        html body .stApp .desktop-orbit-shell::before {
+            inset: 47px;
+        }
         html body .stApp .desktop-orbit-shell::after {
-            inset: 122px;
+            left: calc(50% - 5px);
+            top: 42px;
+            width: 10px;
+            height: 10px;
+            transform-origin: 5px 178px;
         }
         html body .stApp .desktop-orbit-center {
-            width: 92px;
-            height: 92px;
+            width: 96px;
+            height: 96px;
         }
         html body .stApp .desktop-orbit-item {
-            width: 62px;
-            height: 62px;
+            width: 66px;
+            height: 66px;
         }
         html body .stApp .desktop-orbit-item span {
             font-size: 0.54rem;
