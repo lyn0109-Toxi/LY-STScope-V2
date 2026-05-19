@@ -2420,6 +2420,144 @@ st.markdown(
         background: linear-gradient(135deg, #0ea5e9, #14b8a6) !important;
         border-color: rgba(255,255,255,0.54) !important;
     }
+    html body .stApp .desktop-orbit-nav {
+        width: min(580px, 94vw);
+        margin: 8px auto 22px;
+    }
+    html body .stApp .desktop-orbit-shell {
+        position: relative;
+        width: min(520px, 92vw);
+        aspect-ratio: 1 / 1;
+        margin: 0 auto;
+        border-radius: 50%;
+        border: 1px solid rgba(14, 165, 233, 0.22);
+        background:
+            radial-gradient(circle at 50% 50%, rgba(255,255,255,0.96), rgba(240,249,255,0.88) 45%, rgba(236,253,245,0.76) 72%, rgba(255,251,235,0.56)),
+            linear-gradient(135deg, rgba(255,255,255,0.94), rgba(240,249,255,0.80));
+        box-shadow:
+            0 22px 52px rgba(14, 165, 233, 0.12),
+            inset 0 0 0 1px rgba(255,255,255,0.72);
+        overflow: hidden;
+    }
+    html body .stApp .desktop-orbit-shell::before {
+        content: "";
+        position: absolute;
+        inset: 42px;
+        border-radius: 50%;
+        border: 1px solid rgba(14, 165, 233, 0.18);
+        background:
+            conic-gradient(from 210deg, rgba(14,165,233,0.0), rgba(14,165,233,0.20), rgba(20,184,166,0.10), rgba(250,204,21,0.12), rgba(14,165,233,0.0));
+        opacity: 0.70;
+        animation: desktopOrbitSpin 34s linear infinite;
+    }
+    html body .stApp .desktop-orbit-shell::after {
+        content: "";
+        position: absolute;
+        inset: 150px;
+        border-radius: 50%;
+        border: 1px dashed rgba(15, 118, 110, 0.20);
+        background: rgba(255,255,255,0.22);
+    }
+    html body .stApp .desktop-orbit-center,
+    html body .stApp .desktop-orbit-item {
+        position: absolute;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 4px;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 50%;
+        color: #0f172a;
+        -webkit-text-fill-color: #0f172a;
+        letter-spacing: 0;
+        transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+    }
+    html body .stApp .desktop-orbit-center {
+        left: 50%;
+        top: 50%;
+        width: 112px;
+        height: 112px;
+        transform: translate(-50%, -50%);
+        border: 2px solid rgba(20, 184, 166, 0.40);
+        background:
+            radial-gradient(circle at 28% 20%, rgba(255,255,255,0.52), transparent 34%),
+            linear-gradient(135deg, rgba(14,165,233,0.96), rgba(20,184,166,0.88));
+        color: #ffffff;
+        -webkit-text-fill-color: #ffffff;
+        box-shadow:
+            0 18px 38px rgba(14, 165, 233, 0.22),
+            0 0 0 12px rgba(20, 184, 166, 0.10);
+    }
+    html body .stApp .desktop-orbit-center b {
+        font-size: 1.04rem;
+        line-height: 1;
+        font-weight: 950;
+    }
+    html body .stApp .desktop-orbit-center span {
+        max-width: 82px;
+        font-size: 0.64rem;
+        line-height: 1.1;
+        font-weight: 850;
+        text-transform: uppercase;
+    }
+    html body .stApp .desktop-orbit-item {
+        left: var(--x);
+        top: var(--y);
+        width: 76px;
+        height: 76px;
+        transform: translate(-50%, -50%);
+        border: 1px solid rgba(var(--accent-rgb), 0.34);
+        background:
+            radial-gradient(circle at 28% 22%, rgba(255,255,255,0.98), transparent 34%),
+            linear-gradient(135deg, rgba(255,255,255,0.94), rgba(var(--accent-rgb), 0.14));
+        box-shadow:
+            0 14px 28px rgba(var(--accent-rgb), 0.14),
+            inset 0 0 0 1px rgba(255,255,255,0.72);
+    }
+    html body .stApp .desktop-orbit-item b {
+        color: var(--accent);
+        -webkit-text-fill-color: var(--accent);
+        font-size: 0.96rem;
+        line-height: 1;
+        font-weight: 950;
+    }
+    html body .stApp .desktop-orbit-item span {
+        max-width: 64px;
+        color: #0f172a;
+        -webkit-text-fill-color: #0f172a;
+        font-size: 0.58rem;
+        line-height: 1.05;
+        font-weight: 900;
+    }
+    html body .stApp .desktop-orbit-item:hover {
+        transform: translate(-50%, -50%) scale(1.055);
+        border-color: rgba(var(--accent-rgb), 0.58);
+        box-shadow:
+            0 18px 34px rgba(var(--accent-rgb), 0.20),
+            0 0 0 7px rgba(var(--accent-rgb), 0.08);
+    }
+    html body .stApp .desktop-orbit-item.active,
+    html body .stApp .desktop-orbit-center.active {
+        border-color: rgba(255,255,255,0.78);
+        background: linear-gradient(135deg, var(--accent), #14b8a6);
+        color: #ffffff;
+        -webkit-text-fill-color: #ffffff;
+        box-shadow:
+            0 18px 36px rgba(var(--accent-rgb), 0.28),
+            0 0 0 9px rgba(var(--accent-rgb), 0.12);
+    }
+    html body .stApp .desktop-orbit-item.active b,
+    html body .stApp .desktop-orbit-item.active span {
+        color: #ffffff;
+        -webkit-text-fill-color: #ffffff;
+    }
+    @keyframes desktopOrbitSpin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
     html body .stApp .ai-coach-hero {
         width: min(1120px, 100%);
         margin: 0 auto 18px;
@@ -2955,6 +3093,26 @@ st.markdown(
             grid-template-columns: repeat(2, minmax(0, 1fr));
             width: min(720px, 94%);
         }
+        html body .stApp .desktop-orbit-nav {
+            width: min(490px, 94vw);
+        }
+        html body .stApp .desktop-orbit-shell {
+            width: min(452px, 92vw);
+        }
+        html body .stApp .desktop-orbit-shell::after {
+            inset: 130px;
+        }
+        html body .stApp .desktop-orbit-center {
+            width: 98px;
+            height: 98px;
+        }
+        html body .stApp .desktop-orbit-item {
+            width: 68px;
+            height: 68px;
+        }
+        html body .stApp .desktop-orbit-item span {
+            font-size: 0.54rem;
+        }
         html body .stApp .st-key-circle_nav div[data-testid="stButton"] button {
             padding: 62px 8px 18px !important;
         }
@@ -3183,7 +3341,7 @@ st.markdown(
         display: none;
     }
     html body .stApp .mobile-orbit-stamp {
-        width: min(354px, 96vw);
+        width: min(320px, 94vw);
         margin: 8px auto 0;
         padding: 8px 12px;
         border-radius: 999px;
@@ -3200,8 +3358,8 @@ st.markdown(
     }
     html body .stApp .mobile-orbit-shell {
         position: relative;
-        width: min(354px, 96vw);
-        height: 354px;
+        width: min(320px, 94vw);
+        height: min(320px, 94vw);
         margin: 10px auto 16px;
         border-radius: 30px;
         border: 1px solid rgba(14, 165, 233, 0.20);
@@ -3214,7 +3372,7 @@ st.markdown(
     html body .stApp .mobile-orbit-shell::before {
         content: "";
         position: absolute;
-        inset: 26px;
+        inset: 24px;
         border-radius: 50%;
         border: 1px solid rgba(14, 165, 233, 0.18);
         background:
@@ -3225,7 +3383,7 @@ st.markdown(
     html body .stApp .mobile-orbit-shell::after {
         content: "";
         position: absolute;
-        inset: 70px;
+        inset: 62px;
         border-radius: 50%;
         border: 1px dashed rgba(15, 118, 110, 0.20);
     }
@@ -3246,8 +3404,8 @@ st.markdown(
     html body .stApp .mobile-orbit-center {
         left: 50%;
         top: 50%;
-        width: 116px;
-        height: 116px;
+        width: 94px;
+        height: 94px;
         transform: translate(-50%, -50%);
         flex-direction: column;
         gap: 5px;
@@ -3258,20 +3416,21 @@ st.markdown(
         -webkit-text-fill-color: #ffffff;
     }
     html body .stApp .mobile-orbit-center b {
-        font-size: 1.03rem;
+        font-size: 0.94rem;
         line-height: 1;
         font-weight: 950;
     }
     html body .stApp .mobile-orbit-center span {
-        font-size: 0.64rem;
+        max-width: 72px;
+        font-size: 0.56rem;
         line-height: 1;
         font-weight: 850;
         letter-spacing: 0.06em;
         text-transform: uppercase;
     }
     html body .stApp .mobile-orbit-item {
-        width: 68px;
-        height: 68px;
+        width: 58px;
+        height: 58px;
         flex-direction: column;
         gap: 4px;
         border-radius: 50%;
@@ -3281,12 +3440,13 @@ st.markdown(
             linear-gradient(135deg, rgba(255,255,255,0.92), rgba(236,253,245,0.76));
     }
     html body .stApp .mobile-orbit-item b {
-        font-size: 0.88rem;
+        font-size: 0.76rem;
         line-height: 1;
         font-weight: 950;
     }
     html body .stApp .mobile-orbit-item span {
-        font-size: 0.55rem;
+        max-width: 50px;
+        font-size: 0.48rem;
         line-height: 1;
         font-weight: 850;
         letter-spacing: 0;
@@ -3300,31 +3460,31 @@ st.markdown(
         -webkit-text-fill-color: #ffffff;
         box-shadow: 0 16px 32px rgba(14, 165, 233, 0.24);
     }
-    html body .stApp .mobile-orbit-top { left: calc(50% - 34px); top: 14px; }
-    html body .stApp .mobile-orbit-top-right { right: 48px; top: 48px; }
-    html body .stApp .mobile-orbit-right { right: 14px; top: calc(50% - 34px); }
-    html body .stApp .mobile-orbit-bottom-right { right: 48px; bottom: 48px; }
-    html body .stApp .mobile-orbit-bottom { left: calc(50% - 34px); bottom: 14px; }
-    html body .stApp .mobile-orbit-bottom-left { left: 48px; bottom: 48px; }
-    html body .stApp .mobile-orbit-left { left: 14px; top: calc(50% - 34px); }
-    html body .stApp .mobile-orbit-top-left { left: 48px; top: 48px; }
+    html body .stApp .mobile-orbit-top { left: calc(50% - 29px); top: 16px; }
+    html body .stApp .mobile-orbit-top-right { right: 42px; top: 42px; }
+    html body .stApp .mobile-orbit-right { right: 16px; top: calc(50% - 29px); }
+    html body .stApp .mobile-orbit-bottom-right { right: 42px; bottom: 42px; }
+    html body .stApp .mobile-orbit-bottom { left: calc(50% - 29px); bottom: 16px; }
+    html body .stApp .mobile-orbit-bottom-left { left: 42px; bottom: 42px; }
+    html body .stApp .mobile-orbit-left { left: 16px; top: calc(50% - 29px); }
+    html body .stApp .mobile-orbit-top-left { left: 42px; top: 42px; }
     html body .stApp .mobile-orbit-mini-row {
         position: absolute;
         z-index: 3;
         left: 50%;
-        bottom: 86px;
+        bottom: 72px;
         display: flex;
         gap: 8px;
         transform: translateX(-50%);
     }
     html body .stApp .mobile-orbit-mini {
         position: relative;
-        min-width: 62px;
-        padding: 7px 10px;
+        min-width: 56px;
+        padding: 6px 9px;
         border-radius: 999px;
         border: 1px solid rgba(14, 165, 233, 0.20);
         background: rgba(255,255,255,0.82);
-        font-size: 0.68rem;
+        font-size: 0.62rem;
         font-weight: 900;
     }
     @keyframes mobileOrbitSpin {
@@ -3379,6 +3539,10 @@ st.markdown(
             0 12px 28px rgba(2, 6, 23, 0.20) !important;
     }
     @media (max-width: 680px) {
+        html body .stApp .desktop-orbit-nav,
+        html body .stApp .nav-flow-strip {
+            display: none !important;
+        }
         html body .stApp .mobile-only-deck {
             display: block;
         }
@@ -7958,6 +8122,20 @@ NAV_ITEMS = [
     {"key": "settings", "label": "Settings", "icon": "SE"},
 ]
 
+DESKTOP_ORBIT_ITEMS = [
+    {"key": "life", "x": "50%", "y": "8%", "accent": "#14b8a6", "accent_rgb": "20, 184, 166"},
+    {"key": "finance", "x": "73%", "y": "15%", "accent": "#0ea5e9", "accent_rgb": "14, 165, 233"},
+    {"key": "portfolio", "x": "88%", "y": "34%", "accent": "#84cc16", "accent_rgb": "132, 204, 22"},
+    {"key": "search", "x": "90%", "y": "58%", "accent": "#3b82f6", "accent_rgb": "59, 130, 246"},
+    {"key": "compare", "x": "78%", "y": "79%", "accent": "#8b5cf6", "accent_rgb": "139, 92, 246"},
+    {"key": "reit", "x": "58%", "y": "91%", "accent": "#f59e0b", "accent_rgb": "245, 158, 11"},
+    {"key": "details", "x": "35%", "y": "88%", "accent": "#06b6d4", "accent_rgb": "6, 182, 212"},
+    {"key": "scenario", "x": "14%", "y": "71%", "accent": "#f97316", "accent_rgb": "249, 115, 22"},
+    {"key": "ai", "x": "10%", "y": "47%", "accent": "#6366f1", "accent_rgb": "99, 102, 241"},
+    {"key": "guide", "x": "17%", "y": "25%", "accent": "#eab308", "accent_rgb": "234, 179, 8"},
+    {"key": "settings", "x": "37%", "y": "11%", "accent": "#64748b", "accent_rgb": "100, 116, 139"},
+]
+
 
 def active_nav_key() -> str:
     valid_keys = {item["key"] for item in NAV_ITEMS}
@@ -8003,20 +8181,34 @@ def render_circle_navigation(active_key: str) -> None:
         """,
         unsafe_allow_html=True,
     )
-    with st.container(key="circle_nav"):
-        for start in range(0, len(NAV_ITEMS), 4):
-            cols = st.columns(4, gap="large")
-            for col, item in zip(cols, NAV_ITEMS[start : start + 4]):
-                button_label = item["label"]
-                with col:
-                    st.button(
-                        button_label,
-                        key=f"nav_{item['key']}",
-                        type="primary" if item["key"] == active_key else "secondary",
-                        width="stretch",
-                        on_click=set_active_nav_key,
-                        args=(item["key"],),
-                    )
+    nav_item_map = {item["key"]: item for item in NAV_ITEMS}
+    orbit_links = []
+    for orbit_item in DESKTOP_ORBIT_ITEMS:
+        nav_item = nav_item_map[orbit_item["key"]]
+        active_class = " active" if nav_item["key"] == active_key else ""
+        style = (
+            f"--x: {orbit_item['x']}; --y: {orbit_item['y']}; "
+            f"--accent: {orbit_item['accent']}; --accent-rgb: {orbit_item['accent_rgb']};"
+        )
+        orbit_links.append(
+            f'<a class="desktop-orbit-item{active_class}" href="?view={quote(nav_item["key"])}" '
+            f'aria-label="{escape(nav_item["label"])}" style="{style}">'
+            f'<b>{escape(nav_item["icon"])}</b><span>{escape(nav_item["label"])}</span></a>'
+        )
+
+    center_active = " active" if active_key == "diary" else ""
+    st.markdown(
+        (
+            '<div class="desktop-orbit-nav" aria-label="LY-STScope compact orbit navigation">'
+            '<div class="desktop-orbit-shell">'
+            f'{"".join(orbit_links)}'
+            f'<a class="desktop-orbit-center{center_active}" href="?view=diary" aria-label="Personal Diary" '
+            'style="--accent: #ec4899; --accent-rgb: 236, 72, 153;">'
+            '<b>Diary</b><span>Personal Memory</span></a>'
+            '</div></div>'
+        ),
+        unsafe_allow_html=True,
+    )
 
 
 def render_mobile_navigation(active_key: str) -> None:
