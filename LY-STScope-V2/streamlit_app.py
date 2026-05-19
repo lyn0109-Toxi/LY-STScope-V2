@@ -2421,12 +2421,12 @@ st.markdown(
         border-color: rgba(255,255,255,0.54) !important;
     }
     html body .stApp .desktop-orbit-nav {
-        width: min(580px, 94vw);
-        margin: 8px auto 22px;
+        width: min(540px, 92vw);
+        margin: 6px auto 20px;
     }
     html body .stApp .desktop-orbit-shell {
         position: relative;
-        width: min(520px, 92vw);
+        width: min(500px, 90vw);
         aspect-ratio: 1 / 1;
         margin: 0 auto;
         border-radius: 50%;
@@ -2442,7 +2442,7 @@ st.markdown(
     html body .stApp .desktop-orbit-shell::before {
         content: "";
         position: absolute;
-        inset: 42px;
+        inset: 40px;
         border-radius: 50%;
         border: 1px solid rgba(14, 165, 233, 0.18);
         background:
@@ -2453,7 +2453,7 @@ st.markdown(
     html body .stApp .desktop-orbit-shell::after {
         content: "";
         position: absolute;
-        inset: 150px;
+        inset: 142px;
         border-radius: 50%;
         border: 1px dashed rgba(15, 118, 110, 0.20);
         background: rgba(255,255,255,0.22);
@@ -2478,8 +2478,8 @@ st.markdown(
     html body .stApp .desktop-orbit-center {
         left: 50%;
         top: 50%;
-        width: 112px;
-        height: 112px;
+        width: 106px;
+        height: 106px;
         transform: translate(-50%, -50%);
         border: 2px solid rgba(20, 184, 166, 0.40);
         background:
@@ -2506,8 +2506,8 @@ st.markdown(
     html body .stApp .desktop-orbit-item {
         left: var(--x);
         top: var(--y);
-        width: 76px;
-        height: 76px;
+        width: 70px;
+        height: 70px;
         transform: translate(-50%, -50%);
         border: 1px solid rgba(var(--accent-rgb), 0.34);
         background:
@@ -2520,15 +2520,15 @@ st.markdown(
     html body .stApp .desktop-orbit-item b {
         color: var(--accent);
         -webkit-text-fill-color: var(--accent);
-        font-size: 0.96rem;
+        font-size: 0.90rem;
         line-height: 1;
         font-weight: 950;
     }
     html body .stApp .desktop-orbit-item span {
-        max-width: 64px;
+        max-width: 60px;
         color: #0f172a;
         -webkit-text-fill-color: #0f172a;
-        font-size: 0.58rem;
+        font-size: 0.55rem;
         line-height: 1.05;
         font-weight: 900;
     }
@@ -3094,21 +3094,21 @@ st.markdown(
             width: min(720px, 94%);
         }
         html body .stApp .desktop-orbit-nav {
-            width: min(490px, 94vw);
+            width: min(462px, 94vw);
         }
         html body .stApp .desktop-orbit-shell {
-            width: min(452px, 92vw);
+            width: min(430px, 90vw);
         }
         html body .stApp .desktop-orbit-shell::after {
-            inset: 130px;
+            inset: 122px;
         }
         html body .stApp .desktop-orbit-center {
-            width: 98px;
-            height: 98px;
+            width: 92px;
+            height: 92px;
         }
         html body .stApp .desktop-orbit-item {
-            width: 68px;
-            height: 68px;
+            width: 62px;
+            height: 62px;
         }
         html body .stApp .desktop-orbit-item span {
             font-size: 0.54rem;
@@ -8123,17 +8123,17 @@ NAV_ITEMS = [
 ]
 
 DESKTOP_ORBIT_ITEMS = [
-    {"key": "life", "x": "50%", "y": "8%", "accent": "#14b8a6", "accent_rgb": "20, 184, 166"},
-    {"key": "finance", "x": "73%", "y": "15%", "accent": "#0ea5e9", "accent_rgb": "14, 165, 233"},
-    {"key": "portfolio", "x": "88%", "y": "34%", "accent": "#84cc16", "accent_rgb": "132, 204, 22"},
-    {"key": "search", "x": "90%", "y": "58%", "accent": "#3b82f6", "accent_rgb": "59, 130, 246"},
-    {"key": "compare", "x": "78%", "y": "79%", "accent": "#8b5cf6", "accent_rgb": "139, 92, 246"},
-    {"key": "reit", "x": "58%", "y": "91%", "accent": "#f59e0b", "accent_rgb": "245, 158, 11"},
-    {"key": "details", "x": "35%", "y": "88%", "accent": "#06b6d4", "accent_rgb": "6, 182, 212"},
-    {"key": "scenario", "x": "14%", "y": "71%", "accent": "#f97316", "accent_rgb": "249, 115, 22"},
-    {"key": "ai", "x": "10%", "y": "47%", "accent": "#6366f1", "accent_rgb": "99, 102, 241"},
-    {"key": "guide", "x": "17%", "y": "25%", "accent": "#eab308", "accent_rgb": "234, 179, 8"},
-    {"key": "settings", "x": "37%", "y": "11%", "accent": "#64748b", "accent_rgb": "100, 116, 139"},
+    {"key": "life", "x": "50%", "y": "11%", "accent": "#14b8a6", "accent_rgb": "20, 184, 166"},
+    {"key": "finance", "x": "71%", "y": "17%", "accent": "#0ea5e9", "accent_rgb": "14, 165, 233"},
+    {"key": "portfolio", "x": "85%", "y": "34%", "accent": "#84cc16", "accent_rgb": "132, 204, 22"},
+    {"key": "search", "x": "89%", "y": "55%", "accent": "#3b82f6", "accent_rgb": "59, 130, 246"},
+    {"key": "compare", "x": "80%", "y": "75%", "accent": "#8b5cf6", "accent_rgb": "139, 92, 246"},
+    {"key": "reit", "x": "61%", "y": "87%", "accent": "#f59e0b", "accent_rgb": "245, 158, 11"},
+    {"key": "details", "x": "39%", "y": "87%", "accent": "#06b6d4", "accent_rgb": "6, 182, 212"},
+    {"key": "scenario", "x": "20%", "y": "75%", "accent": "#f97316", "accent_rgb": "249, 115, 22"},
+    {"key": "ai", "x": "11%", "y": "55%", "accent": "#6366f1", "accent_rgb": "99, 102, 241"},
+    {"key": "guide", "x": "15%", "y": "34%", "accent": "#eab308", "accent_rgb": "234, 179, 8"},
+    {"key": "settings", "x": "29%", "y": "17%", "accent": "#64748b", "accent_rgb": "100, 116, 139"},
 ]
 
 
