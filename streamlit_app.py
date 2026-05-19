@@ -4410,7 +4410,7 @@ def render_stock_card(stock: dict[str, Any]) -> None:
     status = stock["valuation_status"]
     compare_active = symbol in st.session_state.compare
     portfolio_active = symbol in st.session_state.portfolio
-    detail_href = f"?detail={quote(symbol)}"
+    detail_href = app_detail_href(symbol)
     safe_symbol = escape(str(symbol))
     safe_industry = escape(str(stock.get("industry", "N/A")))
     safe_status = escape(str(status))
@@ -5797,8 +5797,16 @@ def ai_coach_readiness(context: dict[str, Any]) -> dict[str, Any]:
     return {"score": score, "label": label, "reasons": reasons}
 
 
+def app_view_href(view: str) -> str:
+    return f"?view={quote(view)}&mode=dashboard"
+
+
+def app_detail_href(symbol: str) -> str:
+    return f"?view=details&detail={quote(symbol)}&mode=dashboard"
+
+
 def app_view_link(view: str, label: str) -> str:
-    return f"[{label}](?view={quote(view)})"
+    return f"[{label}]({app_view_href(view)})"
 
 
 def build_ai_coach_linked_guidance(
@@ -8149,17 +8157,31 @@ DESKTOP_ORBIT_ITEMS = [
 ]
 
 
+def query_param_value(name: str) -> str | None:
+    try:
+        value = st.query_params.get(name)
+    except Exception:
+        params = st.experimental_get_query_params()
+        value = params.get(name)
+
+    if isinstance(value, list):
+        return value[0] if value else None
+    return value
+
+
+def dashboard_mode_requested() -> bool:
+    valid_keys = {item["key"] for item in NAV_ITEMS}
+    mode = query_param_value("mode")
+    view = query_param_value("view")
+    if mode in {"dashboard", "app"}:
+        return True
+    return view in valid_keys and view != "life"
+
+
 def active_nav_key() -> str:
     valid_keys = {item["key"] for item in NAV_ITEMS}
 
-    try:
-        view = st.query_params.get("view")
-    except Exception:
-        params = st.experimental_get_query_params()
-        view = params.get("view")
-
-    if isinstance(view, list):
-        view = view[0] if view else "life"
+    view = query_param_value("view")
 
     if view in valid_keys:
         st.session_state.active_view = view
@@ -8198,23 +8220,25 @@ def render_circle_navigation(active_key: str) -> None:
     for orbit_item in DESKTOP_ORBIT_ITEMS:
         nav_item = nav_item_map[orbit_item["key"]]
         active_class = " active" if nav_item["key"] == active_key else ""
+        href = escape(app_view_href(nav_item["key"]), quote=True)
         style = (
             f"--x: {orbit_item['x']}; --y: {orbit_item['y']}; "
             f"--accent: {orbit_item['accent']}; --accent-rgb: {orbit_item['accent_rgb']};"
         )
         orbit_links.append(
-            f'<a class="desktop-orbit-item{active_class}" href="?view={quote(nav_item["key"])}" '
+            f'<a class="desktop-orbit-item{active_class}" href="{href}" target="_self" '
             f'aria-label="{escape(nav_item["label"])}" style="{style}">'
             f'<b>{escape(nav_item["icon"])}</b><span>{escape(nav_item["label"])}</span></a>'
         )
 
     center_active = " active" if active_key == "diary" else ""
+    diary_href = escape(app_view_href("diary"), quote=True)
     st.markdown(
         (
             '<div class="desktop-orbit-nav" aria-label="LY-STScope compact orbit navigation">'
             '<div class="desktop-orbit-shell">'
             f'{"".join(orbit_links)}'
-            f'<a class="desktop-orbit-center{center_active}" href="?view=diary" aria-label="Personal Diary" '
+            f'<a class="desktop-orbit-center{center_active}" href="{diary_href}" target="_self" aria-label="Personal Diary" '
             'style="--accent: #ec4899; --accent-rgb: 236, 72, 153;">'
             '<b>Diary</b><span>Personal Memory</span></a>'
             '</div></div>'
@@ -8237,24 +8261,28 @@ def render_mobile_navigation(active_key: str) -> None:
     orbit_links = []
     for item in orbit_items:
         active_class = " active" if item["key"] == active_key else ""
+        href = escape(app_view_href(item["key"]), quote=True)
         orbit_links.append(
-            f'<a class="mobile-orbit-item {item["slot"]}{active_class}" href="?view={quote(item["key"])}" aria-label="{escape(item["label"])}">'
+            f'<a class="mobile-orbit-item {item["slot"]}{active_class}" href="{href}" target="_self" aria-label="{escape(item["label"])}">'
             f'<b>{escape(item["icon"])}</b><span>{escape(item["label"])}</span></a>'
         )
     center_active = " active" if active_key == "diary" else ""
     settings_active = " active" if active_key == "settings" else ""
     guide_active = " active" if active_key == "guide" else ""
+    diary_href = escape(app_view_href("diary"), quote=True)
+    settings_href = escape(app_view_href("settings"), quote=True)
+    guide_href = escape(app_view_href("guide"), quote=True)
     st.markdown(
         (
             '<div class="mobile-orbit-nav mobile-only-deck" aria-label="Mobile LY-STScope orbit navigation">'
             '<div class="mobile-orbit-stamp">Mobile App Mode · Orbit V2</div>'
             '<div class="mobile-orbit-shell">'
             f'{"".join(orbit_links)}'
-            f'<a class="mobile-orbit-center{center_active}" href="?view=diary" aria-label="Personal Diary">'
+            f'<a class="mobile-orbit-center{center_active}" href="{diary_href}" target="_self" aria-label="Personal Diary">'
             '<b>Diary</b><span>Personal Memory</span></a>'
             '<div class="mobile-orbit-mini-row">'
-            f'<a class="mobile-orbit-mini{settings_active}" href="?view=settings">Settings</a>'
-            f'<a class="mobile-orbit-mini{guide_active}" href="?view=guide">Guide</a>'
+            f'<a class="mobile-orbit-mini{settings_active}" href="{settings_href}" target="_self">Settings</a>'
+            f'<a class="mobile-orbit-mini{guide_active}" href="{guide_href}" target="_self">Guide</a>'
             '</div></div></div>'
         ),
         unsafe_allow_html=True,
@@ -8417,6 +8445,9 @@ def render_main_app() -> None:
 
 
 init_state()
+if dashboard_mode_requested():
+    st.session_state.life_entry_complete = True
+    st.session_state.life_entry_version_seen = LIFE_ENTRY_VERSION
 show_life_entry = (
     not st.session_state.life_entry_complete
     or st.session_state.life_entry_version_seen != LIFE_ENTRY_VERSION
