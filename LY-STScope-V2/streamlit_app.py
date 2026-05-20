@@ -3592,16 +3592,143 @@ st.markdown(
             grid-template-columns: 1fr 1fr;
             gap: 8px;
         }
+        html body .stApp .mobile-view-summary {
+            margin: 4px auto 8px;
+        }
+        html body .stApp .mobile-view-summary .mobile-focus-card {
+            display: none;
+        }
         html body .stApp .mobile-card {
-            min-height: 86px;
-            padding: 12px;
+            min-height: 66px;
+            padding: 10px;
+        }
+        html body .stApp .mobile-card .eyebrow {
+            margin-bottom: 4px;
+            font-size: 0.6rem;
         }
         html body .stApp .mobile-card .value {
-            font-size: 1.02rem;
+            font-size: 0.92rem;
         }
         html body .stApp .mobile-card .label,
         html body .stApp .mobile-card .hint {
-            font-size: 0.75rem;
+            margin-top: 4px;
+            font-size: 0.68rem;
+            line-height: 1.18;
+        }
+        html body .stApp .mobile-orbit-stamp {
+            display: none;
+        }
+        html body .stApp .mobile-orbit-shell {
+            width: min(282px, 92vw);
+            height: min(282px, 92vw);
+            margin: 4px auto 10px;
+            border-radius: 24px;
+        }
+        html body .stApp .mobile-orbit-shell::before {
+            inset: 20px;
+        }
+        html body .stApp .mobile-orbit-shell::after {
+            inset: 54px;
+        }
+        html body .stApp .mobile-orbit-center {
+            width: 84px;
+            height: 84px;
+        }
+        html body .stApp .mobile-orbit-item {
+            width: 54px;
+            height: 54px;
+            gap: 3px;
+        }
+        html body .stApp .mobile-orbit-item b {
+            font-size: 0.72rem;
+        }
+        html body .stApp .mobile-orbit-item span {
+            max-width: 46px;
+            font-size: 0.45rem;
+        }
+        html body .stApp .mobile-orbit-top { left: calc(50% - 27px); top: 12px; }
+        html body .stApp .mobile-orbit-top-right { right: 34px; top: 34px; }
+        html body .stApp .mobile-orbit-right { right: 12px; top: calc(50% - 27px); }
+        html body .stApp .mobile-orbit-bottom-right { right: 34px; bottom: 34px; }
+        html body .stApp .mobile-orbit-bottom { left: calc(50% - 27px); bottom: 12px; }
+        html body .stApp .mobile-orbit-bottom-left { left: 34px; bottom: 34px; }
+        html body .stApp .mobile-orbit-left { left: 12px; top: calc(50% - 27px); }
+        html body .stApp .mobile-orbit-top-left { left: 34px; top: 34px; }
+        html body .stApp .mobile-orbit-mini-row {
+            bottom: 58px;
+        }
+        html body .stApp .hero-panel {
+            padding: 15px 16px;
+            margin: 8px 0 12px;
+            border-radius: 16px;
+        }
+        html body .stApp .hero-panel h1 {
+            font-size: 1.42rem !important;
+            line-height: 1.18;
+        }
+        html body .stApp .hero-muted {
+            font-size: 0.86rem;
+            line-height: 1.35;
+        }
+        html body .stApp .detail-hero-title {
+            font-size: 1.45rem;
+            line-height: 1.14;
+        }
+        html body .stApp .detail-hero-meta {
+            font-size: 0.84rem;
+            line-height: 1.25;
+        }
+        html body .stApp div[data-testid="stForm"] {
+            max-width: 100% !important;
+            padding: 12px !important;
+            border-radius: 14px !important;
+        }
+        html body .stApp div[data-testid="stTextInput"] {
+            max-width: 100% !important;
+        }
+        html body .stApp .metric-card {
+            min-height: 78px;
+            padding: 12px;
+        }
+        html body .stApp .metric-card .label {
+            font-size: 0.76rem;
+            margin-bottom: 5px;
+        }
+        html body .stApp .metric-card .value {
+            font-size: 1.1rem;
+            line-height: 1.15;
+        }
+        html body .stApp .stock-card-panel {
+            min-height: auto;
+            padding: 13px;
+            border-radius: 14px;
+        }
+        html body .stApp .stock-card-head {
+            grid-template-columns: 42px minmax(0, 1fr);
+            gap: 10px;
+            padding-bottom: 10px;
+        }
+        html body .stApp .company-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            font-size: 0.84rem;
+        }
+        html body .stApp .company-title {
+            min-height: 0;
+            font-size: 1rem;
+            line-height: 1.16;
+        }
+        html body .stApp .company-meta {
+            font-size: 0.74rem;
+            line-height: 1.25;
+        }
+        html body .stApp .stock-card-price {
+            margin: 12px 0 10px;
+            padding-bottom: 10px;
+        }
+        html body .stApp .stock-card-price .price {
+            font-size: 1.35rem;
         }
         html body .stApp .mobile-holding-card .meta,
         html body .stApp .mobile-diary-card .meta {
@@ -4738,6 +4865,38 @@ def render_valuation_radar(stock: dict[str, Any]) -> None:
     )
 
 
+def render_stock_search_form(form_key: str, compact: bool = False) -> tuple[bool, str]:
+    label = "Search another company" if compact else "Enter a stock ticker"
+    submit_label = "Search" if compact else "Analyze Ticker"
+    with st.form(form_key):
+        query = st.text_input(
+            label,
+            value=st.session_state.last_query,
+            placeholder="Ticker or company name: NVDA, AAPL, 삼성전자, NAVER, SK하이닉스",
+        )
+        submitted = st.form_submit_button(submit_label, width="stretch")
+    return submitted, query
+
+
+def process_stock_search(query: str) -> bool:
+    if not query.strip():
+        return False
+    with st.spinner("Loading stock data..."):
+        try:
+            if not FINNHUB_API_KEY and not resolve_korean_ticker(query):
+                raise ValueError(
+                    "US stock search requires FINNHUB_API_KEY. Try a Korean stock such as 삼성전자 or 005930.KS, or add the API key in Secrets."
+                )
+            stock = load_stock(query)
+            st.session_state.stocks[stock["symbol"]] = stock
+            st.session_state.last_query = query.strip()
+            st.session_state.selected_detail = stock["symbol"]
+            return True
+        except Exception as exc:
+            st.error(f"Could not load stock data: {exc}")
+            return False
+
+
 def render_stock_detail(stock: dict[str, Any]) -> None:
     tri = stock["triangulation"]
     st.divider()
@@ -4750,6 +4909,9 @@ def render_stock_detail(stock: dict[str, Any]) -> None:
         """,
         unsafe_allow_html=True,
     )
+    submitted, query = render_stock_search_form(f"stock_search_inline_{stock['symbol']}", compact=True)
+    if submitted and process_stock_search(query):
+        st.rerun()
 
     c1, c2, c3, c4 = st.columns(4)
     with c1:
@@ -4826,24 +4988,12 @@ def search_tab() -> None:
         )
         st.info("Add FINNHUB_API_KEY in Streamlit Cloud > App settings > Secrets to enable live stock analysis.")
 
-    with st.form("stock_search"):
-        query = st.text_input(
-            "Enter a stock ticker",
-            value=st.session_state.last_query,
-            placeholder="Enter a ticker or company name, e.g. NVDA, AAPL, 삼성전자, NAVER, SK하이닉스",
-        )
-        submitted = st.form_submit_button("Analyze Ticker")
-    if submitted and query.strip():
-        with st.spinner("Loading stock data..."):
-            try:
-                if not FINNHUB_API_KEY and not resolve_korean_ticker(query):
-                    raise ValueError("US stock search requires FINNHUB_API_KEY. Try a Korean stock such as 삼성전자 or 005930.KS, or add the API key in Secrets.")
-                stock = load_stock(query)
-                st.session_state.stocks[stock["symbol"]] = stock
-                st.session_state.last_query = query.strip()
-                st.session_state.selected_detail = stock["symbol"]
-            except Exception as exc:
-                st.error(f"Could not load stock data: {exc}")
+    selected_symbol = st.session_state.selected_detail
+    show_top_search = not selected_symbol or selected_symbol not in st.session_state.stocks
+    if show_top_search:
+        submitted, query = render_stock_search_form("stock_search")
+        if submitted and process_stock_search(query):
+            st.rerun()
 
     filters = ["All", "Undervalued", "Fair Value", "Overvalued"]
     selected_filter = st.radio("Valuation filter", filters, horizontal=True)
@@ -4856,7 +5006,6 @@ def search_tab() -> None:
         st.info("Enter a ticker above to generate the company analysis dashboard.")
         return
 
-    selected_symbol = st.session_state.selected_detail
     if selected_symbol and selected_symbol in st.session_state.stocks:
         render_stock_detail(st.session_state.stocks[selected_symbol])
 
