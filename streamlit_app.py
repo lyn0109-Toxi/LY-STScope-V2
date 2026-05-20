@@ -178,11 +178,13 @@ st.markdown(
         text-align: center;
     }
     .brand-badge {
-        color: #ccfbf1;
-        background: rgba(15, 118, 110, 0.28);
-        border: 1px solid rgba(45, 212, 191, 0.38);
+        color: #fff7ed;
+        background:
+            radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.24), transparent 30%),
+            linear-gradient(135deg, rgba(124, 45, 18, 0.62), rgba(88, 28, 135, 0.52));
+        border: 1px solid rgba(251, 146, 60, 0.46);
         border-radius: 999px;
-        padding: 7px 14px 7px 8px;
+        padding: 7px 15px 7px 8px;
         font-size: 0.88rem;
         font-weight: 850;
         white-space: nowrap;
@@ -194,31 +196,65 @@ st.markdown(
         text-decoration: none !important;
         transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
     }
+    .brand-search-badge,
+    .brand-search-badge:visited {
+        color: #fff7ed !important;
+    }
     .brand-badge:hover {
-        color: #ffffff;
+        color: #ffffff !important;
         transform: translateY(-1px);
-        border-color: rgba(125, 211, 252, 0.64);
-        box-shadow: 0 14px 30px rgba(34, 211, 238, 0.18);
+        border-color: rgba(253, 186, 116, 0.72);
+        box-shadow: 0 16px 34px rgba(244, 114, 182, 0.20);
         text-decoration: none !important;
     }
     .brand-search-icon {
-        width: 38px;
-        height: 38px;
+        width: 42px;
+        height: 42px;
         border-radius: 50%;
         display: inline-grid;
         place-items: center;
         color: #f8fafc;
-        font-size: 0.82rem;
+        font-size: 0.8rem;
         font-weight: 950;
         line-height: 1;
         letter-spacing: 0;
+        overflow: hidden;
+        position: relative;
         background:
-            radial-gradient(circle at 32% 24%, rgba(255,255,255,0.72), transparent 22%),
-            linear-gradient(135deg, #38bdf8, #14b8a6);
-        box-shadow: 0 10px 24px rgba(34, 211, 238, 0.22);
+            radial-gradient(circle at 30% 22%, rgba(255,255,255,0.80), transparent 20%),
+            conic-gradient(from 205deg, #f97316, #facc15, #e11d48, #7c3aed, #f97316);
+        box-shadow: 0 12px 26px rgba(225, 29, 72, 0.22), inset 0 0 18px rgba(255,255,255,0.24);
+    }
+    .brand-search-icon::after {
+        content: "";
+        position: absolute;
+        inset: 4px;
+        border-radius: inherit;
+        border: 1px solid rgba(255,255,255,0.44);
+        pointer-events: none;
+    }
+    .brand-search-sigil {
+        position: absolute;
+        inset: 4px;
+        width: calc(100% - 8px);
+        height: calc(100% - 8px);
+        opacity: 0.62;
+        fill: none;
+        stroke: rgba(255, 255, 255, 0.86);
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2.2;
+        transform: rotate(-10deg);
+        z-index: 1;
+    }
+    .brand-search-initials {
+        position: relative;
+        z-index: 2;
+        color: #ffffff;
+        text-shadow: 0 2px 8px rgba(30, 41, 59, 0.34);
     }
     .brand-search-label {
-        color: inherit;
+        color: inherit !important;
         font-weight: 900;
         letter-spacing: 0;
     }
@@ -2126,21 +2162,27 @@ st.markdown(
         color: #48627e;
     }
     .brand-badge {
-        color: #075985;
-        background: rgba(255, 255, 255, 0.72);
-        border-color: rgba(14, 165, 233, 0.28);
-        box-shadow: 0 12px 28px rgba(14, 116, 144, 0.10);
+        color: #7c2d12;
+        background:
+            radial-gradient(circle at 16% 18%, rgba(255, 255, 255, 0.86), transparent 31%),
+            linear-gradient(135deg, rgba(255, 247, 237, 0.92), rgba(253, 224, 171, 0.72) 46%, rgba(245, 208, 254, 0.68));
+        border-color: rgba(249, 115, 22, 0.30);
+        box-shadow: 0 14px 30px rgba(190, 24, 93, 0.12);
+    }
+    .brand-search-badge,
+    .brand-search-badge:visited {
+        color: #7c2d12 !important;
     }
     .brand-badge:hover {
-        color: #064e7a;
-        border-color: rgba(14, 165, 233, 0.48);
-        box-shadow: 0 16px 34px rgba(14, 116, 144, 0.16);
+        color: #701a75 !important;
+        border-color: rgba(225, 29, 72, 0.42);
+        box-shadow: 0 18px 38px rgba(190, 24, 93, 0.17);
     }
     .brand-search-icon {
         color: #ffffff;
         background:
-            radial-gradient(circle at 32% 24%, rgba(255,255,255,0.76), transparent 23%),
-            linear-gradient(135deg, #38bdf8, #10b981);
+            radial-gradient(circle at 30% 22%, rgba(255,255,255,0.82), transparent 20%),
+            conic-gradient(from 205deg, #f97316, #facc15, #e11d48, #7c3aed, #f97316);
     }
     .st-key-circle_nav {
         position: relative;
@@ -3203,9 +3245,9 @@ st.markdown(
             font-size: 0.82rem;
         }
         html body .stApp .brand-search-icon {
-            width: 34px;
-            height: 34px;
-            font-size: 0.76rem;
+            width: 36px;
+            height: 36px;
+            font-size: 0.72rem;
         }
         html body .stApp .nav-flow-strip {
             display: none !important;
@@ -8604,7 +8646,14 @@ def render_main_app() -> None:
                 </div>
             </div>
             <a class="brand-badge brand-search-badge" href="{search_href}" target="_self" aria-label="Open Search">
-                <span class="brand-search-icon" aria-hidden="true">SR</span>
+                <span class="brand-search-icon" aria-hidden="true">
+                    <svg class="brand-search-sigil" viewBox="0 0 44 44" focusable="false">
+                        <path d="M10 27 C15 12 29 10 34 21 C38 30 25 36 15 31"></path>
+                        <circle cx="33" cy="16" r="3.5"></circle>
+                        <path d="M28 28 L36 36"></path>
+                    </svg>
+                    <span class="brand-search-initials">SR</span>
+                </span>
                 <span class="brand-search-label">Search</span>
             </a>
         </div>
