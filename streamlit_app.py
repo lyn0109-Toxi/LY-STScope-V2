@@ -5064,19 +5064,13 @@ def render_stock_detail(stock: dict[str, Any]) -> None:
 
 
 def search_tab() -> None:
-    st.markdown(
-        """
-        <div class="hero-panel">
-            <h1 style="margin:0 0 8px;">A New Standard for Stock Analysis</h1>
-            <div class="hero-muted">Educational finance analytics prototype for valuation, CAPM, portfolio risk, diversification, and correlation analysis.</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-    st.caption(
-        "LY-STScope is designed for learning and analytical discussion using real market examples. "
-        "It is not an investment recommendation or financial advisory service."
-    )
+    selected_symbol = st.session_state.selected_detail
+    show_top_search = not selected_symbol or selected_symbol not in st.session_state.stocks
+    if show_top_search:
+        submitted, query = render_stock_search_form("stock_search")
+        if submitted and process_stock_search(query):
+            st.rerun()
+
     if not FINNHUB_API_KEY:
         st.warning(
             "FINNHUB_API_KEY is not configured, so US live stock search is temporarily unavailable. "
@@ -5084,12 +5078,8 @@ def search_tab() -> None:
         )
         st.info("Add FINNHUB_API_KEY in Streamlit Cloud > App settings > Secrets to enable live stock analysis.")
 
-    selected_symbol = st.session_state.selected_detail
-    show_top_search = not selected_symbol or selected_symbol not in st.session_state.stocks
-    if show_top_search:
-        submitted, query = render_stock_search_form("stock_search")
-        if submitted and process_stock_search(query):
-            st.rerun()
+    if selected_symbol and selected_symbol in st.session_state.stocks:
+        render_stock_detail(st.session_state.stocks[selected_symbol])
 
     filters = ["All", "Undervalued", "Fair Value", "Overvalued"]
     selected_filter = st.radio("Valuation filter", filters, horizontal=True)
@@ -5101,9 +5091,6 @@ def search_tab() -> None:
     if not stocks:
         st.info("Enter a ticker above to generate the company analysis dashboard.")
         return
-
-    if selected_symbol and selected_symbol in st.session_state.stocks:
-        render_stock_detail(st.session_state.stocks[selected_symbol])
 
     for row_start in range(0, len(stocks), 3):
         cols = st.columns(3)
@@ -8664,9 +8651,10 @@ def render_main_app() -> None:
     sync_selected_detail_from_query()
 
     active_view = active_nav_key()
-    render_mobile_navigation(active_view)
-    render_circle_navigation(active_view)
-    render_mobile_view_summary(active_view)
+    if active_view != "search":
+        render_mobile_navigation(active_view)
+        render_circle_navigation(active_view)
+        render_mobile_view_summary(active_view)
 
     if active_view == "life":
         render_life_compact_panel()
