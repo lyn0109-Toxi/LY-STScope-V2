@@ -182,12 +182,45 @@ st.markdown(
         background: rgba(15, 118, 110, 0.28);
         border: 1px solid rgba(45, 212, 191, 0.38);
         border-radius: 999px;
-        padding: 8px 13px;
+        padding: 7px 14px 7px 8px;
         font-size: 0.88rem;
         font-weight: 850;
         white-space: nowrap;
         position: relative;
         z-index: 1;
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        text-decoration: none !important;
+        transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+    }
+    .brand-badge:hover {
+        color: #ffffff;
+        transform: translateY(-1px);
+        border-color: rgba(125, 211, 252, 0.64);
+        box-shadow: 0 14px 30px rgba(34, 211, 238, 0.18);
+        text-decoration: none !important;
+    }
+    .brand-search-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        display: inline-grid;
+        place-items: center;
+        color: #f8fafc;
+        font-size: 0.82rem;
+        font-weight: 950;
+        line-height: 1;
+        letter-spacing: 0;
+        background:
+            radial-gradient(circle at 32% 24%, rgba(255,255,255,0.72), transparent 22%),
+            linear-gradient(135deg, #38bdf8, #14b8a6);
+        box-shadow: 0 10px 24px rgba(34, 211, 238, 0.22);
+    }
+    .brand-search-label {
+        color: inherit;
+        font-weight: 900;
+        letter-spacing: 0;
     }
     .terminal-showcase {
         position: relative;
@@ -2098,6 +2131,17 @@ st.markdown(
         border-color: rgba(14, 165, 233, 0.28);
         box-shadow: 0 12px 28px rgba(14, 116, 144, 0.10);
     }
+    .brand-badge:hover {
+        color: #064e7a;
+        border-color: rgba(14, 165, 233, 0.48);
+        box-shadow: 0 16px 34px rgba(14, 116, 144, 0.16);
+    }
+    .brand-search-icon {
+        color: #ffffff;
+        background:
+            radial-gradient(circle at 32% 24%, rgba(255,255,255,0.76), transparent 23%),
+            linear-gradient(135deg, #38bdf8, #10b981);
+    }
     .st-key-circle_nav {
         position: relative;
         overflow: hidden;
@@ -3152,6 +3196,16 @@ st.markdown(
             letter-spacing: 0 !important;
             text-align: center;
             line-height: 1.35;
+        }
+        html body .stApp .brand-search-badge {
+            padding: 6px 10px 6px 7px;
+            gap: 7px;
+            font-size: 0.82rem;
+        }
+        html body .stApp .brand-search-icon {
+            width: 34px;
+            height: 34px;
+            font-size: 0.76rem;
         }
         html body .stApp .nav-flow-strip {
             display: none !important;
@@ -8538,8 +8592,9 @@ def render_life_compact_panel() -> None:
 def render_main_app() -> None:
     render_sidebar()
 
+    search_href = escape(app_view_href("search"), quote=True)
     st.markdown(
-        """
+        f"""
         <div class="brand-header">
             <div class="brand-mark">
                 <div class="brand-icon" aria-hidden="true"></div>
@@ -8548,7 +8603,10 @@ def render_main_app() -> None:
                     <div class="brand-subtitle">A I&nbsp;&nbsp; F I N A N C I A L&nbsp;&nbsp; R E A S O N I N G</div>
                 </div>
             </div>
-            <div class="brand-badge">Scenario Lab + AI Coach beta</div>
+            <a class="brand-badge brand-search-badge" href="{search_href}" target="_self" aria-label="Open Search">
+                <span class="brand-search-icon" aria-hidden="true">SR</span>
+                <span class="brand-search-label">Search</span>
+            </a>
         </div>
         """,
         unsafe_allow_html=True,
