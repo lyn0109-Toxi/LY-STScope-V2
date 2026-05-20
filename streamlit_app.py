@@ -258,6 +258,48 @@ st.markdown(
         font-weight: 900;
         letter-spacing: 0;
     }
+    .search-return-row {
+        max-width: 620px;
+        margin: -4px auto 10px;
+        display: flex;
+        justify-content: flex-start;
+    }
+    .search-return-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 38px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        color: #f8fafc !important;
+        background:
+            radial-gradient(circle at 20% 18%, rgba(255,255,255,0.16), transparent 30%),
+            linear-gradient(135deg, rgba(15, 23, 42, 0.90), rgba(30, 41, 59, 0.82));
+        border: 1px solid rgba(125, 211, 252, 0.34);
+        box-shadow: 0 12px 26px rgba(15, 23, 42, 0.18);
+        font-size: 0.86rem;
+        font-weight: 900;
+        text-decoration: none !important;
+        transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+    }
+    .search-return-link:hover {
+        color: #ffffff !important;
+        transform: translateY(-1px);
+        border-color: rgba(251, 146, 60, 0.52);
+        box-shadow: 0 14px 30px rgba(190, 24, 93, 0.15);
+        text-decoration: none !important;
+    }
+    .search-return-arrow {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        display: inline-grid;
+        place-items: center;
+        background: linear-gradient(135deg, #f97316, #7c3aed);
+        color: #ffffff;
+        font-size: 1rem;
+        line-height: 1;
+    }
     .terminal-showcase {
         position: relative;
         overflow: hidden;
@@ -2184,6 +2226,18 @@ st.markdown(
             radial-gradient(circle at 30% 22%, rgba(255,255,255,0.82), transparent 20%),
             conic-gradient(from 205deg, #f97316, #facc15, #e11d48, #7c3aed, #f97316);
     }
+    .search-return-link {
+        color: #334155 !important;
+        background:
+            radial-gradient(circle at 18% 18%, rgba(255,255,255,0.88), transparent 30%),
+            linear-gradient(135deg, rgba(255, 255, 255, 0.90), rgba(255, 247, 237, 0.78));
+        border-color: rgba(249, 115, 22, 0.24);
+        box-shadow: 0 12px 26px rgba(190, 24, 93, 0.10);
+    }
+    .search-return-link:hover {
+        color: #7c2d12 !important;
+        border-color: rgba(225, 29, 72, 0.36);
+    }
     .st-key-circle_nav {
         position: relative;
         overflow: hidden;
@@ -3779,6 +3833,19 @@ st.markdown(
             padding: 12px !important;
             border-radius: 14px !important;
         }
+        html body .stApp .search-return-row {
+            max-width: 100%;
+            margin: -2px 0 8px;
+        }
+        html body .stApp .search-return-link {
+            min-height: 36px;
+            padding: 7px 12px;
+            font-size: 0.82rem;
+        }
+        html body .stApp .search-return-arrow {
+            width: 24px;
+            height: 24px;
+        }
         html body .stApp div[data-testid="stTextInput"] {
             max-width: 100% !important;
         }
@@ -4993,6 +5060,21 @@ def process_stock_search(query: str) -> bool:
             return False
 
 
+def render_search_return_button() -> None:
+    menu_href = escape(app_view_href("life"), quote=True)
+    st.markdown(
+        f"""
+        <div class="search-return-row">
+            <a class="search-return-link" href="{menu_href}" target="_self" aria-label="Back to Menu">
+                <span class="search-return-arrow" aria-hidden="true">&larr;</span>
+                <span>Menu</span>
+            </a>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def render_stock_detail(stock: dict[str, Any]) -> None:
     tri = stock["triangulation"]
     st.divider()
@@ -5064,6 +5146,8 @@ def render_stock_detail(stock: dict[str, Any]) -> None:
 
 
 def search_tab() -> None:
+    render_search_return_button()
+
     selected_symbol = st.session_state.selected_detail
     show_top_search = not selected_symbol or selected_symbol not in st.session_state.stocks
     if show_top_search:
