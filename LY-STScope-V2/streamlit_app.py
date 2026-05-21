@@ -1895,30 +1895,50 @@ st.markdown(
     .homepage-entry-hotspot {
         position: absolute;
         z-index: 4;
-        top: 51.1%;
-        height: 5.4%;
+        top: 51.0%;
+        height: 5.8%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
         border-radius: 999px;
-        text-indent: -9999px;
+        padding: 0 14px;
+        text-indent: 0;
         overflow: hidden;
         outline: 0;
         cursor: pointer;
+        color: #ffffff !important;
+        -webkit-text-fill-color: currentColor !important;
+        text-decoration: none !important;
+        font-size: clamp(0.72rem, 1.05vw, 1.06rem);
+        font-weight: 950;
+        letter-spacing: 0;
+        line-height: 1;
+        white-space: nowrap;
+        backdrop-filter: blur(12px);
+        transform: translateZ(0);
+        transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
     }
     .homepage-entry-hotspot.primary {
         left: 4.75%;
         width: 13.85%;
+        background: linear-gradient(135deg, #2563eb, #0ea5e9 70%, #14b8a6);
+        border: 1px solid rgba(255, 255, 255, 0.38);
+        box-shadow: 0 16px 34px rgba(37, 99, 235, 0.30);
     }
     .homepage-entry-hotspot.secondary {
         left: 19.65%;
         width: 12.70%;
+        color: #1d4ed8 !important;
+        background: rgba(255, 255, 255, 0.82);
+        border: 1px solid rgba(37, 99, 235, 0.36);
+        box-shadow: 0 12px 26px rgba(15, 23, 42, 0.10);
+    }
+    .homepage-entry-hotspot:hover {
+        transform: translateY(-2px);
+        filter: saturate(1.04);
     }
     .homepage-entry-hotspot:focus-visible {
-        text-indent: 0;
-        display: grid;
-        place-items: center;
-        color: #ffffff !important;
-        font-weight: 950;
-        text-decoration: none !important;
-        background: rgba(37, 99, 235, 0.74);
         box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.30);
     }
     .homepage-mobile-cta {
@@ -8656,8 +8676,8 @@ def render_life_entry_screen(standalone: bool = True) -> None:
         <div class="life-entry-wrap">
             <div class="life-entry homepage-visual{homepage_class}">
                 {homepage_image}
-                <a class="homepage-entry-hotspot primary" href="?view=life&amp;mode=dashboard" target="_self" aria-label="Enter LY-STScope Life Dashboard">Enter LY-STScope Life Dashboard</a>
-                <a class="homepage-entry-hotspot secondary" href="?view=life&amp;mode=dashboard" target="_self" aria-label="Explore LY-STScope Dashboard">Explore LY-STScope Dashboard</a>
+                <a class="homepage-entry-hotspot primary" href="?view=life&amp;mode=dashboard" target="_self" aria-label="Enter LY-STScope Life Dashboard">Start Your Life Map</a>
+                <a class="homepage-entry-hotspot secondary" href="?view=life&amp;mode=dashboard" target="_self" aria-label="Explore LY-STScope Dashboard">Explore Dashboard</a>
                 <a class="homepage-mobile-cta" href="?view=life&amp;mode=dashboard" target="_self" aria-label="Enter LY-STScope Dashboard">Enter LY-STScope Dashboard</a>
                 <div class="home-nav">
                     <div class="home-brand">
