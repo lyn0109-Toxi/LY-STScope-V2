@@ -4953,16 +4953,19 @@ def sync_selection_state_from_query() -> None:
     compare = st.session_state.compare
     for symbol in compare_symbols:
         if symbol in st.session_state.stocks and symbol not in compare and len(compare) < 3:
+            st.session_state.pop(f"sidebar_compare_{symbol}", None)
             compare.append(symbol)
 
     portfolio = st.session_state.portfolio
     for symbol in portfolio_symbols:
         if symbol in st.session_state.stocks and symbol not in portfolio:
+            st.session_state.pop(f"sidebar_portfolio_{symbol}", None)
             portfolio[symbol] = {"shares": 1.0, "purchase_price": 0.0}
 
 
 def add_compare(symbol: str) -> None:
     compare = st.session_state.compare
+    st.session_state.pop(f"sidebar_compare_{symbol}", None)
     if symbol in compare:
         sync_selection_state_to_query()
         return
@@ -4976,11 +4979,13 @@ def add_compare(symbol: str) -> None:
 def remove_compare(symbol: str) -> None:
     if symbol in st.session_state.compare:
         st.session_state.compare.remove(symbol)
+    st.session_state.pop(f"sidebar_compare_{symbol}", None)
     sync_selection_state_to_query()
 
 
 def add_portfolio(symbol: str) -> None:
     portfolio = st.session_state.portfolio
+    st.session_state.pop(f"sidebar_portfolio_{symbol}", None)
     if symbol not in portfolio:
         portfolio[symbol] = {"shares": 1.0, "purchase_price": 0.0}
     sync_selection_state_to_query()
@@ -4989,6 +4994,7 @@ def add_portfolio(symbol: str) -> None:
 def remove_portfolio(symbol: str) -> None:
     if symbol in st.session_state.portfolio:
         del st.session_state.portfolio[symbol]
+    st.session_state.pop(f"sidebar_portfolio_{symbol}", None)
     sync_selection_state_to_query()
 
 
@@ -9098,6 +9104,9 @@ def render_life_compact_panel() -> None:
 
 
 def render_main_app() -> None:
+    sync_selection_state_from_query()
+    sync_selected_detail_from_query()
+
     render_sidebar()
 
     search_href = escape(app_view_href("search"), quote=True)
@@ -9126,9 +9135,6 @@ def render_main_app() -> None:
         """,
         unsafe_allow_html=True,
     )
-
-    sync_selection_state_from_query()
-    sync_selected_detail_from_query()
 
     active_view = active_nav_key()
     render_mobile_navigation(active_view)
