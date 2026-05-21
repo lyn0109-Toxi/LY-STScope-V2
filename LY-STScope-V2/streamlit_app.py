@@ -1944,6 +1944,44 @@ st.markdown(
     .homepage-mobile-cta {
         display: none;
     }
+    .homepage-direct-entry {
+        position: relative;
+        z-index: 5;
+        display: flex;
+        justify-content: center;
+        margin: 20px auto 0;
+        width: min(100%, 680px);
+    }
+    .homepage-direct-entry a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        min-height: 58px;
+        padding: 0 24px;
+        border-radius: 999px;
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        text-decoration: none !important;
+        font-size: clamp(1rem, 1.7vw, 1.32rem);
+        font-weight: 950;
+        letter-spacing: 0;
+        background: linear-gradient(135deg, #0ea5e9, #14b8a6 62%, #2563eb);
+        border: 1px solid rgba(255, 255, 255, 0.48);
+        box-shadow: 0 20px 44px rgba(14, 165, 233, 0.30);
+        transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
+    }
+    .homepage-direct-entry a::after {
+        content: "→";
+        font-size: 1.25em;
+        line-height: 1;
+    }
+    .homepage-direct-entry a:hover {
+        transform: translateY(-2px);
+        filter: saturate(1.04);
+        box-shadow: 0 24px 52px rgba(37, 99, 235, 0.32);
+    }
     .homepage-visual .life-kicker {
         display: inline-flex;
         align-items: center;
@@ -2164,6 +2202,15 @@ st.markdown(
             letter-spacing: 0;
             background: linear-gradient(135deg, #0ea5e9, #14b8a6);
             box-shadow: 0 14px 30px rgba(14, 165, 233, 0.22);
+        }
+        .homepage-direct-entry {
+            margin: 14px 14px 18px;
+            width: auto;
+        }
+        .homepage-direct-entry a {
+            min-height: 52px;
+            padding: 0 16px;
+            font-size: 1rem;
         }
         .home-nav-links,
         .home-nav-actions {
@@ -8772,6 +8819,9 @@ def render_life_entry_screen(standalone: bool = True) -> None:
                         <span>Prepare structured context for future reasoning assistants.</span>
                     </div>
                 </div>
+            </div>
+            <div class="homepage-direct-entry">
+                <a href="?view=life&amp;mode=dashboard" target="_self" aria-label="Enter LY-STScope Dashboard">Enter LY-STScope Dashboard</a>
             </div>
         </div>
         """,
