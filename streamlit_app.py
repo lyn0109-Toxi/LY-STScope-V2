@@ -6,7 +6,7 @@ from html import escape
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
-from urllib.parse import quote
+from urllib.parse import urlencode
 
 import altair as alt
 import pandas as pd
@@ -1892,6 +1892,38 @@ st.markdown(
     .homepage-visual.has-home-image .life-entry-grid {
         display: none;
     }
+    .homepage-entry-hotspot {
+        position: absolute;
+        z-index: 4;
+        top: 51.1%;
+        height: 5.4%;
+        border-radius: 999px;
+        text-indent: -9999px;
+        overflow: hidden;
+        outline: 0;
+        cursor: pointer;
+    }
+    .homepage-entry-hotspot.primary {
+        left: 4.75%;
+        width: 13.85%;
+    }
+    .homepage-entry-hotspot.secondary {
+        left: 19.65%;
+        width: 12.70%;
+    }
+    .homepage-entry-hotspot:focus-visible {
+        text-indent: 0;
+        display: grid;
+        place-items: center;
+        color: #ffffff !important;
+        font-weight: 950;
+        text-decoration: none !important;
+        background: rgba(37, 99, 235, 0.74);
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.30);
+    }
+    .homepage-mobile-cta {
+        display: none;
+    }
     .homepage-visual .life-kicker {
         display: inline-flex;
         align-items: center;
@@ -2067,9 +2099,51 @@ st.markdown(
     }
     @media (max-width: 680px) {
         .homepage-visual {
-            padding: 18px;
-            min-height: 620px;
+            padding: 0;
+            min-height: auto;
             aspect-ratio: auto;
+        }
+        .homepage-visual.has-home-image {
+            overflow: hidden;
+            border-radius: 26px;
+            background:
+                linear-gradient(135deg, rgba(240, 249, 255, 0.96), rgba(236, 253, 245, 0.90));
+            box-shadow: 0 20px 46px rgba(14, 165, 233, 0.16);
+        }
+        .homepage-visual.has-home-image .homepage-bg-img {
+            position: relative;
+            inset: auto;
+            display: block;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1672 / 941;
+            object-fit: contain;
+            object-position: center top;
+        }
+        .homepage-visual.has-home-image .home-nav {
+            display: none;
+        }
+        .homepage-entry-hotspot {
+            display: none;
+        }
+        .homepage-mobile-cta {
+            position: relative;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            margin: 12px 14px 16px;
+            padding: 0 16px;
+            border-radius: 999px;
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+            text-decoration: none !important;
+            font-size: 0.98rem;
+            font-weight: 950;
+            letter-spacing: 0;
+            background: linear-gradient(135deg, #0ea5e9, #14b8a6);
+            box-shadow: 0 14px 30px rgba(14, 165, 233, 0.22);
         }
         .home-nav-links,
         .home-nav-actions {
@@ -3279,29 +3353,29 @@ st.markdown(
     }
     @media (max-width: 560px) {
         html body .stApp .brand-header {
-            padding: 24px 16px 20px;
-            margin-bottom: 10px;
-            border-radius: 22px;
+            padding: 16px 12px 14px;
+            margin-bottom: 8px;
+            border-radius: 18px;
         }
         html body .stApp .brand-name {
-            font-size: 2.2rem !important;
-            line-height: 0.98 !important;
+            font-size: 1.78rem !important;
+            line-height: 1 !important;
         }
         html body .stApp .brand-subtitle {
-            font-size: 0.72rem !important;
+            font-size: 0.56rem !important;
             letter-spacing: 0 !important;
             text-align: center;
-            line-height: 1.35;
+            line-height: 1.28;
         }
         html body .stApp .brand-search-badge {
-            padding: 6px 10px 6px 7px;
-            gap: 7px;
-            font-size: 0.82rem;
+            padding: 5px 9px 5px 6px;
+            gap: 6px;
+            font-size: 0.76rem;
         }
         html body .stApp .brand-search-icon {
-            width: 36px;
-            height: 36px;
-            font-size: 0.72rem;
+            width: 31px;
+            height: 31px;
+            font-size: 0.66rem;
         }
         html body .stApp .nav-flow-strip {
             display: none !important;
@@ -3522,11 +3596,11 @@ st.markdown(
         position: relative;
         width: min(320px, 94vw);
         height: min(320px, 94vw);
-        margin: 10px auto 16px;
+        margin: 10px auto 8px;
         border-radius: 30px;
         border: 1px solid rgba(14, 165, 233, 0.20);
         background:
-            radial-gradient(circle at 50% 50%, rgba(255,255,255,0.96), rgba(240,249,255,0.82) 58%, rgba(236,253,245,0.74)),
+            radial-gradient(circle at 50% 50%, rgba(255,255,255,0.98), rgba(240,249,255,0.84) 58%, rgba(236,253,245,0.66)),
             linear-gradient(135deg, rgba(255,255,255,0.94), rgba(240,249,255,0.82));
         box-shadow: 0 18px 42px rgba(14, 165, 233, 0.12);
         overflow: hidden;
@@ -3534,20 +3608,27 @@ st.markdown(
     html body .stApp .mobile-orbit-shell::before {
         content: "";
         position: absolute;
-        inset: 24px;
+        inset: 45px;
         border-radius: 50%;
-        border: 1px solid rgba(14, 165, 233, 0.18);
-        background:
-            conic-gradient(from 0deg, rgba(14,165,233,0.0), rgba(14,165,233,0.24), rgba(20,184,166,0.10), rgba(14,165,233,0.0));
-        animation: mobileOrbitSpin 24s linear infinite;
-        opacity: 0.72;
+        border: 1px dashed rgba(15, 118, 110, 0.26);
+        background: transparent;
+        opacity: 0.70;
     }
     html body .stApp .mobile-orbit-shell::after {
         content: "";
         position: absolute;
-        inset: 62px;
+        left: calc(50% - 4px);
+        top: 41px;
+        width: 8px;
+        height: 8px;
         border-radius: 50%;
-        border: 1px dashed rgba(15, 118, 110, 0.20);
+        border: 0;
+        background: #22d3ee;
+        box-shadow:
+            0 0 0 5px rgba(34, 211, 238, 0.14),
+            0 0 18px rgba(14, 165, 233, 0.62);
+        transform-origin: 4px 119px;
+        animation: mobileOrbitSpin 8s linear infinite;
     }
     html body .stApp .mobile-orbit-center,
     html body .stApp .mobile-orbit-item,
@@ -3631,13 +3712,13 @@ st.markdown(
     html body .stApp .mobile-orbit-left { left: 16px; top: calc(50% - 29px); }
     html body .stApp .mobile-orbit-top-left { left: 42px; top: 42px; }
     html body .stApp .mobile-orbit-mini-row {
-        position: absolute;
+        position: relative;
         z-index: 3;
-        left: 50%;
-        bottom: 72px;
         display: flex;
         gap: 8px;
-        transform: translateX(-50%);
+        justify-content: center;
+        width: min(230px, 86%);
+        margin: -2px auto 10px;
     }
     html body .stApp .mobile-orbit-mini {
         position: relative;
@@ -3701,6 +3782,19 @@ st.markdown(
             0 12px 28px rgba(2, 6, 23, 0.20) !important;
     }
     @media (max-width: 680px) {
+        html body .stApp .brand-header {
+            padding: 16px 12px 14px !important;
+            margin-bottom: 8px !important;
+            border-radius: 18px !important;
+        }
+        html body .stApp .brand-name {
+            font-size: 1.78rem !important;
+            line-height: 1 !important;
+        }
+        html body .stApp .brand-subtitle {
+            font-size: 0.56rem !important;
+            line-height: 1.28 !important;
+        }
         html body .stApp .desktop-orbit-nav,
         html body .stApp .nav-flow-strip {
             display: none !important;
@@ -3769,16 +3863,18 @@ st.markdown(
             display: none;
         }
         html body .stApp .mobile-orbit-shell {
-            width: min(282px, 92vw);
-            height: min(282px, 92vw);
-            margin: 4px auto 10px;
+            width: min(292px, 90vw);
+            height: min(292px, 90vw);
+            margin: 4px auto 6px;
             border-radius: 24px;
         }
         html body .stApp .mobile-orbit-shell::before {
-            inset: 20px;
+            inset: 39px;
         }
         html body .stApp .mobile-orbit-shell::after {
-            inset: 54px;
+            left: calc(50% - 4px);
+            top: 35px;
+            transform-origin: 4px 111px;
         }
         html body .stApp .mobile-orbit-center {
             width: 84px;
@@ -3805,7 +3901,40 @@ st.markdown(
         html body .stApp .mobile-orbit-left { left: 12px; top: calc(50% - 27px); }
         html body .stApp .mobile-orbit-top-left { left: 34px; top: 34px; }
         html body .stApp .mobile-orbit-mini-row {
-            bottom: 58px;
+            margin: -1px auto 8px;
+        }
+        html body .stApp div[data-testid="stTabs"] div[role="tablist"] {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px !important;
+            padding: 4px 0 10px !important;
+            margin-bottom: 12px !important;
+            border-bottom: 0 !important;
+        }
+        html body .stApp div[data-testid="stTabs"] button[role="tab"] {
+            width: auto !important;
+            height: 42px !important;
+            min-width: 0 !important;
+            min-height: 42px !important;
+            padding: 7px 10px !important;
+            border-radius: 14px !important;
+            transform: none !important;
+            color: #0f172a !important;
+            background:
+                radial-gradient(circle at 18% 16%, rgba(255,255,255,0.96), transparent 30%),
+                linear-gradient(135deg, rgba(255,255,255,0.96), rgba(240,249,255,0.86)) !important;
+            box-shadow: 0 10px 22px rgba(14, 165, 233, 0.10) !important;
+        }
+        html body .stApp div[data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
+            color: #ffffff !important;
+            background: linear-gradient(135deg, #0ea5e9, #14b8a6) !important;
+            box-shadow: 0 12px 28px rgba(14, 165, 233, 0.22) !important;
+        }
+        html body .stApp div[data-testid="stTabs"] button[role="tab"] p {
+            max-width: none !important;
+            font-size: 0.78rem !important;
+            line-height: 1.05 !important;
+            white-space: normal !important;
         }
         html body .stApp .hero-panel {
             padding: 15px 16px;
@@ -4169,6 +4298,7 @@ def init_state() -> None:
     )
     st.session_state.setdefault("last_query", "")
     st.session_state.setdefault("selected_detail", None)
+    st.session_state.setdefault("_selection_restore_errors", {})
     st.session_state.setdefault("comments", [])
     st.session_state.setdefault("financial_diary", [])
     st.session_state.setdefault("ai_coach_messages", [])
@@ -4660,26 +4790,161 @@ def guide_image(filename: str, caption: str) -> None:
         st.caption(f"Guide graphic unavailable: {filename}")
 
 
+def parse_symbol_query_value(value: Any) -> list[str]:
+    raw_values = value if isinstance(value, list) else [value]
+    symbols: list[str] = []
+    for raw_value in raw_values:
+        if not raw_value:
+            continue
+        for item in str(raw_value).replace("|", ",").split(","):
+            symbol = item.strip().upper()
+            if symbol and symbol not in symbols:
+                symbols.append(symbol)
+    return symbols
+
+
+def selected_symbols_for_url() -> list[str]:
+    symbols: list[str] = []
+    for symbol in st.session_state.get("compare", []):
+        if symbol not in symbols:
+            symbols.append(symbol)
+    for symbol in st.session_state.get("portfolio", {}).keys():
+        if symbol not in symbols:
+            symbols.append(symbol)
+    selected_detail = st.session_state.get("selected_detail")
+    if selected_detail and selected_detail not in symbols:
+        symbols.append(selected_detail)
+    return symbols
+
+
+def selection_state_params() -> dict[str, str]:
+    params: dict[str, str] = {}
+    symbols = selected_symbols_for_url()
+    compare_symbols = [
+        symbol for symbol in st.session_state.get("compare", []) if symbol
+    ]
+    portfolio_symbols = [
+        symbol for symbol in st.session_state.get("portfolio", {}).keys() if symbol
+    ]
+    if symbols:
+        params["symbols"] = ",".join(symbols)
+    if compare_symbols:
+        params["compare"] = ",".join(compare_symbols)
+    if portfolio_symbols:
+        params["portfolio"] = ",".join(portfolio_symbols)
+    return params
+
+
+def sync_selection_state_to_query() -> None:
+    try:
+        query_params = st.query_params
+        for key in ("symbols", "compare", "portfolio"):
+            if key in query_params:
+                del query_params[key]
+        for key, value in selection_state_params().items():
+            query_params[key] = value
+    except Exception:
+        return
+
+
+def restore_stock_for_symbol(symbol: str) -> bool:
+    symbol = symbol.strip().upper()
+    if not symbol:
+        return False
+    if symbol in st.session_state.stocks:
+        return True
+
+    restore_errors = st.session_state.setdefault("_selection_restore_errors", {})
+    if symbol in restore_errors:
+        return False
+
+    try:
+        stock = load_stock(symbol)
+        st.session_state.stocks[stock["symbol"]] = stock
+        if stock["symbol"] != symbol:
+            st.session_state.stocks[symbol] = stock
+        return True
+    except Exception as exc:
+        restore_errors[symbol] = str(exc)
+        return False
+
+
+def sync_selection_state_from_query() -> None:
+    try:
+        params = st.query_params
+    except Exception:
+        params = st.experimental_get_query_params()
+
+    symbols = parse_symbol_query_value(params.get("symbols"))
+    compare_symbols = parse_symbol_query_value(params.get("compare"))
+    portfolio_symbols = parse_symbol_query_value(params.get("portfolio"))
+    detail_symbols = parse_symbol_query_value(params.get("detail"))
+
+    for symbol in symbols + compare_symbols + portfolio_symbols + detail_symbols:
+        restore_stock_for_symbol(symbol)
+
+    compare = st.session_state.compare
+    for symbol in compare_symbols:
+        if symbol in st.session_state.stocks and symbol not in compare and len(compare) < 3:
+            compare.append(symbol)
+
+    portfolio = st.session_state.portfolio
+    for symbol in portfolio_symbols:
+        if symbol in st.session_state.stocks and symbol not in portfolio:
+            portfolio[symbol] = {"shares": 1.0, "purchase_price": 0.0}
+
+
 def add_compare(symbol: str) -> None:
     compare = st.session_state.compare
     if symbol in compare:
-        compare.remove(symbol)
-    elif len(compare) < 3:
+        sync_selection_state_to_query()
+        return
+    if len(compare) < 3:
         compare.append(symbol)
     else:
         st.warning("You can compare up to 3 stocks at a time.")
+    sync_selection_state_to_query()
+
+
+def remove_compare(symbol: str) -> None:
+    if symbol in st.session_state.compare:
+        st.session_state.compare.remove(symbol)
+    sync_selection_state_to_query()
+
+
+def add_portfolio(symbol: str) -> None:
+    portfolio = st.session_state.portfolio
+    if symbol not in portfolio:
+        portfolio[symbol] = {"shares": 1.0, "purchase_price": 0.0}
+    sync_selection_state_to_query()
+
+
+def remove_portfolio(symbol: str) -> None:
+    if symbol in st.session_state.portfolio:
+        del st.session_state.portfolio[symbol]
+    sync_selection_state_to_query()
 
 
 def toggle_portfolio(symbol: str) -> None:
-    portfolio = st.session_state.portfolio
-    if symbol in portfolio:
-        del portfolio[symbol]
+    if symbol in st.session_state.portfolio:
+        remove_portfolio(symbol)
     else:
-        portfolio[symbol] = {"shares": 1.0, "purchase_price": 0.0}
+        add_portfolio(symbol)
 
 
 def select_detail(symbol: str) -> None:
     st.session_state.selected_detail = symbol
+    sync_selection_state_to_query()
+
+
+def add_compare_and_open(symbol: str) -> None:
+    add_compare(symbol)
+    set_active_nav_key("compare")
+
+
+def add_portfolio_and_open(symbol: str) -> None:
+    add_portfolio(symbol)
+    set_active_nav_key("portfolio")
 
 
 def sync_selected_detail_from_query() -> None:
@@ -4736,18 +5001,20 @@ def render_stock_card(stock: dict[str, Any]) -> None:
         )
         c1, c2 = st.columns(2)
         c1.button(
-            "Added" if symbol in st.session_state.compare else "Compare",
+            "Added to Compare" if compare_active else "Add to Compare",
             key=f"compare_{symbol}",
             on_click=add_compare,
             args=(symbol,),
             width="stretch",
+            disabled=compare_active,
         )
         c2.button(
-            "In Portfolio" if symbol in st.session_state.portfolio else "Add to Portfolio",
+            "In Portfolio" if portfolio_active else "Add to Portfolio",
             key=f"portfolio_{symbol}",
-            on_click=toggle_portfolio,
+            on_click=add_portfolio,
             args=(symbol,),
             width="stretch",
+            disabled=portfolio_active,
         )
 
 
@@ -5054,6 +5321,8 @@ def process_stock_search(query: str) -> bool:
             st.session_state.stocks[stock["symbol"]] = stock
             st.session_state.last_query = query.strip()
             st.session_state.selected_detail = stock["symbol"]
+            st.session_state.setdefault("_selection_restore_errors", {}).pop(stock["symbol"], None)
+            sync_selection_state_to_query()
             return True
         except Exception as exc:
             st.error(f"Could not load stock data: {exc}")
@@ -5090,6 +5359,41 @@ def render_stock_detail(stock: dict[str, Any]) -> None:
     submitted, query = render_stock_search_form(f"stock_search_inline_{stock['symbol']}", compact=True)
     if submitted and process_stock_search(query):
         st.rerun()
+
+    symbol = stock["symbol"]
+    compare_active = symbol in st.session_state.compare
+    portfolio_active = symbol in st.session_state.portfolio
+    action_cols = st.columns(4)
+    action_cols[0].button(
+        "Compare selected" if compare_active else "Add to Compare",
+        key=f"detail_compare_{symbol}",
+        on_click=add_compare,
+        args=(symbol,),
+        width="stretch",
+        disabled=compare_active,
+    )
+    action_cols[1].button(
+        "Portfolio selected" if portfolio_active else "Add to Portfolio",
+        key=f"detail_portfolio_{symbol}",
+        on_click=add_portfolio,
+        args=(symbol,),
+        width="stretch",
+        disabled=portfolio_active,
+    )
+    action_cols[2].button(
+        "Open Compare",
+        key=f"detail_open_compare_{symbol}",
+        on_click=add_compare_and_open,
+        args=(symbol,),
+        width="stretch",
+    )
+    action_cols[3].button(
+        "Open Portfolio",
+        key=f"detail_open_portfolio_{symbol}",
+        on_click=add_portfolio_and_open,
+        args=(symbol,),
+        width="stretch",
+    )
 
     c1, c2, c3, c4 = st.columns(4)
     with c1:
@@ -5211,7 +5515,7 @@ def compare_tab() -> None:
 
     cols = st.columns(len(selected))
     for col, stock in zip(cols, selected):
-        col.button("Remove " + stock["symbol"], key=f"remove_compare_{stock['symbol']}", on_click=add_compare, args=(stock["symbol"],))
+        col.button("Remove " + stock["symbol"], key=f"remove_compare_{stock['symbol']}", on_click=remove_compare, args=(stock["symbol"],))
 
 
 def portfolio_market_values() -> dict[str, float]:
@@ -5369,6 +5673,8 @@ def portfolio_weights(symbols: list[str]) -> dict[str, float]:
 
 def portfolio_risk_metrics() -> dict[str, Any] | None:
     symbols = [symbol for symbol in st.session_state.portfolio if symbol in st.session_state.stocks]
+    if len(symbols) < 2:
+        return None
     returns = portfolio_return_frame(symbols)
     if returns.empty or len(returns.columns) < 2:
         return None
@@ -5446,12 +5752,19 @@ def render_portfolio_risk_analysis() -> None:
 
 def render_complementarity_analysis() -> None:
     symbols = [symbol for symbol in st.session_state.portfolio if symbol in st.session_state.stocks]
-    returns = portfolio_return_frame(symbols)
 
     st.subheader("Stock Complementarity")
     st.caption(
         "This checks whether holdings move together or offset each other using daily return correlations from available price history."
     )
+
+    if len(symbols) < 2:
+        st.info(
+            "At least two portfolio stocks with available price history are needed for complementarity analysis."
+        )
+        return
+
+    returns = portfolio_return_frame(symbols)
 
     if returns.empty or len(returns.columns) < 2:
         st.info(
@@ -5537,6 +5850,8 @@ def portfolio_valuation_rows() -> list[dict[str, Any]]:
 
 def complementarity_summary() -> dict[str, Any] | None:
     symbols = [symbol for symbol in st.session_state.portfolio if symbol in st.session_state.stocks]
+    if len(symbols) < 2:
+        return None
     returns = portfolio_return_frame(symbols)
     if returns.empty or len(returns.columns) < 2:
         return None
@@ -6114,11 +6429,19 @@ def ai_coach_readiness(context: dict[str, Any]) -> dict[str, Any]:
 
 
 def app_view_href(view: str) -> str:
-    return f"?view={quote(view)}&mode=dashboard"
+    params = {"view": view, "mode": "dashboard"}
+    params.update(selection_state_params())
+    return f"?{urlencode(params)}"
 
 
 def app_detail_href(symbol: str) -> str:
-    return f"?view=details&detail={quote(symbol)}&mode=dashboard"
+    params = {"view": "details", "detail": symbol, "mode": "dashboard"}
+    params.update(selection_state_params())
+    detail_symbols = selected_symbols_for_url()
+    if symbol not in detail_symbols:
+        detail_symbols.append(symbol)
+    params["symbols"] = ",".join(detail_symbols)
+    return f"?{urlencode(params)}"
 
 
 def app_view_link(view: str, label: str) -> str:
@@ -7667,7 +7990,6 @@ def portfolio_tab() -> None:
         st.number_input(
             "Manual USD/KRW rate",
             min_value=1.0,
-            value=float(st.session_state.get("manual_usdkrw", 1350.0)),
             step=1.0,
             key="manual_usdkrw",
         )
@@ -7893,7 +8215,7 @@ def portfolio_tab() -> None:
         remove_cols[idx % len(remove_cols)].button(
             f"Remove {symbol}",
             key=f"remove_portfolio_{symbol}",
-            on_click=toggle_portfolio,
+            on_click=remove_portfolio,
             args=(symbol,),
         )
 
@@ -8213,6 +8535,7 @@ def remove_sidebar_item(collection: str, symbol: str, key: str) -> None:
         del st.session_state.portfolio[symbol]
     if key in st.session_state:
         del st.session_state[key]
+    sync_selection_state_to_query()
     st.rerun()
 
 
@@ -8333,6 +8656,9 @@ def render_life_entry_screen(standalone: bool = True) -> None:
         <div class="life-entry-wrap">
             <div class="life-entry homepage-visual{homepage_class}">
                 {homepage_image}
+                <a class="homepage-entry-hotspot primary" href="?view=life&amp;mode=dashboard" target="_self" aria-label="Enter LY-STScope Life Dashboard">Enter LY-STScope Life Dashboard</a>
+                <a class="homepage-entry-hotspot secondary" href="?view=life&amp;mode=dashboard" target="_self" aria-label="Explore LY-STScope Dashboard">Explore LY-STScope Dashboard</a>
+                <a class="homepage-mobile-cta" href="?view=life&amp;mode=dashboard" target="_self" aria-label="Enter LY-STScope Dashboard">Enter LY-STScope Dashboard</a>
                 <div class="home-nav">
                     <div class="home-brand">
                         <div class="home-brand-mark">LY</div>
@@ -8432,15 +8758,10 @@ def render_life_entry_screen(standalone: bool = True) -> None:
         unsafe_allow_html=True,
     )
 
-    c1, c2, c3 = st.columns([1, 1.1, 1])
-    with c2:
-        if st.button("Enter LY-STScope Life Dashboard", type="primary", width="stretch"):
-            st.session_state.life_entry_complete = True
-            st.session_state.life_entry_version_seen = LIFE_ENTRY_VERSION
-            st.rerun()
-        st.caption(
-            "Educational and informational use only. LY-STScope is not financial, investment, legal, or tax advice."
-        )
+    st.caption(
+        "Click the image buttons on desktop or Enter LY-STScope Dashboard on mobile. "
+        "Educational and informational use only; not financial, investment, legal, or tax advice."
+    )
 
 
 NAV_ITEMS = [
@@ -8514,8 +8835,12 @@ def set_active_nav_key(view: str) -> None:
     st.session_state.active_view = view
     try:
         st.query_params["view"] = view
+        st.query_params["mode"] = "dashboard"
+        sync_selection_state_to_query()
     except Exception:
-        st.experimental_set_query_params(view=view)
+        params = {"view": view, "mode": "dashboard"}
+        params.update(selection_state_params())
+        st.experimental_set_query_params(**params)
 
 
 def render_circle_navigation(active_key: str) -> None:
@@ -8595,11 +8920,11 @@ def render_mobile_navigation(active_key: str) -> None:
             '<div class="mobile-orbit-shell">'
             f'{"".join(orbit_links)}'
             f'<a class="mobile-orbit-center{center_active}" href="{diary_href}" target="_self" aria-label="Personal Diary">'
-            '<b>Diary</b><span>Personal Memory</span></a>'
+            '<b>Diary</b><span>Personal Memory</span></a></div>'
             '<div class="mobile-orbit-mini-row">'
             f'<a class="mobile-orbit-mini{settings_active}" href="{settings_href}" target="_self">Settings</a>'
             f'<a class="mobile-orbit-mini{guide_active}" href="{guide_href}" target="_self">Guide</a>'
-            '</div></div></div>'
+            '</div></div>'
         ),
         unsafe_allow_html=True,
     )
@@ -8732,13 +9057,13 @@ def render_main_app() -> None:
         unsafe_allow_html=True,
     )
 
+    sync_selection_state_from_query()
     sync_selected_detail_from_query()
 
     active_view = active_nav_key()
-    if active_view != "search":
-        render_mobile_navigation(active_view)
-        render_circle_navigation(active_view)
-        render_mobile_view_summary(active_view)
+    render_mobile_navigation(active_view)
+    render_circle_navigation(active_view)
+    render_mobile_view_summary(active_view)
 
     if active_view == "life":
         render_life_compact_panel()
